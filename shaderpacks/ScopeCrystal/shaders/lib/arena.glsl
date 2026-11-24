@@ -108,7 +108,7 @@ vec3 padArcs(vec3 camW, vec3 dir, float sceneDist, float t) {
     for (int g = 0; g < 4; g++) {                                      // Batching: 3 Bögen pro Gruppentest
         vec4 gb = arenaCache(g, CACHE_GROUP_ROW);
         if (!rayNear(gb.xyz, gb.w, camW, dir, sceneDist)) continue;
-        for (int k = g * 3; k < g * 3 + 3; k++) col += padArc(k, camW, dir, sceneDist, t);
+        for (int k = g * 3; k < g * 3 + 3; k += 2) col += padArc(k, camW, dir, sceneDist, t);   // Typ 1 (Hochpads) gibt es nicht mehr
     }
     return col;
 }
