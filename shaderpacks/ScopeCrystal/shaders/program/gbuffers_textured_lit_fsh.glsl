@@ -23,6 +23,11 @@ layout(location = 2) out vec4 outLight;
 
 void main() {
 #ifdef PVP_WORLD
+#ifdef PORTAL_BLOCK_ENTITY
+    // End-Portal-Ersatzflaeche fuer Spieler ohne Shader (Arena.sendPortalSurface): hier unsichtbar
+    vec3 portalLocal = portalSceneLocal(worldPos);
+    if (portalLocal.y > PORTAL_Y + 0.3 && portalLocal.y < PORTAL_Y + 0.8 && portalOpeningCell(portalLocal.xz)) discard;
+#endif
 #ifndef PORTAL_HAND
     if (!portalFragmentVisible(worldPos, cameraPosition + gbufferModelViewInverse[3].xyz, cameraPosition)) discard;
 #endif
