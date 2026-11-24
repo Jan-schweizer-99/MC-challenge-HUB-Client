@@ -1,4 +1,4 @@
-// Pass 2: Bildschirm-Reflexionen (SSR) – Wasser, Glas, glänzende Blöcke. Spiegelt auch die Showcase-Effekte.
+// Pass 2: Bildschirm-Reflexionen (SSR) – Wasser, Glas, glänzende Blöcke. Spiegelt auch die Hub-/Arena-Effekte.
 #include "/lib/common.glsl"
 
 uniform sampler2D colortex0;

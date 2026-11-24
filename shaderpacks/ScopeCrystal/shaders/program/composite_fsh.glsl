@@ -1,11 +1,11 @@
-// Pass 1: optionaler Vanilla-Nebel am Sichtweitenrand (alle Welten); in Welt pvp zusaetzlich Showcase-/Hub-/Arena-Effekte
+// Pass 1: optionaler Vanilla-Nebel am Sichtweitenrand (alle Welten); in Welt pvp zusaetzlich Hub-/Arena-Effekte
 
 // Shader-Option (Optionen > Shaderpacks > ScopeCrystal): standardmaessig AUS = klare Sicht bis zum Rand
 //#define VANILLA_FOG // Vanilla-Nebel am Rand der Sichtweite
 
 #include "/lib/common.glsl"
 #ifdef PVP_WORLD
-#include "/lib/showcase.glsl"
+#include "/lib/fx_common.glsl"
 #include "/lib/hub.glsl"
 #include "/lib/arena.glsl"
 #endif
@@ -109,7 +109,6 @@ void main() {
 
 #ifdef PVP_WORLD
     bool surf = depth0 < 1.0 && mat >= 0;
-    color += showcase(camW, dir, sceneDist, surf, wp, nW);
     color += hub(camW, dir, sceneDist, surf, wp, nW);
     vec3 effectCamera = camW, effectWorld = wp;
     if (portalSceneCamera(cameraPosition)) {

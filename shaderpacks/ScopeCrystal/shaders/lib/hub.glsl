@@ -1,6 +1,6 @@
 // Challenge-Hub (Welt pvp, Boden y = 100): Polarlicht, schwebendes Pixel-Herz, Pixelwellen auf dem Eisboden,
 // Lichtsaeulen ueber den 10 Sockeln, Schneeglitzern. Keine Portale.
-// Koordinaten muessen zu Hub.java passen (HX, HY, HZ, HR, RING). Braucht pointGlow/rotY aus showcase.glsl.
+// Koordinaten muessen zu Hub.java passen (HX, HY, HZ, HR, RING). Braucht pointGlow/rotY aus fx_common.glsl.
 
 // Pixel-Herz wie im Server-Icon: 13 x 12, je Zelle 2 Bit (0 leer, 1 Umriss, 2 Rot, 3 Glanz), Zeile 0 = oben
 const int HEART[12] = int[12](1376592, 6964900, 27941565, 27962029, 27634025, 27634025, 6990500, 1747600, 436800, 108800, 25600, 4096);

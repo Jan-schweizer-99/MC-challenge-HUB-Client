@@ -1,7 +1,7 @@
 # MC-challenge-HUB Client
 
 ScopeCrystal shaderpack and Windows installer for the MC-challenge-HUB server (Minecraft Java 26.3).
-Vanilla look in normal worlds, effects in the hub, arena and showcase.
+Vanilla look in normal worlds, effects in the hub and arena.
 
 **Download:** [full install](https://github.com/Jan-schweizer-99/MC-challenge-HUB-Client/releases/latest/download/MC-challenge-HUB-Client.zip) · [shader update](https://github.com/Jan-schweizer-99/MC-challenge-HUB-Client/releases/latest/download/ScopeCrystal-Shader.zip) · [install guide](install.txt)
 

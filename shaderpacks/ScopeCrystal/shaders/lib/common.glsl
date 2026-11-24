@@ -1,10 +1,6 @@
 // Gemeinsame Funktionen und Einstellungen
 uniform float arenaLavaMix;
 
-// Showcase-Room in Weltkoordinaten (Welt "pvp", Boden auf y = 100)
-const vec3 SHOWCASE = vec3(20000.0, 100.0, 20000.0);
-const float SHOWCASE_R = 21.0;
-
 // Challenge-Hub (Welt "pvp", Boden y = 100) – gleiche Werte wie Hub.java (HX, HY, HZ, HR, RING)
 const vec3 HUB = vec3(-20000.0, 100.0, -20000.0);
 const float HUB_R = 23.0;

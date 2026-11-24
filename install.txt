@@ -19,7 +19,7 @@ GOOD TO KNOW
 - K turns the shader on/off.
 - Fog, reflections and glass: Options -> Video Settings -> Shader Packs
   -> ScopeCrystal -> Settings.
-- Normal worlds look vanilla; effects only appear in the hub, arena and showcase.
+- Normal worlds look vanilla; effects only appear in the hub and arena.
 - Your old mods folder, shaderpack and Iris settings are saved in
   .minecraft\mc-hub-backup\<date>. Mods from your old mods folder are not
   active anymore until you copy them back.
