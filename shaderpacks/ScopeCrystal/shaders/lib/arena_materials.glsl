@@ -2,7 +2,7 @@
 #define ARENA_MATERIALS_GLSL
 uniform sampler2D arenaPaletteAtlas;
 float arenaBlendWeight() { return smoothstep(0.02, 0.98, arenaLavaMix); }
-vec3 arenaLocal(vec3 p) { p.x -= step(TWIN_SPLIT, p.x) * TWIN_X; return p; }
+vec3 arenaLocal(vec3 p) { p.x -= arenaOffsetX(arenaSideAt(p)); return p; }
 bool arenaPaletteRegion(vec3 p) {
     p = arenaLocal(p);
     return length(p.xz - vec2(0.5)) < 90.0 && abs(p.y - 101.0) < 70.0;
@@ -17,7 +17,7 @@ vec4 arenaTexel(int role, int side, int frame, vec2 uv, int level) {
     int size = 16 >> level;
     int offset = 32 - (32 >> level);
     ivec2 pixel = ivec2(floor(fract(uv) * float(size)));
-    return texelFetch(arenaPaletteAtlas, ivec2((role * 2 + side) * 32 + offset, frame * 16) + pixel, 0);
+    return texelFetch(arenaPaletteAtlas, ivec2((side == 2 ? 36 + role : role * 2 + side) * 32 + offset, frame * 16) + pixel, 0);
 }
 vec4 arenaSideTexture(int role, int side, vec2 uv, int level, float t) {
     if (side == 1 && role == 2) {

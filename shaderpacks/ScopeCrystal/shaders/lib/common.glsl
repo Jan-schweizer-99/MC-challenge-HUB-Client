@@ -10,6 +10,14 @@ const float HUB_RING = 14.0;
 // Jeder Client zeigt nur die Insel, auf der die Kamera gerade ist → Portalwechsel ohne sichtbaren Sprung.
 const float TWIN_X = 120.0;
 const float TWIN_SPLIT = 60.0;
+// End-Arena: dritte Insel ohne Portal, gleiche Werte wie Arena.END_X / TOWER
+const float END_X = -600.0;
+// Insel an einer Weltposition: 0 Eis, 1 Lava, 2 End
+int arenaSideAt(vec3 p) {
+    if (abs(p.x - END_X) < 150.0 && abs(p.z) < 200.0) return 2;
+    return p.x > TWIN_SPLIT ? 1 : 0;
+}
+float arenaOffsetX(int side) { return side == 2 ? END_X : side == 1 ? TWIN_X : 0.0; }
 #ifdef PVP_WORLD
 #include "/lib/portal_scene.glsl"
 #include "/lib/arena_fx_palette.glsl"

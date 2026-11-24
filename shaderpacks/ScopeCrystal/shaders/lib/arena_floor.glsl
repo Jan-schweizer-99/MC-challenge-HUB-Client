@@ -12,17 +12,19 @@ vec3 roundArenaFloor(vec3 wp, vec3 tint, vec3 light, float t) {
     float ring = (1.0 - smoothstep(0.5 - fw, 0.5 + fw, ringDist)) * (1.0 - trench);
     float stone = 1.0 - ring - trench;
     int level = arenaTextureLevel(tile);
-    float blend = portalPhysicalSide(wp);
+    int side = arenaSideAt(wp);
+    float blend = side == 1 ? 1.0 : 0.0;
+    float glow = side == 2 ? 0.45 + 0.15 * sin(t * 1.4 + r) : blend;   // crying obsidian glows softly
     vec3 color = vec3(0.0);
     if (stone > 0.0) {
         vec2 block = floor(tile);
         float deg = degrees(atan(block.y, block.x)) + 180.0;
         int role = int(mod(floor(deg / 15.0) + floor(length(block) / 3.0), 2.0));
-        color += arenaSideTexture(role, int(blend), tile, level, t).rgb * light * stone;
+        color += arenaSideTexture(role, side, tile, level, t).rgb * light * stone;
     }
-    if (ring > 0.0) color += arenaSideTexture(2, int(blend), tile, level, t).rgb
+    if (ring > 0.0) color += arenaSideTexture(2, side, tile, level, t).rgb
         * mix(light, max(light, vec3(0.35)), blend) * ring;
-    if (trench > 0.0) color += arenaSideTexture(4, int(blend), tile, level, t).rgb
-        * mix(light, vec3(1.0), blend) * trench;
+    if (trench > 0.0) color += arenaSideTexture(4, side, tile, level, t).rgb
+        * mix(light, vec3(1.0), glow) * trench;
     return color * tint;
 }

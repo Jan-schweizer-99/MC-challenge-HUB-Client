@@ -398,10 +398,47 @@ vec3 pillarOrnament(vec3 wp, vec3 nW, float t) {
     return col;
 }
 
+// ---------------------------------------------------------------- End-Arena: Kristallstrahlen und Ender-Himmel
+// Vier Strahlen von den Turmkristallen (Arena.TOWER / TOWER_TOP) zur Mitte, mit nahtlos laufendem Muster
+vec3 endBeams(vec3 camW, vec3 dir, float sceneDist, float t) {
+    const vec3 TARGET = vec3(0.5, 116.5, 0.5);
+    if (!rayNear(vec3(0.5, 119.0, 0.5), 45.0, camW, dir, sceneDist)) return vec3(0.0);
+    vec3 col = vec3(0.0);
+    for (int i = 0; i < 4; i++) {
+        vec3 a = vec3(0.5 + ((i & 1) == 0 ? -29.0 : 29.0), 124.0, 0.5 + ((i & 2) == 0 ? -29.0 : 29.0));
+        vec3 seg = raySegment(a, TARGET, camW, dir);
+        if (seg.z > 0.0 && seg.z < sceneDist && seg.x < 1.6) {
+            float roll = 0.6 + 0.4 * sin(seg.y * 60.0 - t * 9.0);
+            float pulse = exp(-pow(fract(seg.y * 2.0 - t * 0.7 + float(i) * 0.25) - 0.5, 2.0) * 90.0);
+            col += vec3(0.85, 0.45, 1.0) * exp(-seg.x * seg.x / 0.05) * (0.5 * roll + 1.3 * pulse);
+            col += vec3(0.6, 0.3, 1.0) * exp(-seg.x * seg.x / 0.5) * 0.12;
+        }
+        col += vec3(1.0, 0.7, 1.0) * pointGlow(a, camW, dir, sceneDist, 1.6) * 0.5 * (0.8 + 0.2 * sin(t * 2.6 + float(i)));
+    }
+    col += vec3(1.0, 0.8, 1.0) * pointGlow(TARGET, camW, dir, sceneDist, 1.3) * 0.9;
+    return col;
+}
+
+// Ender-Himmel im Pixelraster: ziehende Nebelschleier und blinkende Sterne
+vec3 endSky(vec3 dir, float t) {
+    vec3 ad = abs(dir);
+    float m = max(ad.x, max(ad.y, ad.z));
+    vec2 uv = m == ad.y ? dir.xz / ad.y : m == ad.x ? dir.zy / ad.x : dir.xy / ad.z;   // Würfelflächen, ohne Pol-Verzerrung
+    float face = m == ad.y ? sign(dir.y) : m == ad.x ? 2.0 + sign(dir.x) : 5.0 + sign(dir.z);
+    vec3 d = floor(dir * 48.0) / 48.0;
+    float n = sin(d.x * 5.0 + t * 0.06 + 2.0 * sin(d.z * 3.0 - t * 0.04)) * sin(d.z * 4.0 - t * 0.05 + 1.7 * sin(d.y * 5.0))
+            + 0.5 * sin(d.x * 11.0 - d.y * 9.0 + t * 0.09);
+    vec3 col = mix(vec3(0.25, 0.1, 0.7), vec3(0.9, 0.2, 0.7), clamp(n, 0.0, 1.0)) * smoothstep(0.05, 1.2, n) * 0.3;
+    vec2 cell = floor(uv * 70.0);
+    float h = hash12(cell + face * 37.0);
+    if (h > 0.985) col += vec3(0.9, 0.8, 1.0) * (0.35 + 0.65 * abs(sin(t * (0.5 + h * 1.5) + h * 400.0)));
+    return col;
+}
+
 vec3 arena(vec3 camW, vec3 dir, float sceneDist, bool hasSurface, bool isSky, vec3 wp, vec3 nW, float edge, int mat) {
-    // Lava-Zwilling bei x 120: dieselben Effekte, einfach um die Insel verschoben
-    bool lavaSide = camW.x > TWIN_SPLIT;
-    if (lavaSide) { camW.x -= TWIN_X; wp.x -= TWIN_X; }
+    // Lava- und End-Insel: dieselben Effekte, einfach um die Insel verschoben
+    int side = arenaSideAt(camW);
+    camW.x -= arenaOffsetX(side); wp.x -= arenaOffsetX(side);
     vec3 rel = camW - ARENA;
     if (length(rel.xz) > 90.0 || abs(rel.y) > 70.0) return vec3(0.0);
     float t = frameTimeCounter;
@@ -411,6 +448,7 @@ vec3 arena(vec3 camW, vec3 dir, float sceneDist, bool hasSurface, bool isSky, ve
         col += arenaSurface(wp, nW, t, mat == 2 ? 0.0 : edge);   // Glas bleibt Vanilla
         // Säulen-Ornament sitzt jetzt pixelgenau in der Textur (gbuffers_terrain), nicht mehr als Overlay
     }
-    if (isSky) col += aurora(dir, t);
-    return arenaFxPalette(col, lavaSide);
+    if (side == 2) col += endBeams(camW, dir, sceneDist, t);
+    if (isSky) col += side == 2 ? endSky(dir, t) : aurora(dir, t);
+    return arenaFxPalette(col, side);
 }

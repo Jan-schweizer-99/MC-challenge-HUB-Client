@@ -32,7 +32,7 @@ vec3 hue(float h) { return clamp(abs(fract(h + vec3(0.0, 2.0 / 3.0, 1.0 / 3.0)) 
 // Ortsbezogene Fackelfarbe: 16 Fackeln rund um die Arena (alle 22,5°, r ≈ 26, y ≈ 103.5).
 // Farbe = Himmelsrichtung der Fackel → einmal rundherum ein Farbkreis.
 #ifdef PVP_WORLD
-vec3 torchColor(float ang, bool lavaSide) { return arenaFxPalette(mix(vec3(1.0), hue(ang / 6.2832 + 0.5), 0.9), lavaSide); }
+vec3 torchColor(float ang, int lavaSide) { return arenaFxPalette(mix(vec3(1.0), hue(ang / 6.2832 + 0.5), 0.9), lavaSide); }
 #endif
 
 float nearestTorch(vec3 wp, out float tAng) {
@@ -74,19 +74,19 @@ void main() {
     // Fackellicht in der Arena nach Ort färben – nur in der Nähe der Fackeln, andere Lichtquellen bleiben
     float tAng;
     vec3 wpI = worldPos;
-    if (wpI.x > TWIN_SPLIT) wpI.x -= TWIN_X;            // Lava-Zwilling: gleiche Fackelanordnung
+    wpI.x -= arenaOffsetX(arenaSideAt(wpI));            // Lava- und End-Insel: gleiche Fackelanordnung
     float td = nearestTorch(wpI, tAng);
     if (td < 9.0 && length(wpI.xz - vec2(0.5)) < 30.0) {
         vec3 skyOnly = texture(lightmap, vec2(1.0 / 32.0, lmcoord.y)).rgb;
         float blockAmt = max(lum(light) - lum(skyOnly), 0.0);
         float w = smoothstep(9.0, 2.5, td);
-        light = mix(light, skyOnly + torchColor(tAng, arenaLavaEffects(worldPos)) * blockAmt * 1.35, w);
+        light = mix(light, skyOnly + torchColor(tAng, arenaFxSide(worldPos)) * blockAmt * 1.35, w);
     }
     if (blockId == 10011) {                   // die Flamme selbst: helle, gesättigte Pixel umfärben + leuchten
         vec3 raw = texture(gtexture, texcoord).rgb;                     // ohne Schattierung prüfen
         float sat = max(raw.r, max(raw.g, raw.b)) - min(raw.r, min(raw.g, raw.b));
         if (sat > 0.2 && lum(raw) > 0.52 && raw.r >= raw.b) {            // gelb/orange = Flamme, nicht der Holzstiel
-            c.rgb = torchColor(tAng, arenaLavaEffects(worldPos)) * (0.6 + lum(raw)) * 1.6;
+            c.rgb = torchColor(tAng, arenaFxSide(worldPos)) * (0.6 + lum(raw)) * 1.6;
             light = vec3(1.0);
         }
     }
@@ -122,7 +122,7 @@ void main() {
 #endif
     c.rgb *= light;
 #ifdef PVP_WORLD
-    emissive = arenaFxPalette(emissive, arenaLavaEffects(worldPos));
+    emissive = arenaFxPalette(emissive, arenaFxSide(worldPos));
 #endif
     c.rgb += emissive;
     int surfaceMat = mat;
@@ -134,7 +134,7 @@ void main() {
     }
     if (crystal == 1) {                       // Kristalle leuchten pulsierend von selbst
         float pulse = 0.45 + 0.35 * sin(frameTimeCounter * 2.5 + gl_FragCoord.x * 0.002);
-        c.rgb += arenaFxPalette(albedo * vec3(1.0, 0.75, 1.2) * pulse, arenaLavaEffects(worldPos));
+        c.rgb += arenaFxPalette(albedo * vec3(1.0, 0.75, 1.2) * pulse, arenaFxSide(worldPos));
     }
 #endif
     outColor = c;

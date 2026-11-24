@@ -118,7 +118,7 @@ void main() {
     }
     // Kanten (4 Extra-Abtastungen) braucht nur das Lauflicht an Tribüne und Mauer
     vec3 edgeLocal = effectWorld;
-    if (effectCamera.x > TWIN_SPLIT) edgeLocal.x -= TWIN_X;
+    edgeLocal.x -= arenaOffsetX(arenaSideAt(effectCamera));
     float edgeR = length(edgeLocal.xz - vec2(0.5));
     bool nearTribune = edgeR > 24.5 && edgeR < 36.0 && edgeLocal.y > 99.0 && edgeLocal.y < 118.0;
     float edge = surf && nearTribune ? edgeMask(texcoord, n, vp.z, mat) : 0.0;
