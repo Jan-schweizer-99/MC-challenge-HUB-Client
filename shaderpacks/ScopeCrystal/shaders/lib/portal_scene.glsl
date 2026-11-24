@@ -6,12 +6,17 @@ uniform sampler2D colortex4;
 const float PORTAL_Y = 109.0;
 const float PORTAL_R = 4.5;
 // Whole Minecraft cells define the aperture, matching Arena.crystalLayout.
+uniform int worldTime;
+// Arenas without a portal: the server moves the frozen clock of "pvp" from 18000 to 18300 (Arena.TIME_NO_PORTAL).
+bool portalEnabled() { return worldTime < 18150 || worldTime > 18450; }
 bool portalOpeningCell(vec2 localHit) {
+    if (!portalEnabled()) return false;
     vec2 cell = floor(localHit);
     return dot(cell, cell) < PORTAL_R * PORTAL_R;
 }
 bool portalFrontFacing(vec3 eye) {
     // One horizontal plane with normal (0,1,0). No underside portal view.
+    if (!portalEnabled()) return false;
     return dot(eye - vec3(0.5, PORTAL_Y, 0.5), vec3(0.0, 1.0, 0.0)) > 0.00001;
 }
 bool portalFrontInView(vec3 eye, vec3 camera, mat4 viewProjection) {
