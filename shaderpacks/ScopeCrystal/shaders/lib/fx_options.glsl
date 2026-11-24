@@ -1,4 +1,4 @@
-// Effekt-Schalter je Stage (Menue "Effects"). Aus = der Effekt wird nicht kompiliert und kostet nichts.
+// Effekt-Schalter je Stage (Menue "StageEffects"). Aus = der Effekt wird nicht kompiliert und kostet nichts.
 // Die Arena-Schalter gelten fuer alle Arenen gemeinsam.
 #define FX_HUB_AURORA // Northern lights above the hub.
 #define FX_HUB_HEART // The floating, spinning heart in the middle.
