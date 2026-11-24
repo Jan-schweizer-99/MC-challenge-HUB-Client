@@ -143,8 +143,21 @@ vec3 hubSnow(vec3 camW, vec3 dir, float sceneDist) {
 vec3 hub(vec3 camW, vec3 dir, float sceneDist, bool hasSurface, vec3 wp, vec3 nW) {
     vec3 rel = camW - HUB;
     if (max(abs(rel.x), abs(rel.z)) > 120.0 || abs(rel.y) > 80.0) return vec3(0.0);
-    vec3 col = hubAurora(camW, dir, sceneDist) + hubHeart(camW, dir, sceneDist)
-             + hubPillars(camW, dir, sceneDist) + hubSnow(camW, dir, sceneDist);
+    vec3 col = vec3(0.0);
+#ifdef FX_HUB_AURORA
+    col += hubAurora(camW, dir, sceneDist);
+#endif
+#ifdef FX_HUB_HEART
+    col += hubHeart(camW, dir, sceneDist);
+#endif
+#ifdef FX_HUB_PILLARS
+    col += hubPillars(camW, dir, sceneDist);
+#endif
+#ifdef FX_HUB_SNOW
+    col += hubSnow(camW, dir, sceneDist);
+#endif
+#ifdef FX_HUB_FLOOR
     if (hasSurface) col += hubFloor(wp, nW);
+#endif
     return col;
 }

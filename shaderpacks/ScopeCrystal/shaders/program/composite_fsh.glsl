@@ -116,12 +116,15 @@ void main() {
         float offset = (viewSide - portalPhysicalSide(cameraPosition)) * TWIN_X;
         effectCamera.x += offset; effectWorld.x += offset;
     }
+    float edge = 0.0;
+#ifdef FX_ARENA_EDGES
     // Kanten (4 Extra-Abtastungen) braucht nur das Lauflicht an Tribüne und Mauer
     vec3 edgeLocal = effectWorld;
     edgeLocal.x -= arenaOffsetX(arenaSideAt(effectCamera));
     float edgeR = length(edgeLocal.xz - vec2(0.5));
     bool nearTribune = edgeR > 24.5 && edgeR < 36.0 && edgeLocal.y > 99.0 && edgeLocal.y < 118.0;
-    float edge = surf && nearTribune ? edgeMask(texcoord, n, vp.z, mat) : 0.0;
+    if (surf && nearTribune) edge = edgeMask(texcoord, n, vp.z, mat);
+#endif
     color += arena(effectCamera, dir, sceneDist, surf, depth0 >= 1.0, effectWorld, nW, edge, mat);
 #endif
     outColor = vec4(color, 1.0);

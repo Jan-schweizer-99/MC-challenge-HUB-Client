@@ -19,6 +19,7 @@ int arenaSideAt(vec3 p) {
 }
 float arenaOffsetX(int side) { return side == 2 ? END_X : side == 1 ? TWIN_X : 0.0; }
 #ifdef PVP_WORLD
+#include "/lib/fx_options.glsl"
 #include "/lib/portal_scene.glsl"
 #include "/lib/arena_fx_palette.glsl"
 #endif

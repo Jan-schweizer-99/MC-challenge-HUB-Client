@@ -1,7 +1,11 @@
 #include "/lib/arena_materials.glsl"
 bool arenaFloorSurface(vec3 wp, vec3 nW) {
+#ifdef FX_ARENA_ROUND_FLOOR
     return nW.y > 0.9 && abs(wp.y - 101.0) < 0.05
         && length(arenaLocal(wp).xz - vec2(0.5)) < 25.9;
+#else
+    return false;
+#endif
 }
 vec3 roundArenaFloor(vec3 wp, vec3 tint, vec3 light, float t) {
     vec2 tile = arenaLocal(wp).xz;
