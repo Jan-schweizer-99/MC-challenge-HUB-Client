@@ -1,0 +1,35 @@
+MC-challenge-HUB - client install guide (Windows)
+=================================================
+
+FIRST INSTALL  (MC-challenge-HUB-Client.zip)
+1. Start Minecraft Java 26.3 once in the official launcher, then close
+   the game AND the launcher.
+2. Extract the whole ZIP (do not run it from inside the ZIP).
+3. Double-click install.cmd. An internet connection is needed.
+4. Open the launcher, choose the profile "fabric-loader-26.3", press Play.
+5. Multiplayer -> add the server address you got from the server owner.
+
+UPDATE THE SHADER  (ScopeCrystal-Shader.zip)
+1. Close Minecraft and extract the whole ZIP.
+2. Double-click update-shader.cmd.
+Your shader settings are kept. Use /getshader on the server for the latest link.
+
+GOOD TO KNOW
+- K turns the shader on/off.
+- Fog, reflections and glass: Options -> Video Settings -> Shader Packs
+  -> ScopeCrystal -> Settings.
+- Normal worlds look vanilla; effects only appear in the hub, arena and showcase.
+- Your old mods folder, shaderpack and Iris settings are saved in
+  .minecraft\mc-hub-backup\<date>. Mods from your old mods folder are not
+  active anymore until you copy them back.
+- Do not copy the shader folder by hand: the installer also builds two
+  textures from your own Minecraft.
+- Do not update Sodium on its own: Iris 1.11.7 needs Sodium 0.9.2.
+
+WHAT GETS INSTALLED
+Fabric Loader 0.20.1, Fabric API 0.166.2, Sodium 0.9.2, Iris 1.11.7 (downloaded
+from Fabric and Modrinth, checksums verified) and the ScopeCrystal shaderpack.
+
+UNDO
+Choose your normal launcher profile. To restore old mods, copy them back from
+the backup folder.

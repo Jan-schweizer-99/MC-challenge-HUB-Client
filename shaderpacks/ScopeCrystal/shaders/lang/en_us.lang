@@ -1,0 +1,15 @@
+option.VANILLA_FOG=Fog
+option.VANILLA_FOG.comment=Vanilla fog at the edge of your render distance. Off = clear view all the way out.
+value.VANILLA_FOG.true=Vanilla
+value.VANILLA_FOG.false=Off
+option.REFLECTIONS=Reflections
+option.REFLECTIONS.comment=Screen-space reflections. Low = water and glass, Medium = also shiny blocks, High = longest reach. Costs FPS.
+value.REFLECTIONS.0=Off
+value.REFLECTIONS.1=Low
+value.REFLECTIONS.2=Medium
+value.REFLECTIONS.3=High
+option.GLASS_STYLE=Glass
+option.GLASS_STYLE.comment=Vanilla = original texture. Clear = seamless panes without frame lines. Fancy = clear plus moving shine.
+value.GLASS_STYLE.0=Vanilla
+value.GLASS_STYLE.1=Clear
+value.GLASS_STYLE.2=Fancy

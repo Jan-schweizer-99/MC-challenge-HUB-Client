@@ -1,0 +1,20 @@
+[
+  {"blue":"smooth_quartz","lava":"polished_blackstone","blueId":10010,"lavaId":10012,"blueTex":"quartz_block_bottom","lavaTex":"polished_blackstone"},
+  {"blue":"calcite","lava":"blackstone","blueId":10010,"lavaId":10015,"blueTex":"calcite","lavaTex":"blackstone"},
+  {"blue":"amethyst_block","lava":"magma_block","blueId":10008,"lavaId":10013,"blueTex":"amethyst_block","lavaTex":"magma"},
+  {"blue":"pearlescent_froglight","lava":"glowstone","blueId":10009,"lavaId":0,"blueTex":"pearlescent_froglight_top","lavaTex":"glowstone"},
+  {"blue":"blue_ice","lava":"glass","blueId":10006,"lavaId":10014,"blueTex":"blue_ice","lavaTex":"lava_still"},
+  {"blue":"light_blue_stained_glass","lava":"orange_stained_glass","blueId":10002,"lavaId":10002,"blueTex":"light_blue_stained_glass","lavaTex":"orange_stained_glass"},
+  {"blue":"purple_stained_glass","lava":"red_stained_glass","blueId":10002,"lavaId":10002,"blueTex":"purple_stained_glass","lavaTex":"red_stained_glass"},
+  {"blue":"magenta_stained_glass","lava":"yellow_stained_glass","blueId":10002,"lavaId":10002,"blueTex":"magenta_stained_glass","lavaTex":"yellow_stained_glass"},
+  {"blue":"quartz_pillar","lava":"polished_basalt","blueId":10007,"lavaId":0,"blueTex":"quartz_pillar_side","lavaTex":"polished_basalt_side"},
+  {"blue":"quartz_bricks","lava":"polished_blackstone_bricks","blueId":10003,"lavaId":10003,"blueTex":"quartz_bricks","lavaTex":"polished_blackstone_bricks"},
+  {"blue":"chiseled_quartz_block","lava":"chiseled_polished_blackstone","blueId":10003,"lavaId":0,"blueTex":"chiseled_quartz_block","lavaTex":"chiseled_polished_blackstone"},
+  {"blue":"diamond_block","lava":"gold_block","blueId":10003,"lavaId":10003,"blueTex":"diamond_block","lavaTex":"gold_block"},
+  {"blue":"sea_lantern","lava":"shroomlight","blueId":10009,"lavaId":0,"blueTex":"sea_lantern","lavaTex":"shroomlight"},
+  {"blue":"soul_lantern","lava":"lantern","blueId":0,"lavaId":0,"blueTex":"soul_lantern","lavaTex":"lantern"},
+  {"blue":"white_stained_glass_pane","lava":"orange_stained_glass_pane","blueId":10002,"lavaId":10002,"blueTex":"white_stained_glass","lavaTex":"orange_stained_glass"},
+  {"blue":"purple_carpet","lava":"red_carpet","blueId":0,"lavaId":0,"blueTex":"purple_wool","lavaTex":"red_wool"},
+  {"blue":"light_blue_carpet","lava":"orange_carpet","blueId":0,"lavaId":0,"blueTex":"light_blue_wool","lavaTex":"orange_wool"},
+  {"blue":null,"lava":null,"blueId":0,"lavaId":0,"blueTex":"quartz_pillar_top","lavaTex":"polished_basalt_top"}
+]

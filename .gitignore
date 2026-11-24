@@ -1,0 +1,25 @@
+/*
+!/.gitignore
+!/.gitattributes
+!/README.md
+!/install.ps1
+!/install.cmd
+!/update-shader.cmd
+!/install.txt
+!/release.ps1
+!/tools/
+!/config/
+!/shaderpacks/
+/config/*
+!/config/iris.properties
+/shaderpacks/*
+!/shaderpacks/ScopeCrystal/
+# Generated from the player's own Minecraft (Mojang textures) - never publish
+**/arena-palette.png
+**/lava-floor.png
+*.jar
+*.zip
+*.bak
+.panel-key
+**/server.properties
+**/rcon-password.txt

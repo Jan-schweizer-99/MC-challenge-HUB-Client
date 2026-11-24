@@ -1,0 +1,15 @@
+option.VANILLA_FOG=Nebel
+option.VANILLA_FOG.comment=Vanilla-Nebel am Rand der Sichtweite. Aus = klare Sicht bis ganz nach hinten.
+value.VANILLA_FOG.true=Vanilla
+value.VANILLA_FOG.false=Aus
+option.REFLECTIONS=Spiegelungen
+option.REFLECTIONS.comment=Spiegelungen im Bild. Niedrig = Wasser und Glas, Mittel = auch glaenzende Bloecke, Hoch = groesste Reichweite. Kostet FPS.
+value.REFLECTIONS.0=Aus
+value.REFLECTIONS.1=Niedrig
+value.REFLECTIONS.2=Mittel
+value.REFLECTIONS.3=Hoch
+option.GLASS_STYLE=Glas
+option.GLASS_STYLE.comment=Vanilla = Originaltextur. Klar = durchgehende Scheiben ohne Rahmenlinien. Fancy = klar plus wandernder Glanz.
+value.GLASS_STYLE.0=Vanilla
+value.GLASS_STYLE.1=Klar
+value.GLASS_STYLE.2=Fancy
