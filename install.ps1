@@ -51,8 +51,15 @@ try {
         foreach ($m in $mods) { Write-Host "Downloading $($m.file) ..."; Get-Checked $m.url $m.hash (Join-Path $tmp $m.file) }
         Write-Host 'Downloading Fabric installer ...'
         Get-Checked $fabric.url $fabric.hash (Join-Path $tmp 'fabric-installer.jar')
-        & $javaExe -jar (Join-Path $tmp 'fabric-installer.jar') client -mcversion 26.3 -loader 0.20.1 -dir $McDir | Out-Host
-        if ($LASTEXITCODE -ne 0) { throw 'Fabric installer failed.' }
+        # Both launcher variants may be installed; Fabric wants each one named.
+        $launchers = @()
+        if (Test-Path (Join-Path $McDir 'launcher_profiles.json')) { $launchers += 'win32' }
+        if (Test-Path (Join-Path $McDir 'launcher_profiles_microsoft_store.json')) { $launchers += 'microsoft_store' }
+        if (-not $launchers) { throw 'Minecraft launcher not found. Start it once, close it, then run this again.' }
+        foreach ($l in $launchers) {
+            & $javaExe -jar (Join-Path $tmp 'fabric-installer.jar') client -mcversion 26.3 -loader 0.20.1 -launcher $l -dir $McDir | Out-Host
+            if ($LASTEXITCODE -ne 0) { throw 'Fabric installer failed.' }
+        }
     }
 
     $backup = Join-Path $McDir ('mc-hub-backup\' + (Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'))
@@ -69,11 +76,14 @@ try {
         $cfg = Join-Path $cfgDir 'iris.properties'
         if (Test-Path $cfg) { Copy-Item $cfg $backup }
         Copy-Item (Join-Path $here 'config\iris.properties') $cfg -Force
+        # only cosmetic: a problem here must not fail the install
+        try { & (Join-Path $here 'tools\set-profile.ps1') -McDir $McDir -Backup $backup }
+        catch { Write-Host "Note: launcher icon not set ($($_.Exception.Message))" -ForegroundColor Yellow }
     }
     Write-Host ''
     Write-Host "Done. Your previous files are in: $backup" -ForegroundColor Green
     if ($ShaderOnly) { Write-Host 'Start Minecraft to use the new shader.' -ForegroundColor Green }
-    else { Write-Host 'Launcher -> profile "fabric-loader-26.3" -> Play.' -ForegroundColor Green }
+    else { Write-Host 'Launcher -> profile "MC-challenge-HUB" -> Play.' -ForegroundColor Green }
 } catch {
     Write-Host ''
     Write-Host "ERROR: $($_.Exception.Message)" -ForegroundColor Red

@@ -6,7 +6,8 @@ FIRST INSTALL  (MC-challenge-HUB-Client.zip)
    the game AND the launcher.
 2. Extract the whole ZIP (do not run it from inside the ZIP).
 3. Double-click install.cmd. An internet connection is needed.
-4. Open the launcher, choose the profile "fabric-loader-26.3", press Play.
+4. Open the launcher, choose the profile "MC-challenge-HUB" (ice crystal icon),
+   press Play.
 5. Multiplayer -> add the server address you got from the server owner.
 
 UPDATE THE SHADER  (ScopeCrystal-Shader.zip)
