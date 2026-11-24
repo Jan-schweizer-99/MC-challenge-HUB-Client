@@ -117,13 +117,14 @@ void main() {
         effectCamera.x += offset; effectWorld.x += offset;
     }
     float edge = 0.0;
-#ifdef FX_ARENA_EDGES
+#if FXM_EDGES > 0
     // Kanten (4 Extra-Abtastungen) braucht nur das Lauflicht an Tribüne und Mauer
     vec3 edgeLocal = effectWorld;
-    edgeLocal.x -= arenaOffsetX(arenaSideAt(effectCamera));
+    int edgeSide = arenaSideAt(effectCamera);
+    edgeLocal.x -= arenaOffsetX(edgeSide);
     float edgeR = length(edgeLocal.xz - vec2(0.5));
     bool nearTribune = edgeR > 24.5 && edgeR < 36.0 && edgeLocal.y > 99.0 && edgeLocal.y < 118.0;
-    if (surf && nearTribune) edge = edgeMask(texcoord, n, vp.z, mat);
+    if (surf && nearTribune && fxOn(FXM_EDGES, edgeSide)) edge = edgeMask(texcoord, n, vp.z, mat);
 #endif
     color += arena(effectCamera, dir, sceneDist, surf, depth0 >= 1.0, effectWorld, nW, edge, mat);
 #endif

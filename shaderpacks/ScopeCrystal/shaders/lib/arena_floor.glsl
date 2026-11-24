@@ -1,7 +1,7 @@
 #include "/lib/arena_materials.glsl"
 bool arenaFloorSurface(vec3 wp, vec3 nW) {
-#ifdef FX_ARENA_ROUND_FLOOR
-    return nW.y > 0.9 && abs(wp.y - 101.0) < 0.05
+#if FXM_ROUND_FLOOR > 0
+    return fxOn(FXM_ROUND_FLOOR, arenaSideAt(wp)) && nW.y > 0.9 && abs(wp.y - 101.0) < 0.05
         && length(arenaLocal(wp).xz - vec2(0.5)) < 25.9;
 #else
     return false;

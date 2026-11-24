@@ -47,17 +47,20 @@ vec3 trailStreak(int row, int n, vec3 c, float r0, float r1, float w, float flow
     return c * best * w;
 }
 
-vec3 crystalAura(vec3 camW, vec3 dir, float sceneDist, float t) {
+vec3 crystalAura(vec3 camW, vec3 dir, float sceneDist, float t, int side) {
     vec3 col = vec3(0.0);
     vec3 center = vec3(0.5, 109.5, 0.5);
     // Batching: eine Kugel r 13.5 umschließt Aura (r 5.5 → unter 1/1000 ab ~13) und alle Bahnen (≤ ~11)
     if (!rayNear(center, 13.5, camW, dir, sceneDist)) return col;
-#ifdef FX_ARENA_AURA
+#if FXM_AURA > 0
+    if (fxOn(FXM_AURA, side)) {
     float breathe = 0.75 + 0.25 * sin(t * 1.7);
     col += vec3(0.6, 0.35, 1.0) * pointGlow(center, camW, dir, sceneDist, 5.5) * 0.35 * breathe;
     col += vec3(0.4, 0.8, 1.0) * pointGlow(center, camW, dir, sceneDist, 2.2) * 0.25 * breathe;
+    }
 #endif
-#ifdef FX_ARENA_ORBS
+#if FXM_ORBS > 0
+    if (fxOn(FXM_ORBS, side)) {
     for (int i = 0; i < ORB_COUNT; i++) {
         int row = CACHE_ORB_ROW + i;
         vec4 bound = arenaCache(ORB_SAMPLES, row);
@@ -67,6 +70,7 @@ vec3 crystalAura(vec3 camW, vec3 dir, float sceneDist, float t) {
         col += c * pointGlow(head, camW, dir, sceneDist, 0.22) * 3.0;
         col += c * pointGlow(head, camW, dir, sceneDist, 0.9) * 0.3;
         col += trailStreak(row, ORB_SAMPLES, c, 0.2, 0.03, 0.85, 7.0, camW, dir, sceneDist, t);
+    }
     }
 #endif
     return col;
@@ -222,25 +226,30 @@ vec3 floorCircles(vec2 p, float r, float t) {
 }
 
 // Effekte auf den Oberflächen der Arena
-vec3 arenaSurface(vec3 wp, vec3 nW, float t, float edge) {
+vec3 arenaSurface(vec3 wp, vec3 nW, float t, float edge, int side) {
     vec2 p = wp.xz - ARENA.xz;
     float r = length(p);
     if (r > ARENA_R + 3.0 || wp.y < 99.0 || wp.y > 118.0) return vec3(0.0);
     vec3 col = vec3(0.0);
     bool floorUp = nW.y > 0.9 && wp.y < 103.5;
     if (floorUp && r < ARENA_R) {
-#ifdef FX_ARENA_CIRCLES
+#if FXM_CIRCLES > 0
+    if (fxOn(FXM_CIRCLES, side)) {
         if (wp.y < 101.2) col += floorCircles(p, r, t);   // nur auf der Bodenebene, nicht auf Podest/Mauern
+    }
 #endif
-#ifdef FX_ARENA_WAVES
+#if FXM_WAVES > 0
+    if (fxOn(FXM_WAVES, side)) {
         // Energiewellen von der Mitte
         for (int i = 0; i < 2; i++) {
             float wr = mod(t * 7.0 + float(i) * 20.0, 40.0);
             float wv = exp(-pow(r - wr, 2.0) * 0.9) * smoothstep(40.0, 10.0, wr);
             col += mix(vec3(0.3, 0.8, 1.0), vec3(1.0, 0.35, 0.9), float(i)) * wv * 0.55;
         }
+    }
 #endif
-#ifdef FX_ARENA_SPOKES
+#if FXM_SPOKES > 0
+    if (fxOn(FXM_SPOKES, side)) {
         // Licht-Impulse auf den Speichen
         float ang = atan(p.y, p.x);
         float spoke = abs(sin(4.0 * ang)) * r;
@@ -248,15 +257,19 @@ vec3 arenaSurface(vec3 wp, vec3 nW, float t, float edge) {
             float pulse = pow(fract(r / 7.0 - t * 0.9), 6.0);
             col += vec3(0.5, 0.9, 1.0) * pulse * (1.0 - spoke / 0.7) * 1.4;
         }
+    }
 #endif
-#ifdef FX_ARENA_SPARKLE
+#if FXM_SPARKLE > 0
+    if (fxOn(FXM_SPARKLE, side)) {
         // Funkeln auf dem Eisring
         if (r > 19.0 && r < 20.5) {
             float s = hash12(floor(wp.xz * 5.0) + floor(t * 6.0));
             col += vec3(0.85, 0.95, 1.0) * step(0.965, s) * 1.6;
         }
+    }
 #endif
-#ifdef FX_ARENA_SPAWNS
+#if FXM_SPAWNS > 0
+    if (fxOn(FXM_SPAWNS, side)) {
         // Ringe um die Diamant-Spawnpunkte
         for (int i = 0; i < 8; i++) {
             float a = radians(22.5 + float(i) * 45.0);
@@ -265,6 +278,7 @@ vec3 arenaSurface(vec3 wp, vec3 nW, float t, float edge) {
             float ring = exp(-pow(d - 0.9 - 0.25 * sin(t * 3.0 + float(i)), 2.0) * 60.0);
             col += vec3(0.6, 0.95, 1.0) * ring * 0.9;
         }
+    }
 #endif
     }
     // Tribüne + Mauerkrone: echte Blockkanten leuchten im Lauflicht (Outline aus dem Bild),
@@ -274,18 +288,22 @@ vec3 arenaSurface(vec3 wp, vec3 nW, float t, float edge) {
     float trib = smoothstep(25.0, 26.0, r) * (1.0 - smoothstep(34.5, 35.5, r)) * max(down, smoothstep(105.5, 106.5, wp.y));
     if (trib > 0.0) {
         float ang = atan(p.y, p.x);
-#ifdef FX_ARENA_EDGES
+#if FXM_EDGES > 0
+    if (fxOn(FXM_EDGES, side)) {
         // Eisblau mit umlaufenden weißen Lichtblitzen
         float flash = pow(max(0.0, cos(ang * 3.0 - t * 1.6)), 28.0) + pow(max(0.0, cos(ang * 5.0 + t * 2.3)), 40.0) * 0.6;
         vec3 ice = vec3(0.42, 0.78, 1.0) * (0.85 + 0.15 * sin(t * 1.3 + ang * 2.0));
         col += (ice + vec3(1.0) * flash * 1.8) * edge * 1.3 * trib;
+    }
 #endif
-#ifdef FX_ARENA_DOTS
+#if FXM_DOTS > 0
+    if (fxOn(FXM_DOTS, side)) {
         if (abs(nW.y) < 0.5 && r > ARENA_R + 1.0) {
             float dots = step(0.72, fract(ang * 24.0 / 6.2832 - t * 2.5));
             float band = exp(-pow(fract(wp.y) - 0.5, 2.0) * 40.0);
             col += chase(ang + 1.5, t, 2.0) * dots * band * 1.1 * trib;
         }
+    }
 #endif
     }
     return col;
@@ -461,27 +479,37 @@ vec3 arena(vec3 camW, vec3 dir, float sceneDist, bool hasSurface, bool isSky, ve
     if (length(rel.xz) > 90.0 || abs(rel.y) > 70.0) return vec3(0.0);
     float t = frameTimeCounter;
     vec3 col = vec3(0.0);
-#if defined(FX_ARENA_AURA) || defined(FX_ARENA_ORBS)
-    col += crystalAura(camW, dir, sceneDist, t);
+#if FXM_AURA + FXM_ORBS > 0
+    col += crystalAura(camW, dir, sceneDist, t, side);
 #endif
-#ifdef FX_ARENA_COMETS
+#if FXM_COMETS > 0
+    if (fxOn(FXM_COMETS, side)) {
     col += cometBlocks(camW, dir, sceneDist, t);
+    }
 #endif
-#ifdef FX_ARENA_ARCS
+#if FXM_ARCS > 0
+    if (fxOn(FXM_ARCS, side)) {
     col += padArcs(camW, dir, sceneDist, t);
+    }
 #endif
-#ifdef FX_ARENA_SHAFT
+#if FXM_SHAFT > 0
+    if (fxOn(FXM_SHAFT, side)) {
     col += shaftFx(camW, dir, sceneDist, t);
+    }
 #endif
     if (hasSurface) {
-        col += arenaSurface(wp, nW, t, mat == 2 ? 0.0 : edge);   // Glas bleibt Vanilla
+        col += arenaSurface(wp, nW, t, mat == 2 ? 0.0 : edge, side);   // Glas bleibt Vanilla
         // Säulen-Ornament sitzt jetzt pixelgenau in der Textur (gbuffers_terrain), nicht mehr als Overlay
     }
-#ifdef FX_ARENA_BEAMS
+#if FXM_BEAMS > 0
+    if (fxOn(FXM_BEAMS, side)) {
     if (side == 2) col += endBeams(camW, dir, sceneDist, t);
+    }
 #endif
-#ifdef FX_ARENA_SKY
+#if FXM_SKY > 0
+    if (fxOn(FXM_SKY, side)) {
     if (isSky) col += side == 2 ? endSky(dir, t) : aurora(dir, t);
+    }
 #endif
     return arenaFxPalette(col, side);
 }

@@ -23,6 +23,7 @@ layout(location = 2) out vec4 outLight;   // Lightmap (Fackel, Himmel)
 
 #ifdef PVP_WORLD
 #include "/lib/arena_floor.glsl"
+bool terrainFx(int mask) { return !arenaPaletteRegion(worldPos) || fxOn(mask, arenaSideAt(worldPos)); }
 #endif
 
 float lum(vec3 c) { return dot(c, vec3(0.299, 0.587, 0.114)); }
@@ -71,7 +72,7 @@ void main() {
     vec3 albedo = c.rgb;
     vec3 light = texture(lightmap, lmcoord).rgb;
 #ifdef PVP_WORLD
-#ifdef FX_ARENA_TORCHES
+    if (terrainFx(FXM_TORCHES)) {
     // Fackellicht in der Arena nach Ort färben – nur in der Nähe der Fackeln, andere Lichtquellen bleiben
     float tAng;
     vec3 wpI = worldPos;
@@ -91,13 +92,14 @@ void main() {
             light = vec3(1.0);
         }
     }
-#endif
+    }
+
 #endif
     vec3 emissive = vec3(0.0);
 #ifdef PVP_WORLD
     // Quarzsäulen: Ornament pixelgenau im 16×16-Raster der Textur – eingraviert wie die Original-Rillen
     vec3 nW = mat3(gbufferModelViewInverse) * normalize(viewNormal);
-#ifdef FX_ARENA_PILLARS
+    if (terrainFx(FXM_PILLARS)) {
     if (blockId == 10007 && abs(nW.y) < 0.5) {
         float u = fract(abs(nW.x) > 0.5 ? worldPos.z : worldPos.x);
         if (abs(nW.x) > 0.5 ? nW.x < 0.0 : nW.z > 0.0) u = 1.0 - u;
@@ -122,7 +124,8 @@ void main() {
         }
         if (v >= 0.0 && v < 3.0) emissive += ice * exp(-v * 1.3) * 0.12;   // leichtes Licht vom Fuß
     }
-#endif
+    }
+
 #endif
     c.rgb *= light;
 #ifdef PVP_WORLD
@@ -136,12 +139,13 @@ void main() {
         c.a = 1.0;                            // auch über Glas (Lava-Insel) deckend
         surfaceMat = 3;
     }
-#ifdef FX_ARENA_CRYSTALS
+    if (terrainFx(FXM_CRYSTALS)) {
     if (crystal == 1) {                       // Kristalle leuchten pulsierend von selbst
         float pulse = 0.45 + 0.35 * sin(frameTimeCounter * 2.5 + gl_FragCoord.x * 0.002);
         c.rgb += arenaFxPalette(albedo * vec3(1.0, 0.75, 1.2) * pulse, arenaFxSide(worldPos));
     }
-#endif
+    }
+
 #endif
     outColor = c;
     outData = vec4(normalize(viewNormal) * 0.5 + 0.5, encodeMat(surfaceMat));
