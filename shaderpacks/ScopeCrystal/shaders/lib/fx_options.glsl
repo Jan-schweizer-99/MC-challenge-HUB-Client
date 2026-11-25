@@ -11,6 +11,7 @@
 #define FX_LOBBY // All lobby and bridge effects
 #define FX_LOBBY_CRYSTAL // Glow and pulses of the crystal above the island.
 #define FX_LOBBY_RING // Light ring above the pavilion.
+#define FX_LOBBY_CUBES // Glowing cubes flying around the island.
 #define FX_LOBBY_FLOOR // Waves, rings and pulses on the island floor.
 #define FX_LOBBY_BOARDS // Running light on the arena and game mode boards.
 #define FX_LOBBY_FROST // Sparkling ice where the bridge meets the hub.
@@ -110,6 +111,7 @@
 #ifndef FX_LOBBY
 #undef FX_LOBBY_CRYSTAL
 #undef FX_LOBBY_RING
+#undef FX_LOBBY_CUBES
 #undef FX_LOBBY_FLOOR
 #undef FX_LOBBY_BOARDS
 #undef FX_LOBBY_FROST

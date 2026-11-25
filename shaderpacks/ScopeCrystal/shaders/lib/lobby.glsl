@@ -26,6 +26,58 @@ vec3 lobbyRing(vec3 camW, vec3 dir, float sceneDist, float t) {
     return mix(vec3(0.4, 0.85, 1.0), vec3(0.8, 0.5, 1.0), run) * (line * (0.35 + run) + exp(-pow(r - 8.0, 2.0) / 0.8) * (0.05 + 0.15 * run));
 }
 
+// Fliegende Würfel mit leuchtenden Kanten wie in der Arena, in gespiegelten Paaren um die Insel
+vec3 lobbyCubePos(int i, float t) {
+    float fi = float(i), a = t * (0.34 - 0.05 * fi) + fi * 1.9;
+    float r = 14.5 + 2.2 * fi + 1.5 * sin(t * 0.3 + fi * 2.0);
+    return vec3(sin(a) * r, 17.0 + 3.2 * fi + 2.0 * sin(a * 2.0 + fi * 1.3), -cos(a) * r * 0.85);
+}
+
+vec3 lobbyCubes(vec3 camW, vec3 dir, float sceneDist, float t) {
+    if (!rayNear(LOBBY + vec3(0.0, 20.0, 0.0), 30.0, camW, dir, sceneDist)) return vec3(0.0);
+    vec3 col = vec3(0.0);
+    for (int m = 0; m < 2; m++) {
+        // zweiter Durchgang: Blickstrahl gespiegelt = exakt gespiegelter Würfel
+        vec3 mir = vec3(m == 0 ? 1.0 : -1.0, 1.0, 1.0), o = (camW - LOBBY) * mir, d = dir * mir;
+        for (int i = 0; i < 3; i++) {
+            vec3 p = lobbyCubePos(i, t);
+            if (!rayNear(p, 8.5, o, d, sceneDist)) continue;               // Würfel samt Schweif
+            float s = 0.55 + 0.15 * float(i);
+            vec3 c = i == 0 ? vec3(0.35, 0.85, 1.0) : i == 1 ? vec3(0.75, 0.5, 1.0) : vec3(0.55, 0.95, 0.95);
+            if (rayNear(p, s * 1.74, o, d, sceneDist)) {
+                mat3 rot = transpose(rotX(t * (0.8 + 0.2 * float(i))) * rotY(t * 1.1 + float(i) * 2.0));
+                vec3 ro = rot * (o - p), rd = rot * d, inv = 1.0 / rd;
+                vec3 t0 = (-vec3(s) - ro) * inv, t1 = (vec3(s) - ro) * inv, lo = min(t0, t1), hi = max(t0, t1);
+                float tn = max(max(lo.x, lo.y), lo.z), tf = min(min(hi.x, hi.y), hi.z);
+                if (tf > max(tn, 0.0) && tn < sceneDist) {
+                    for (int side = 0; side < 2; side++) {                 // gläsern: Vorder- und Rückseite
+                        float th = side == 0 ? max(tn, 0.0) : tf;
+                        if (th > sceneDist) continue;
+                        vec3 e = vec3(s) - abs(ro + rd * th);
+                        float mn = min(e.x, min(e.y, e.z)), mx = max(e.x, max(e.y, e.z)), mid = e.x + e.y + e.z - mn - mx;
+                        col += c * exp(-mid * mid * 140.0 / (s * s)) * (side == 0 ? 2.0 : 0.8);
+                    }
+                    col += c * 0.05;
+                }
+            }
+            col += c * pointGlow(p, o, d, sceneDist, s * 2.2) * 0.16;
+            vec3 a = p;                                                    // Schweif: vier Lichtlinien-Stücke
+            float best = 0.0;
+            for (int j = 1; j <= 4; j++) {
+                vec3 b = lobbyCubePos(i, t - float(j) * 0.22);
+                vec3 seg = raySegment(a, b, o, d);
+                if (seg.z > 0.0 && seg.z < sceneDist) {
+                    float k = (float(j - 1) + seg.y) / 4.0, w = mix(0.6, 0.06, k) * s;
+                    best = max(best, exp(-seg.x * seg.x / (w * w)) * (1.0 - k) * (0.7 + 0.3 * sin(k * 16.0 - t * 5.0)));
+                }
+                a = b;
+            }
+            col += c * best * 0.6;
+        }
+    }
+    return col;
+}
+
 // Boden: Wellen aus der Mitte, Lichtpulse auf den Streifen zu den Brücken und Balkonen
 vec3 lobbyFloor(vec3 wp, vec3 nW, float t) {
     vec2 q = wp.xz - LOBBY.xz;
@@ -93,6 +145,9 @@ vec3 lobby(vec3 camW, vec3 dir, float sceneDist, bool hasSurface, vec3 wp, vec3 
 #endif
 #ifdef FX_LOBBY_RING
     col += lobbyRing(camW, dir, sceneDist, t);
+#endif
+#ifdef FX_LOBBY_CUBES
+    col += lobbyCubes(camW, dir, sceneDist, t);
 #endif
 #ifdef FX_LOBBY_BOARDS
     col += lobbyBoards(camW, dir, sceneDist, hasSurface, wp, nW, t);
