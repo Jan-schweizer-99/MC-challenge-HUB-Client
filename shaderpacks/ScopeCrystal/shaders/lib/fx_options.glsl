@@ -2,7 +2,7 @@
 // FX_ARENA_MODE 0: alle Arena-Effekte aus. 1: die allgemeinen Schalter FX_ALL_* gelten fuer alle Arenen.
 // 2: jede Arena nutzt ihre eigenen Schalter (Untermenues Ice, Lava, End).
 // FX_HUB, FX_LOBBY, FX_TEMPLE, FX_HALL, FX_ICE, FX_LAVA, FX_END sind Hauptschalter ihres Bereichs.
-#define FX_HUB // All hub effects, with lobby, bridges, temple and Hall of Fame
+#define FX_HUB // All hub effects, with lobby, bridges, side places, temple and Hall of Fame
 #define FX_HUB_AURORA // Northern lights above the hub.
 #define FX_HUB_HEART // The floating, spinning heart in the middle.
 #define FX_HUB_FLOOR // Round light waves, grid and twinkle on the floor.
@@ -31,6 +31,18 @@
 #define FX_TEMPLE_FIREFLIES // Fireflies between columns and vines.
 #define FX_TEMPLE_LIFTS // Light columns above the lifts.
 #define FX_TEMPLE_ROUND // Smooth round rings on every temple floor.
+#define FX_ARCADE // All Arcade effects
+#define FX_ARCADE_DICE // Glow and candy lights around the die.
+#define FX_ARCADE_BULBS // Running bulbs and stripes on the tent.
+#define FX_ARCADE_FLOOR // Fields light up to the beat, bridge pulses.
+#define FX_ARCADE_CONFETTI // Confetti sinking under the tent.
+#define FX_ARCADE_ROUND // Smooth round fields on the arcade floor.
+#define FX_WORLD // All World Sanctum effects
+#define FX_WORLD_GLOBE // Atmosphere and satellites of the floating globe.
+#define FX_WORLD_GATES // Swirling light in the ten gates.
+#define FX_WORLD_FLOOR // Waves, veins and bridge pulses.
+#define FX_WORLD_SPORES // Spores rising from the gardens.
+#define FX_WORLD_ROUND // Smooth round rings on the sanctum floor.
 #define FX_HALL // All Hall of Fame effects
 #define FX_HALL_TROPHY // Golden glow and rising sparks around the trophy.
 #define FX_HALL_CROWN // Light running along the crown, sparkling tips.
@@ -126,6 +138,8 @@
 #undef FX_HUB_PADS
 #undef FX_LOBBY
 #undef FX_TEMPLE
+#undef FX_ARCADE
+#undef FX_WORLD
 #undef FX_HALL
 #endif
 #ifndef FX_LOBBY
@@ -148,6 +162,20 @@
 #undef FX_TEMPLE_FIREFLIES
 #undef FX_TEMPLE_LIFTS
 #undef FX_TEMPLE_ROUND
+#endif
+#ifndef FX_ARCADE
+#undef FX_ARCADE_DICE
+#undef FX_ARCADE_BULBS
+#undef FX_ARCADE_FLOOR
+#undef FX_ARCADE_CONFETTI
+#undef FX_ARCADE_ROUND
+#endif
+#ifndef FX_WORLD
+#undef FX_WORLD_GLOBE
+#undef FX_WORLD_GATES
+#undef FX_WORLD_FLOOR
+#undef FX_WORLD_SPORES
+#undef FX_WORLD_ROUND
 #endif
 #ifndef FX_HALL
 #undef FX_HALL_TROPHY

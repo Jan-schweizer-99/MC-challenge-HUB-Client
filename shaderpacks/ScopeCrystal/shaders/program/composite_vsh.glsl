@@ -22,9 +22,9 @@ bool fxInView(int i, mat4 m, vec3 cam) {
 
 // Gleiche Entfernungen (mit Reserve) wie am Anfang von hub, temple, lobby, hall und arena
 bool fxNear(int i, vec3 cam) {
-    vec3 c = i <= FXV_AURORA ? vec3(0.0, 100.0, -455.0) : i <= FXV_BEAM ? vec3(0.5, 104.0, -343.5) : i == FXV_LOBBY ? vec3(0.5, 101.0, -399.5)
+    vec3 c = i == FXV_WORLD ? CHAL : i == FXV_ARCADE ? ARCADE : i <= FXV_AURORA ? vec3(0.0, 100.0, -455.0) : i <= FXV_BEAM ? vec3(0.5, 104.0, -343.5) : i == FXV_LOBBY ? vec3(0.5, 101.0, -399.5)
         : i == FXV_ARENA ? vec3(0.5, 101.0, 0.5) : vec3(0.5, 104.0, -554.5);
-    float R = i <= FXV_AURORA ? 175.0 : i <= FXV_BEAM ? 155.0 : i == FXV_LOBBY ? 135.0 : i == FXV_ARENA ? 95.0 : 165.0;
+    float R = i >= FXV_WORLD ? 170.0 : i <= FXV_AURORA ? 175.0 : i <= FXV_BEAM ? 155.0 : i == FXV_LOBBY ? 135.0 : i == FXV_ARENA ? 95.0 : 165.0;
     return length(cam.xz - c.xz) < R && abs(cam.y - c.y) < 130.0;
 }
 #endif

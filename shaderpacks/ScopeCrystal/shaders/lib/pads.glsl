@@ -1,9 +1,9 @@
 // Boost-Pads im Hub-Bereich: Werte wie Bahn.java, mittig auf der Achse. Lichtring, Pfeile in Flugrichtung, aufsteigende Ringe.
-// Gespiegelt um x = 0.5. Braucht raySegment (arena).
-vec3 padFx(vec2 yz, float dirZ, vec3 tint, vec3 camW, vec3 dir, float sceneDist, bool hasSurface, vec3 wp, vec3 nW, float t) {
-    vec3 c = vec3(0.5, yz), col = vec3(0.0);
+// Gespiegelt um die Flugrichtung. Braucht raySegment (arena).
+vec3 padFx(vec3 c, vec2 way, vec3 tint, vec3 camW, vec3 dir, float sceneDist, bool hasSurface, vec3 wp, vec3 nW, float t) {
+    vec3 col = vec3(0.0);
     if (hasSurface && abs(wp.y - c.y) < 0.35) {
-        vec2 q = vec2(abs(wp.x - c.x), (wp.z - c.z) * dirZ);                // q.y zeigt in Flugrichtung
+        vec2 rel = wp.xz - c.xz, q = vec2(abs(rel.x * way.y - rel.y * way.x), dot(rel, way));   // q.y zeigt in Flugrichtung
         float r = length(q);
         if (r < 4.5) {
             float fw = max(fwidth(r), 1e-3);

@@ -15,6 +15,7 @@ bool fxSee(int i, vec3 camW, vec3 dir, float sceneDist) { return (fxSeen >> i & 
 #include "/lib/temple.glsl"
 #include "/lib/lobby.glsl"
 #include "/lib/hall.glsl"
+#include "/lib/sides.glsl"
 #include "/lib/sky.glsl"
 #endif
 
@@ -121,17 +122,23 @@ void main() {
     if (fxSee(FXV_TEMPLE, camW, dir, sceneDist) || fxSee(FXV_BEAM, camW, dir, sceneDist)) color += temple(camW, dir, sceneDist, surf, wp, nW);
     if (fxSee(FXV_LOBBY, camW, dir, sceneDist)) color += lobby(camW, dir, sceneDist, surf, wp, nW);
 #ifdef FX_HUB_PADS
+    if (fxSee(FXV_WORLD, camW, dir, sceneDist)) color += padFx(vec3(-52.5, 101.0, -454.5), vec2(1.0, 0.0), vec3(0.35, 0.8, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
+    if (fxSee(FXV_ARCADE, camW, dir, sceneDist)) color += padFx(vec3(53.5, 101.0, -454.5), vec2(-1.0, 0.0), vec3(0.35, 0.8, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
     if (fxSee(FXV_HUB, camW, dir, sceneDist)) {
-        color += padFx(vec2(101.0, -435.5), 1.0, vec3(0.50, 0.60, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
-        color += padFx(vec2(101.0, -474.5), -1.0, vec3(1.0, 0.75, 0.25), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
+        color += padFx(vec3(-19.0, 101.0, -454.5), vec2(-1.0, 0.0), vec3(0.45, 1.0, 0.65), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
+        color += padFx(vec3(20.0, 101.0, -454.5), vec2(1.0, 0.0), vec3(1.0, 0.5, 0.78), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
+        color += padFx(vec3(0.5, 101.0, -435.5), vec2(0.0, 1.0), vec3(0.50, 0.60, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
+        color += padFx(vec3(0.5, 101.0, -474.5), vec2(0.0, -1.0), vec3(1.0, 0.75, 0.25), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
     }
     if (fxSee(FXV_LOBBY, camW, dir, sceneDist)) {
-        color += padFx(vec2(101.0, -403.5), -1.0, vec3(0.35, 0.8, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
-        color += padFx(vec2(101.0, -395.5), 1.0, vec3(0.75, 0.5, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
-        color += padFx(vec2(101.0, -379.5), -1.0, vec3(0.50, 0.60, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
+        color += padFx(vec3(0.5, 101.0, -403.5), vec2(0.0, -1.0), vec3(0.35, 0.8, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
+        color += padFx(vec3(0.5, 101.0, -395.5), vec2(0.0, 1.0), vec3(0.75, 0.5, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
+        color += padFx(vec3(0.5, 101.0, -379.5), vec2(0.0, -1.0), vec3(0.50, 0.60, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
     }
-    if (fxSee(FXV_HALL, camW, dir, sceneDist)) color += padFx(vec2(104.0, -525.0), 1.0, vec3(0.35, 0.8, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
+    if (fxSee(FXV_HALL, camW, dir, sceneDist)) color += padFx(vec3(0.5, 104.0, -525.0), vec2(0.0, 1.0), vec3(0.35, 0.8, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
 #endif
+    if (fxSee(FXV_WORLD, camW, dir, sceneDist)) color += world(camW, dir, sceneDist, surf, wp, nW);
+    if (fxSee(FXV_ARCADE, camW, dir, sceneDist)) color += arcade(camW, dir, sceneDist, surf, wp, nW);
     if (fxSee(FXV_HALL, camW, dir, sceneDist)) color += hall(camW, dir, sceneDist, surf, wp, nW);
     vec3 effectCamera = camW, effectWorld = wp;
     if (portalSceneCamera(cameraPosition)) {

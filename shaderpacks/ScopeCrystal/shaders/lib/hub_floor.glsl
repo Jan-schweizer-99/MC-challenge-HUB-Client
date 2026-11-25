@@ -9,11 +9,22 @@ vec3 hubFloorTex(int col, vec2 uv, int level) {
     return texelFetch(arenaPaletteAtlas, ivec2(col * 32 + offset, 0) + ivec2(floor(fract(uv) * float(size))), 0).rgb;
 }
 
-// Welcher runde Boden liegt hier? 0 keiner, 1 Hub, 2 Insel, 3 Inselbalkon, 4 Tempel, 5 Hall of Fame
+// Welcher runde Boden liegt hier? 0 keiner, 1 Hub, 2 Insel, 3 Inselbalkon, 4 Tempel, 5 Hall of Fame, 6 World Sanctum, 7 Arcade
 int hubFloorZone(vec3 wp, vec3 nW) {
-    if (nW.y < 0.9 || abs(wp.x - 0.5) > 31.0 || wp.z < -586.0 || wp.z > -312.0) return 0;
+    if (nW.y < 0.9 || abs(wp.x - 0.5) > 108.0 || wp.z < -586.0 || wp.z > -312.0) return 0;
     float ax = abs(wp.x - 0.5);
     bool ground = abs(wp.y - 101.0) < 0.05;
+    if (ax > 31.0) {                                                               // Seitenplätze
+        vec2 sq = vec2(80.0 - ax, abs(wp.z + 454.5));
+        if (!ground || length(sq) > 26.4 || sq.y < 2.5 && sq.x > (wp.x < 0.5 ? 16.5 : 18.5)) return 0;
+#ifdef FX_WORLD_ROUND
+        if (wp.x < 0.5) return 6;
+#endif
+#ifdef FX_ARCADE_ROUND
+        if (wp.x > 0.5) return length(sq) < 5.6 ? 0 : 7;
+#endif
+        return 0;
+    }
 #ifdef FX_HUB_ROUND
     vec2 h = wp.xz - vec2(0.5, -454.5);
     if (ground && length(h) < 23.5) return ax < 2.5 && h.y > 16.5 ? 0 : 1;          // Lichtstreifen zur Brücke bleibt gerade
@@ -48,6 +59,8 @@ float hubBand(float r, float a, float b, float fw) { return smoothstep(a - fw, a
 
 vec3 hubRoundFloor(int zone, vec3 wp, vec3 tint, vec3 light, float t, out int surfaceMat) {
     vec2 c = zone == 1 ? vec2(0.5, -454.5) : zone == 4 ? vec2(0.5, -343.5) : zone == 5 ? vec2(0.5, -554.5) : vec2(0.5, -399.5);
+    if (zone == 6) c = CHAL.xz;
+    if (zone == 7) c = ARCADE.xz;
     vec2 q = wp.xz - c;
     if (zone == 3) q = vec2(abs(q.x) - 10.0, q.y);
     float r = length(q), fw = max(fwidth(r), 1e-3);
@@ -55,6 +68,8 @@ vec3 hubRoundFloor(int zone, vec3 wp, vec3 tint, vec3 light, float t, out int su
     int level = arenaTextureLevel(uv);
     float deg = degrees(atan(abs(q.x), -q.y));
     if (zone == 5) deg = 180.0 - deg;                                                // vorn ist hier +z
+    if (zone == 6) deg = degrees(atan(abs(q.y), q.x));
+    if (zone == 7) deg = degrees(atan(abs(q.y), -q.x));
     if (zone == 3) deg = degrees(atan(abs(q.y), q.x));
     int a = HF_QUARTZ, b = HF_CALCITE;                                              // Grundmuster aus zwei Steinen
     float seg = 11.25;
@@ -80,6 +95,18 @@ vec3 hubRoundFloor(int zone, vec3 wp, vec3 tint, vec3 light, float t, out int su
         HUB_LAYER(hubBand(r, 3.5, 4.5, fw), HF_AMETHYST, light)
         HUB_LAYER(hubBand(r, 5.5, 6.5, fw), HF_BLUE, light)
         seg = 22.5;
+    } else if (zone == 6) {
+        HUB_LAYER(hubBand(r, -1.0, 1.6, fw), HF_FROG, lit)
+        HUB_LAYER(hubBand(r, 5.5, 6.2, fw), HF_BLUE, lit)
+        HUB_LAYER(hubBand(r, 13.4, 16.6, fw), HF_BLUE, light)
+        HUB_LAYER(hubBand(r, 21.6, 22.4, fw), HF_GOLD, lit)
+        HUB_LAYER(hubBand(r, 25.4, 27.0, fw), HF_CHISELED, light)
+        seg = 18.0;
+    } else if (zone == 7) {
+        HUB_LAYER(hubBand(r, 9.6, 10.4, fw), HF_GOLD, lit)
+        HUB_LAYER(hubBand(r, 20.6, 21.4, fw), HF_BLUE, lit)
+        HUB_LAYER(hubBand(r, 25.4, 27.0, fw), HF_CHISELED, light)
+        seg = 22.5;
     } else if (zone == 5) {
         HUB_LAYER(hubBand(r, 9.5, 10.5, fw) + hubBand(r, 18.5, 19.4, fw) + hubBand(r, 27.5, 28.5, fw), HF_GOLD, lit)
         HUB_LAYER(hubBand(r, 13.5, 15.5, fw), HF_BLUE, light)
@@ -96,12 +123,15 @@ vec3 hubRoundFloor(int zone, vec3 wp, vec3 tint, vec3 light, float t, out int su
 #undef HUB_LAYER
     if (used < 1.0) {
         // Strahlen zwischen den Feldern ebenfalls kantengeglättet
-        float u = deg / seg + (zone == 1 || zone == 5 ? 0.5 : 0.0);               // Hub: Sockel stehen mitten auf ihrem Feld
+        float u = deg / seg + (zone == 1 || zone >= 5 ? 0.5 : 0.0);               // Hub: Sockel stehen mitten auf ihrem Feld
         float w = abs(fract(u) - 0.5), aa = max(fw / max(r, 0.5) * 57.3 / seg, 1e-3);
         float odd = mod(floor(u), 2.0);
         float edge = 0.5 * (1.0 - smoothstep(0.0, aa, 0.5 - w));                     // an der Grenze halb/halb
         float mixB = mix(odd, 1.0 - odd, edge);
-        col += mix(hubFloorTex(a, uv, level), hubFloorTex(b, uv, level), mixB) * light * (1.0 - used);
+        vec3 ta = vec3(1.0), tb = vec3(1.0);                                          // Farbe der Felder
+        if (zone == 6) tb = vec3(0.80, 1.0, 0.88);
+        if (zone == 7) { ta = r < 10.0 ? vec3(0.95, 0.97, 1.0) : vec3(0.98, 0.95, 1.0); tb = r < 10.0 ? vec3(0.45, 0.78, 1.0) : vec3(1.0, 0.52, 0.74); }
+        col += mix(hubFloorTex(a, uv, level) * ta, hubFloorTex(b, uv, level) * tb, mixB) * light * (1.0 - used);
     }
     return col * tint;
 }

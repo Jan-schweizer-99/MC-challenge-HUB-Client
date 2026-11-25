@@ -57,7 +57,7 @@ void main() {
         c.rgb *= mix(0.78, 1.0, smoothstep(104.0, 104.7, worldPos.y));
     }
     // Gedrehte Hub-Sockel (Block-Displays) wie Bloecke schattieren: oben hell, Seiten dunkler, fliessend je Drehung
-    if (entityId == 101 && worldPos.y > 100.9 && worldPos.y < 104.1 && length(worldPos.xz - vec2(0.5, -454.5)) < 17.0) {
+    if (entityId == 101 && worldPos.y > 100.9 && worldPos.y < 104.1 && length(worldPos.xz - CHAL.xz) < 18.0) {
         vec3 n2 = displayNormal * displayNormal / max(dot(displayNormal, displayNormal), 1e-4);
         c.rgb *= n2.x * 0.6 + n2.z * 0.8 + n2.y * (displayNormal.y > 0.0 ? 1.0 : 0.5);
         c.rgb *= mix(0.78, 1.0, smoothstep(101.0, 101.7, worldPos.y));      // weicher Kontaktschatten am Boden

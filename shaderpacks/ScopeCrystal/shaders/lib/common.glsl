@@ -4,7 +4,10 @@ uniform float arenaLavaMix;
 // Challenge-Hub (Welt "pvp", Boden y = 100) – gleiche Werte wie Hub.java (HX, HY, HZ, HR, RING)
 const vec3 HUB = vec3(0.0, 100.0, -455.0);
 const float HUB_R = 23.0;
-const float HUB_RING = 14.0;
+// Seitenplaetze (Seiten.java): World Sanctum mit Sockeln und Ready-Ring, Arcade
+const vec3 CHAL = vec3(-79.5, 101.0, -454.5);
+const vec3 ARCADE = vec3(80.5, 101.0, -454.5);
+const float CHAL_RING = 15.0;
 
 // Zwei Inseln in Sichtweite (Welt pvp): Kristall bei x 0, Lava-Zwilling bei x 120.
 // Jeder Client zeigt nur die Insel, auf der die Kamera gerade ist → Portalwechsel ohne sichtbaren Sprung.

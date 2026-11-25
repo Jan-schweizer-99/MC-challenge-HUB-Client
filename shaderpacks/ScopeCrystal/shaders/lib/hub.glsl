@@ -128,8 +128,8 @@ vec3 hubPillars(vec3 camW, vec3 dir, float sceneDist) {
     float t = frameTimeCounter;
     float dd = max(dot(dir.xz, dir.xz), 1e-5);
     for (int s = 0; s < 10; s++) {
-        float a = radians(-90.0 + float(s) * 36.0);
-        vec2 pos = HUB.xz + vec2(cos(a), sin(a)) * HUB_RING + vec2(0.5);
+        float a = radians(18.0 + float(s) * 36.0);
+        vec2 pos = CHAL.xz + vec2(cos(a), sin(a)) * CHAL_RING;
         float tt = dot(pos - camW.xz, dir.xz) / dd;
         if (tt < 0.0 || tt > sceneDist) continue;
         vec3 q = camW + dir * tt;
@@ -164,10 +164,10 @@ vec3 hubReady(vec3 camW, vec3 dir, float sceneDist, bool hasSurface, vec3 wp, ve
     float fill = n >= 10.0 ? (n - 10.0) / 90.0 : 0.0, team = n > 0.0 && n < 10.0 ? n / 9.0 : 0.0;
     vec3 base = n >= 10.0 ? vec3(0.3, 1.0, 0.6) : vec3(0.4, 0.8, 1.0);
     vec3 col = vec3(0.0);
-    vec2 c = HUB.xz + vec2(0.5);
+    vec2 c = CHAL.xz;                                                       // im World Sanctum, vorn = zum Hub (+x)
     if (hasSurface && nW.y > 0.9 && abs(wp.y - HUB.y - 1.0) < 0.2) {
         vec2 q = wp.xz - c;
-        float r = length(q), fw = max(fwidth(r), 1e-3), ang = atan(abs(q.x), -q.y) / 3.14159;
+        float r = length(q), fw = max(fwidth(r), 1e-3), ang = atan(abs(q.y), q.x) / 3.14159;
         float line = exp(-pow((r - 5.85) / (0.09 + fw), 2.0));
         float done = n >= 10.0 ? 1.0 - smoothstep(fill - 0.01, fill + 0.01, ang) : 0.0;
         col += base * line * (0.25 + 0.12 * sin(t * 1.6) + 0.6 * team + 1.1 * done);
@@ -186,7 +186,7 @@ vec3 hubReady(vec3 camW, vec3 dir, float sceneDist, bool hasSurface, vec3 wp, ve
         float h = p.y - HUB.y - 1.0, top = n >= 10.0 ? 1.0 + 3.0 * fill : 0.7;
         if (h < 0.0 || h > top) continue;
         vec2 q = p.xz - c;
-        float ang = atan(abs(q.x), -q.y) / 3.14159;
+        float ang = atan(abs(q.y), q.x) / 3.14159;
         float on = n >= 10.0 ? 1.0 - smoothstep(fill - 0.02, fill + 0.02, ang) : team;
         col += base * pow(1.0 - h / top, 2.0) * (0.75 + 0.25 * sin(ang * 40.0 - t * 3.0)) * on * (n >= 10.0 ? 0.38 : 0.2);
     }
@@ -204,14 +204,8 @@ vec3 hub(vec3 camW, vec3 dir, float sceneDist, bool hasSurface, vec3 wp, vec3 nW
 #ifdef FX_HUB_HEART
     col += hubHeart(camW, dir, sceneDist);
 #endif
-#ifdef FX_HUB_PILLARS
-    col += hubPillars(camW, dir, sceneDist);
-#endif
 #ifdef FX_HUB_SNOW
     col += hubSnow(camW, dir, sceneDist);
-#endif
-#ifdef FX_HUB_READY
-    col += hubReady(camW, dir, sceneDist, hasSurface, wp, nW);
 #endif
 #ifdef FX_HUB_FLOOR
     if (hasSurface) col += hubFloor(wp, nW);
