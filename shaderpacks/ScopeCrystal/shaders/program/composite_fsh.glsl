@@ -122,15 +122,15 @@ void main() {
     if (fxSee(FXV_LOBBY, camW, dir, sceneDist)) color += lobby(camW, dir, sceneDist, surf, wp, nW);
 #ifdef FX_HUB_PADS
     if (fxSee(FXV_HUB, camW, dir, sceneDist)) {
-        color += padFx(vec3(4.0, 101.0, -442.5), 1.0, vec3(0.50, 0.60, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
-        color += padFx(vec3(4.0, 101.0, -471.5), -1.0, vec3(1.0, 0.75, 0.25), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
+        color += padFx(vec2(101.0, -435.5), 1.0, vec3(0.50, 0.60, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
+        color += padFx(vec2(101.0, -474.5), -1.0, vec3(1.0, 0.75, 0.25), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
     }
     if (fxSee(FXV_LOBBY, camW, dir, sceneDist)) {
-        color += padFx(vec3(4.0, 101.0, -402.5), -1.0, vec3(0.35, 0.8, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
-        color += padFx(vec3(4.0, 101.0, -396.5), 1.0, vec3(0.75, 0.5, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
-        color += padFx(vec3(3.0, 101.0, -379.5), -1.0, vec3(0.50, 0.60, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
+        color += padFx(vec2(101.0, -403.5), -1.0, vec3(0.35, 0.8, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
+        color += padFx(vec2(101.0, -395.5), 1.0, vec3(0.75, 0.5, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
+        color += padFx(vec2(101.0, -379.5), -1.0, vec3(0.50, 0.60, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
     }
-    if (fxSee(FXV_HALL, camW, dir, sceneDist)) color += padFx(vec3(5.0, 102.0, -519.5), 1.0, vec3(0.35, 0.8, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
+    if (fxSee(FXV_HALL, camW, dir, sceneDist)) color += padFx(vec2(104.0, -525.0), 1.0, vec3(0.35, 0.8, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
 #endif
     if (fxSee(FXV_HALL, camW, dir, sceneDist)) color += hall(camW, dir, sceneDist, surf, wp, nW);
     vec3 effectCamera = camW, effectWorld = wp;
