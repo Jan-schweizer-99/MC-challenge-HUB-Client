@@ -14,6 +14,7 @@ bool fxSee(int i, vec3 camW, vec3 dir, float sceneDist) { return (fxSeen >> i & 
 #include "/lib/temple.glsl"
 #include "/lib/lobby.glsl"
 #include "/lib/hall.glsl"
+#include "/lib/sky.glsl"
 #endif
 
 
@@ -125,6 +126,10 @@ void main() {
         float offset = (viewSide - portalPhysicalSide(cameraPosition)) * TWIN_X;
         effectCamera.x += offset; effectWorld.x += offset;
     }
+#ifdef FX_HUB_SKY
+    if (depth0 >= 1.0) color += skyZones(dir, frameTimeCounter, arenaSideAt(effectCamera));
+    else if (mat < 0 && wp.y > 185.0 && wp.y < 202.0 && sceneDist > 40.0) color += skyZones(dir, frameTimeCounter, arenaSideAt(effectCamera)) * 0.45;   // Wolken
+#endif
     float edge = 0.0;
 #if FXM_EDGES > 0
     // Kanten (4 Extra-Abtastungen) braucht nur das Lauflicht an Tribüne und Mauer

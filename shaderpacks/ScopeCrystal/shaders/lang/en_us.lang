@@ -253,3 +253,5 @@ option.FX_HALL_WALK=Walk of Fame
 option.FX_HALL_WALK.comment=Light pulses and sparkle on the bridge.
 option.FX_HALL_ROUND=Round floor
 option.FX_HALL_ROUND.comment=Smooth round rings on the hall floor.
+option.FX_HUB_SKY=Sky colors
+option.FX_HUB_SKY.comment=Sky color follows the place: hub, temple, Hall of Fame and arenas.

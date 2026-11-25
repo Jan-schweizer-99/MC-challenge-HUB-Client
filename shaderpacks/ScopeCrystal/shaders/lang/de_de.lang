@@ -253,3 +253,5 @@ option.FX_HALL_WALK=Walk of Fame
 option.FX_HALL_WALK.comment=Lichtpulse und Funkeln auf der Bruecke.
 option.FX_HALL_ROUND=Runder Boden
 option.FX_HALL_ROUND.comment=Glatte runde Ringe in der Halle.
+option.FX_HUB_SKY=Himmelsfarben
+option.FX_HUB_SKY.comment=Himmel faerbt sich je nach Ort: Hub, Tempel, Hall of Fame und Arenen.
