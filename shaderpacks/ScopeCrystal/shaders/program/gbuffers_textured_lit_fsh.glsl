@@ -48,6 +48,14 @@ void main() {
     }
 #endif
 #ifdef PVP_WORLD
+    // Gedrehte Sockel in Hub und Hall of Fame: gleiche Schattierung
+    vec2 hallQ = worldPos.xz - vec2(0.5, -554.5);
+    bool hallBase = entityId == 101 && worldPos.y > 103.9 && worldPos.y < 107.1 && length(hallQ) < 27.0;
+    if (hallBase) {
+        vec3 hn = displayNormal * displayNormal / max(dot(displayNormal, displayNormal), 1e-4);
+        c.rgb *= hn.x * 0.6 + hn.z * 0.8 + hn.y * (displayNormal.y > 0.0 ? 1.0 : 0.5);
+        c.rgb *= mix(0.78, 1.0, smoothstep(104.0, 104.7, worldPos.y));
+    }
     // Gedrehte Hub-Sockel (Block-Displays) wie Bloecke schattieren: oben hell, Seiten dunkler, fliessend je Drehung
     if (entityId == 101 && worldPos.y > 100.9 && worldPos.y < 104.1 && length(worldPos.xz - vec2(0.5, -454.5)) < 17.0) {
         vec3 n2 = displayNormal * displayNormal / max(dot(displayNormal, displayNormal), 1e-4);

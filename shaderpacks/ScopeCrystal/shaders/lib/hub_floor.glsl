@@ -1,7 +1,7 @@
 // Runde Böden für Hub, Lobby-Insel und Tempel – gleiche Technik wie roundArenaFloor: die Blocktexturen bleiben
 // pixelgenau, nur die Grenzen zwischen den Materialien werden zu echten Kreisen. Werte wie Hub.java / Tempel.java.
 // Braucht arena_materials.glsl (arenaPaletteAtlas, arenaTextureLevel). Alles spiegelbildlich zu x = 0.5.
-const int HF_QUARTZ = 0, HF_CALCITE = 2, HF_AMETHYST = 4, HF_FROG = 6, HF_BLUE = 8, HF_CHISELED = 20, HF_DIAMOND = 22;
+const int HF_QUARTZ = 0, HF_CALCITE = 2, HF_AMETHYST = 4, HF_FROG = 6, HF_BLUE = 8, HF_CHISELED = 20, HF_DIAMOND = 22, HF_GOLD = 23;
 const int HF_PACKED = 54, HF_SNOW = 55;                                    // Zusatzspalten am Ende des Atlas (make-textures.ps1)
 
 vec3 hubFloorTex(int col, vec2 uv, int level) {
@@ -9,9 +9,9 @@ vec3 hubFloorTex(int col, vec2 uv, int level) {
     return texelFetch(arenaPaletteAtlas, ivec2(col * 32 + offset, 0) + ivec2(floor(fract(uv) * float(size))), 0).rgb;
 }
 
-// Welcher runde Boden liegt hier? 0 keiner, 1 Hub, 2 Insel, 3 Inselbalkon, 4 Tempel
+// Welcher runde Boden liegt hier? 0 keiner, 1 Hub, 2 Insel, 3 Inselbalkon, 4 Tempel, 5 Hall of Fame
 int hubFloorZone(vec3 wp, vec3 nW) {
-    if (nW.y < 0.9 || abs(wp.x - 0.5) > 31.0 || wp.z < -479.0 || wp.z > -312.0) return 0;
+    if (nW.y < 0.9 || abs(wp.x - 0.5) > 31.0 || wp.z < -586.0 || wp.z > -312.0) return 0;
     float ax = abs(wp.x - 0.5);
     bool ground = abs(wp.y - 101.0) < 0.05;
 #ifdef FX_HUB_ROUND
@@ -25,6 +25,10 @@ int hubFloorZone(vec3 wp, vec3 nW) {
         if (lr < 9.4) return 2;
         if (length(vec2(ax - 10.0, l.y)) < 7.5) return 3;
     }
+#endif
+#ifdef FX_HALL_ROUND
+    vec2 f = wp.xz - vec2(0.5, -554.5);
+    if (abs(wp.y - 104.0) < 0.05 && length(f) < 31.4) return ax < 2.5 && f.y > 7.5 ? 0 : 5;      // Lichtweg vom Tor bleibt gerade
 #endif
 #ifdef FX_TEMPLE_ROUND
     vec2 q = wp.xz - vec2(0.5, -343.5);
@@ -43,13 +47,14 @@ int hubFloorZone(vec3 wp, vec3 nW) {
 float hubBand(float r, float a, float b, float fw) { return smoothstep(a - fw, a + fw, r) * (1.0 - smoothstep(b - fw, b + fw, r)); }
 
 vec3 hubRoundFloor(int zone, vec3 wp, vec3 tint, vec3 light, float t, out int surfaceMat) {
-    vec2 c = zone == 1 ? vec2(0.5, -454.5) : zone == 4 ? vec2(0.5, -343.5) : vec2(0.5, -399.5);
+    vec2 c = zone == 1 ? vec2(0.5, -454.5) : zone == 4 ? vec2(0.5, -343.5) : zone == 5 ? vec2(0.5, -554.5) : vec2(0.5, -399.5);
     vec2 q = wp.xz - c;
     if (zone == 3) q = vec2(abs(q.x) - 10.0, q.y);
     float r = length(q), fw = max(fwidth(r), 1e-3);
     vec2 uv = wp.xz;
     int level = arenaTextureLevel(uv);
     float deg = degrees(atan(abs(q.x), -q.y));
+    if (zone == 5) deg = 180.0 - deg;                                                // vorn ist hier +z
     if (zone == 3) deg = degrees(atan(abs(q.y), q.x));
     int a = HF_QUARTZ, b = HF_CALCITE;                                              // Grundmuster aus zwei Steinen
     float seg = 11.25;
@@ -75,6 +80,11 @@ vec3 hubRoundFloor(int zone, vec3 wp, vec3 tint, vec3 light, float t, out int su
         HUB_LAYER(hubBand(r, 3.5, 4.5, fw), HF_AMETHYST, light)
         HUB_LAYER(hubBand(r, 5.5, 6.5, fw), HF_BLUE, light)
         seg = 22.5;
+    } else if (zone == 5) {
+        HUB_LAYER(hubBand(r, 9.5, 10.5, fw) + hubBand(r, 18.5, 19.4, fw) + hubBand(r, 27.5, 28.5, fw), HF_GOLD, lit)
+        HUB_LAYER(hubBand(r, 13.5, 15.5, fw), HF_BLUE, light)
+        HUB_LAYER(hubBand(r, 22.6, 23.2, fw) + hubBand(r, 25.8, 26.3, fw), HF_PACKED, light)
+        HUB_LAYER(hubBand(r, 30.4, 32.0, fw), HF_CHISELED, light)
     } else {
         HUB_LAYER(hubBand(r, -1.0, 2.5, fw), HF_FROG, lit)
         HUB_LAYER(hubBand(r, 3.5, 4.5, fw) + hubBand(r, 7.5, 8.5, fw), HF_BLUE, light)
@@ -86,7 +96,7 @@ vec3 hubRoundFloor(int zone, vec3 wp, vec3 tint, vec3 light, float t, out int su
 #undef HUB_LAYER
     if (used < 1.0) {
         // Strahlen zwischen den Feldern ebenfalls kantengeglättet
-        float u = deg / seg + (zone == 1 ? 0.5 : 0.0);               // Hub: Sockel stehen mitten auf ihrem Feld
+        float u = deg / seg + (zone == 1 || zone == 5 ? 0.5 : 0.0);               // Hub: Sockel stehen mitten auf ihrem Feld
         float w = abs(fract(u) - 0.5), aa = max(fw / max(r, 0.5) * 57.3 / seg, 1e-3);
         float odd = mod(floor(u), 2.0);
         float edge = 0.5 * (1.0 - smoothstep(0.0, aa, 0.5 - w));                     // an der Grenze halb/halb

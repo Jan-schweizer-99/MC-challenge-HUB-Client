@@ -1,8 +1,8 @@
 // Effekt-Schalter (Menue "Stage Effects").
 // FX_ARENA_MODE 0: alle Arena-Effekte aus. 1: die allgemeinen Schalter FX_ALL_* gelten fuer alle Arenen.
 // 2: jede Arena nutzt ihre eigenen Schalter (Untermenues Ice, Lava, End).
-// FX_HUB, FX_LOBBY, FX_TEMPLE, FX_ICE, FX_LAVA, FX_END sind Hauptschalter ihres Bereichs.
-#define FX_HUB // All hub effects, with lobby, bridges and temple
+// FX_HUB, FX_LOBBY, FX_TEMPLE, FX_HALL, FX_ICE, FX_LAVA, FX_END sind Hauptschalter ihres Bereichs.
+#define FX_HUB // All hub effects, with lobby, bridges, temple and Hall of Fame
 #define FX_HUB_AURORA // Northern lights above the hub.
 #define FX_HUB_HEART // The floating, spinning heart in the middle.
 #define FX_HUB_FLOOR // Round light waves, grid and twinkle on the floor.
@@ -29,6 +29,15 @@
 #define FX_TEMPLE_FIREFLIES // Fireflies between columns and vines.
 #define FX_TEMPLE_LIFTS // Light columns above the lifts.
 #define FX_TEMPLE_ROUND // Smooth round rings on every temple floor.
+#define FX_HALL // All Hall of Fame effects
+#define FX_HALL_TROPHY // Golden glow and rising sparks around the trophy.
+#define FX_HALL_CROWN // Light running along the crown, sparkling tips.
+#define FX_HALL_BURST // Golden rays floating above the crown.
+#define FX_HALL_NICHES // Light cones on the statues, running light in the frames.
+#define FX_HALL_DUST // Golden dust sinking through the hall.
+#define FX_HALL_FLOOR // Golden rings and waves on the hall floor.
+#define FX_HALL_WALK // Light pulses and sparkle on the bridge.
+#define FX_HALL_ROUND // Smooth round rings on the hall floor.
 #define FX_ARENA_MODE 1 // [0 1 2] Arena effects: off, same everywhere, per stage
 #define FX_ALL_AURA // Soft glow above the beacon.
 #define FX_ALL_ORBS // Light orbs with trails around the center.
@@ -113,6 +122,7 @@
 #undef FX_HUB_READY
 #undef FX_LOBBY
 #undef FX_TEMPLE
+#undef FX_HALL
 #endif
 #ifndef FX_LOBBY
 #undef FX_LOBBY_CRYSTAL
@@ -134,6 +144,16 @@
 #undef FX_TEMPLE_FIREFLIES
 #undef FX_TEMPLE_LIFTS
 #undef FX_TEMPLE_ROUND
+#endif
+#ifndef FX_HALL
+#undef FX_HALL_TROPHY
+#undef FX_HALL_CROWN
+#undef FX_HALL_BURST
+#undef FX_HALL_NICHES
+#undef FX_HALL_DUST
+#undef FX_HALL_FLOOR
+#undef FX_HALL_WALK
+#undef FX_HALL_ROUND
 #endif
 #ifndef FX_ICE
 #undef FX_ICE_AURA

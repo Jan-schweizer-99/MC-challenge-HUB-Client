@@ -10,6 +10,7 @@
 #include "/lib/arena.glsl"
 #include "/lib/temple.glsl"
 #include "/lib/lobby.glsl"
+#include "/lib/hall.glsl"
 #endif
 
 
@@ -114,6 +115,7 @@ void main() {
     color += hub(camW, dir, sceneDist, surf, wp, nW);
     color += temple(camW, dir, sceneDist, surf, wp, nW);
     color += lobby(camW, dir, sceneDist, surf, wp, nW);
+    color += hall(camW, dir, sceneDist, surf, wp, nW);
     vec3 effectCamera = camW, effectWorld = wp;
     if (portalSceneCamera(cameraPosition)) {
         float viewSide = portalPixelSide(wp, camW, cameraPosition);
