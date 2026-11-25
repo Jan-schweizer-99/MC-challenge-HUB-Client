@@ -1,15 +1,14 @@
 // Effekt-Schalter (Menue "Stage Effects").
-// FX_GENERAL an: die allgemeinen Schalter FX_ALL_* gelten fuer alle Arenen.
-// FX_GENERAL aus: jede Arena nutzt ihre eigenen Schalter (Untermenues Ice, Lava, End).
-// FX_HUB, FX_ARENAS, FX_ICE, FX_LAVA, FX_END sind Hauptschalter ihres Bereichs.
+// FX_ARENA_MODE 0: alle Arena-Effekte aus. 1: die allgemeinen Schalter FX_ALL_* gelten fuer alle Arenen.
+// 2: jede Arena nutzt ihre eigenen Schalter (Untermenues Ice, Lava, End).
+// FX_HUB, FX_ICE, FX_LAVA, FX_END sind Hauptschalter ihres Bereichs.
 #define FX_HUB // All hub effects
 #define FX_HUB_AURORA // Northern lights above the hub.
 #define FX_HUB_HEART // The floating, spinning heart in the middle.
 #define FX_HUB_FLOOR // Pixel waves, grid and twinkle on the floor.
 #define FX_HUB_PILLARS // Light above the ten pedestals.
 #define FX_HUB_SNOW // Slowly sinking bright dots.
-#define FX_ARENAS // All arena effects
-#define FX_GENERAL // Same settings in all arenas
+#define FX_ARENA_MODE 1 // [0 1 2] Arena effects: off, same everywhere, per stage
 #define FX_ALL_AURA // Soft glow above the beacon.
 #define FX_ALL_ORBS // Light orbs with trails around the center.
 #define FX_ALL_SHAFT // Light rings and rising sparks in the center.
@@ -148,7 +147,7 @@
 #undef FX_END_CRYSTALS
 #undef FX_END_BEAMS
 #endif
-#ifndef FX_ARENAS
+#if FX_ARENA_MODE == 0
 #undef FX_ALL_AURA
 #undef FX_ALL_ORBS
 #undef FX_ALL_SHAFT
@@ -222,7 +221,7 @@
 #endif
 
 // Je Effekt eine Maske: 1 = Eis, 2 = Lava, 4 = End; 0 = nirgends, wird nicht kompiliert
-#ifdef FX_GENERAL
+#if FX_ARENA_MODE == 1
 #ifdef FX_ALL_AURA
 #define FXM_AURA 7
 #else
