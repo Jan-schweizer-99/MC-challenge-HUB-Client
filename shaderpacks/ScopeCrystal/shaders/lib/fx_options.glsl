@@ -12,6 +12,7 @@
 #define FX_HUB_READY // Ready ring in the middle, fills up during the countdown.
 #define FX_HUB_SKY // Sky color follows the place: hub, temple, Hall of Fame and arenas.
 #define FX_HUB_PADS // Rings and arrows of the boost pads.
+#define FX_HUB_DYNAMIC // Only the place you are at shows its effects, the others build up when you come closer.
 #define FX_LOBBY // All lobby and bridge effects
 #define FX_LOBBY_CRYSTAL // Glow and pulses of the crystal above the island.
 #define FX_LOBBY_RING // Light ring above the pavilion.
@@ -37,12 +38,14 @@
 #define FX_ARCADE_FLOOR // Fields light up to the beat, bridge pulses.
 #define FX_ARCADE_CONFETTI // Confetti sinking under the tent.
 #define FX_ARCADE_ROUND // Smooth round fields on the arcade floor.
+#define FX_ARCADE_BEAM // Beam of light into the sky, always visible.
 #define FX_WORLD // All World Sanctum effects
 #define FX_WORLD_GLOBE // Atmosphere and satellites of the floating globe.
 #define FX_WORLD_GATES // Swirling light in the ten gates.
 #define FX_WORLD_FLOOR // Waves, veins and bridge pulses.
 #define FX_WORLD_SPORES // Spores rising from the gardens.
 #define FX_WORLD_ROUND // Smooth round rings on the sanctum floor.
+#define FX_WORLD_BEAM // Beam of light into the sky, always visible.
 #define FX_HALL // All Hall of Fame effects
 #define FX_HALL_TROPHY // Golden glow and rising sparks around the trophy.
 #define FX_HALL_CROWN // Light running along the crown, sparkling tips.
@@ -52,6 +55,7 @@
 #define FX_HALL_FLOOR // Golden rings and waves on the hall floor.
 #define FX_HALL_WALK // Light pulses and sparkle on the bridge.
 #define FX_HALL_ROUND // Smooth round rings on the hall floor.
+#define FX_HALL_BEAM // Beam of light into the sky, always visible.
 #define FX_ARENA_MODE 1 // [0 1 2] Arena effects: off, same everywhere, per stage
 #define FX_ALL_AURA // Soft glow above the beacon.
 #define FX_ALL_ORBS // Light orbs with trails around the center.
@@ -136,6 +140,7 @@
 #undef FX_HUB_READY
 #undef FX_HUB_SKY
 #undef FX_HUB_PADS
+#undef FX_HUB_DYNAMIC
 #undef FX_LOBBY
 #undef FX_TEMPLE
 #undef FX_ARCADE
@@ -169,6 +174,7 @@
 #undef FX_ARCADE_FLOOR
 #undef FX_ARCADE_CONFETTI
 #undef FX_ARCADE_ROUND
+#undef FX_ARCADE_BEAM
 #endif
 #ifndef FX_WORLD
 #undef FX_WORLD_GLOBE
@@ -176,6 +182,7 @@
 #undef FX_WORLD_FLOOR
 #undef FX_WORLD_SPORES
 #undef FX_WORLD_ROUND
+#undef FX_WORLD_BEAM
 #endif
 #ifndef FX_HALL
 #undef FX_HALL_TROPHY
@@ -186,6 +193,7 @@
 #undef FX_HALL_FLOOR
 #undef FX_HALL_WALK
 #undef FX_HALL_ROUND
+#undef FX_HALL_BEAM
 #endif
 #ifndef FX_ICE
 #undef FX_ICE_AURA

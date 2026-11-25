@@ -6,6 +6,9 @@ uniform mat4 gbufferProjection;
 uniform vec3 cameraPosition;
 #include "/lib/common.glsl"
 #include "/lib/fx_view.glsl"
+flat out float fxAct[6];                                // Aufbau je Ort (lib/places.glsl), 0 aus bis 1 voll
+uniform float skyPosX, skyPosZ;                         // geglaettete Position: auch Teleports bauen weich auf
+#include "/lib/places.glsl"
 flat out int fxSeen;                                   // ein Bit je Effekt-Bereich im Blickfeld
 
 bool fxInView(int i, mat4 m, vec3 cam) {
@@ -22,6 +25,7 @@ bool fxInView(int i, mat4 m, vec3 cam) {
 
 // Gleiche Entfernungen (mit Reserve) wie am Anfang von hub, temple, lobby, hall und arena
 bool fxNear(int i, vec3 cam) {
+    if (i == FXV_BEAM || i >= FXV_BEAM_HALL) return cam.z < -200.0 && abs(cam.y - 104.0) < 220.0;      // Strahlen sieht man im ganzen Hub-Bereich
     vec3 c = i == FXV_WORLD ? CHAL : i == FXV_ARCADE ? ARCADE : i <= FXV_AURORA ? vec3(0.0, 100.0, -455.0) : i <= FXV_BEAM ? vec3(0.5, 104.0, -343.5) : i == FXV_LOBBY ? vec3(0.5, 101.0, -399.5)
         : i == FXV_ARENA ? vec3(0.5, 101.0, 0.5) : vec3(0.5, 104.0, -554.5);
     float R = i >= FXV_WORLD ? 170.0 : i <= FXV_AURORA ? 175.0 : i <= FXV_BEAM ? 155.0 : i == FXV_LOBBY ? 135.0 : i == FXV_ARENA ? 95.0 : 165.0;
@@ -36,7 +40,20 @@ void main() {
     mat4 m = gbufferProjection * gbufferModelView;
     vec3 local = cameraPosition;                        // Arena-Kiste liegt in Insel-Koordinaten
     local.x -= arenaOffsetX(arenaSideAt(cameraPosition));
+    // Welcher Ort ist dran? Nur der naechste baut sich auf, der andere klingt ab
+    float best = 0.0;
+    for (int p = 0; p < 6; p++) {
+        vec3 k = placeRange(p);
+        fxAct[p] = 1.0 - smoothstep(k.y, k.z, length(vec2(skyPosX, skyPosZ) - placeCenter(p).xz));
+        best = max(best, fxAct[p]);
+    }
+    for (int p = 0; p < 6; p++) fxAct[p] *= smoothstep(best - 0.7, best - 0.2, fxAct[p]);
+#ifndef FX_HUB_DYNAMIC
+    for (int p = 0; p < 6; p++) fxAct[p] = 1.0;
+#endif
+    bool on[14] = bool[14](fxAct[PL_HUB] > 0.002, fxAct[PL_HUB] > 0.002, fxAct[PL_TEMPLE] > 0.002, true, fxAct[PL_LOBBY] > 0.002, fxAct[PL_HALL] > 0.002, fxAct[PL_HALL] > 0.002,
+        fxAct[PL_HALL] > 0.002, true, fxAct[PL_WORLD] > 0.002, fxAct[PL_ARCADE] > 0.002, true, true, true);
     fxSeen = 0;
-    for (int i = 0; i < FXV_COUNT; i++) if (fxNear(i, i == FXV_ARENA ? local : cameraPosition) && fxInView(i, m, i == FXV_ARENA ? local : cameraPosition)) fxSeen |= 1 << i;
+    for (int i = 0; i < FXV_COUNT; i++) if (on[i] && fxNear(i, i == FXV_ARENA ? local : cameraPosition) && fxInView(i, m, i == FXV_ARENA ? local : cameraPosition)) fxSeen |= 1 << i;
 #endif
 }

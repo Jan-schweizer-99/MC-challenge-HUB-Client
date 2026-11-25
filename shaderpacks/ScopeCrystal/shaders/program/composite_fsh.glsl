@@ -8,6 +8,8 @@
 #include "/lib/fx_common.glsl"
 #include "/lib/fx_view.glsl"
 flat in int fxSeen;
+flat in float fxAct[6];
+#include "/lib/places.glsl"
 bool fxSee(int i, vec3 camW, vec3 dir, float sceneDist) { return (fxSeen >> i & 1) != 0 && fxRayBox(i, camW, dir, sceneDist); }
 #include "/lib/hub.glsl"
 #include "/lib/arena.glsl"
@@ -16,6 +18,7 @@ bool fxSee(int i, vec3 camW, vec3 dir, float sceneDist) { return (fxSeen >> i & 
 #include "/lib/lobby.glsl"
 #include "/lib/hall.glsl"
 #include "/lib/sides.glsl"
+#include "/lib/beams.glsl"
 #include "/lib/sky.glsl"
 #endif
 
@@ -118,28 +121,73 @@ void main() {
 
 #ifdef PVP_WORLD
     bool surf = depth0 < 1.0 && mat >= 0;
-    color += hub(camW, dir, sceneDist, surf, wp, nW);
-    if (fxSee(FXV_TEMPLE, camW, dir, sceneDist) || fxSee(FXV_BEAM, camW, dir, sceneDist)) color += temple(camW, dir, sceneDist, surf, wp, nW);
-    if (fxSee(FXV_LOBBY, camW, dir, sceneDist)) color += lobby(camW, dir, sceneDist, surf, wp, nW);
+    float ft = frameTimeCounter;
+    color += skyBeams(camW, dir, sceneDist, ft);
+    if (cameraPosition.z < -200.0) {
+        if (fxAct[PL_HUB] > 0.002) {
+            vec3 fx = hub(camW, dir, sceneDist, surf, wp, nW);
 #ifdef FX_HUB_PADS
-    if (fxSee(FXV_WORLD, camW, dir, sceneDist)) color += padFx(vec3(-52.5, 101.0, -454.5), vec2(1.0, 0.0), vec3(0.35, 0.8, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
-    if (fxSee(FXV_ARCADE, camW, dir, sceneDist)) color += padFx(vec3(53.5, 101.0, -454.5), vec2(-1.0, 0.0), vec3(0.35, 0.8, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
-    if (fxSee(FXV_HUB, camW, dir, sceneDist)) {
-        color += padFx(vec3(-19.0, 101.0, -454.5), vec2(-1.0, 0.0), vec3(0.45, 1.0, 0.65), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
-        color += padFx(vec3(20.0, 101.0, -454.5), vec2(1.0, 0.0), vec3(1.0, 0.5, 0.78), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
-        color += padFx(vec3(0.5, 101.0, -435.5), vec2(0.0, 1.0), vec3(0.50, 0.60, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
-        color += padFx(vec3(0.5, 101.0, -474.5), vec2(0.0, -1.0), vec3(1.0, 0.75, 0.25), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
-    }
-    if (fxSee(FXV_LOBBY, camW, dir, sceneDist)) {
-        color += padFx(vec3(0.5, 101.0, -403.5), vec2(0.0, -1.0), vec3(0.35, 0.8, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
-        color += padFx(vec3(0.5, 101.0, -395.5), vec2(0.0, 1.0), vec3(0.75, 0.5, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
-        color += padFx(vec3(0.5, 101.0, -379.5), vec2(0.0, -1.0), vec3(0.50, 0.60, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
-    }
-    if (fxSee(FXV_HALL, camW, dir, sceneDist)) color += padFx(vec3(0.5, 104.0, -525.0), vec2(0.0, 1.0), vec3(0.35, 0.8, 1.0), camW, dir, sceneDist, surf, wp, nW, frameTimeCounter);
+            if (fxSee(FXV_HUB, camW, dir, sceneDist)) {
+                fx += padFx(vec3(-19.0, 101.0, -454.5), vec2(-1.0, 0.0), vec3(0.45, 1.0, 0.65), camW, dir, sceneDist, surf, wp, nW, ft);
+                fx += padFx(vec3(20.0, 101.0, -454.5), vec2(1.0, 0.0), vec3(1.0, 0.5, 0.78), camW, dir, sceneDist, surf, wp, nW, ft);
+                fx += padFx(vec3(0.5, 101.0, -435.5), vec2(0.0, 1.0), vec3(0.50, 0.60, 1.0), camW, dir, sceneDist, surf, wp, nW, ft);
+                fx += padFx(vec3(0.5, 101.0, -474.5), vec2(0.0, -1.0), vec3(1.0, 0.75, 0.25), camW, dir, sceneDist, surf, wp, nW, ft);
+            }
 #endif
-    if (fxSee(FXV_WORLD, camW, dir, sceneDist)) color += world(camW, dir, sceneDist, surf, wp, nW);
-    if (fxSee(FXV_ARCADE, camW, dir, sceneDist)) color += arcade(camW, dir, sceneDist, surf, wp, nW);
-    if (fxSee(FXV_HALL, camW, dir, sceneDist)) color += hall(camW, dir, sceneDist, surf, wp, nW);
+            color += fx * placeShow(PL_HUB, fxAct[PL_HUB], surf, wp) + placeFront(PL_HUB, fxAct[PL_HUB], surf, wp, nW);
+        }
+        if (fxAct[PL_LOBBY] > 0.002) {
+            vec3 fx = vec3(0.0);
+            if (fxSee(FXV_LOBBY, camW, dir, sceneDist)) {
+                fx += lobby(camW, dir, sceneDist, surf, wp, nW);
+#ifdef FX_HUB_PADS
+                fx += padFx(vec3(0.5, 101.0, -403.5), vec2(0.0, -1.0), vec3(0.35, 0.8, 1.0), camW, dir, sceneDist, surf, wp, nW, ft);
+                fx += padFx(vec3(0.5, 101.0, -395.5), vec2(0.0, 1.0), vec3(0.75, 0.5, 1.0), camW, dir, sceneDist, surf, wp, nW, ft);
+#endif
+            }
+            color += fx * placeShow(PL_LOBBY, fxAct[PL_LOBBY], surf, wp) + placeFront(PL_LOBBY, fxAct[PL_LOBBY], surf, wp, nW);
+        }
+        if (fxAct[PL_TEMPLE] > 0.002) {
+            vec3 fx = vec3(0.0);
+            if (fxSee(FXV_TEMPLE, camW, dir, sceneDist)) {
+                fx += temple(camW, dir, sceneDist, surf, wp, nW);
+#ifdef FX_HUB_PADS
+                fx += padFx(vec3(0.5, 101.0, -379.5), vec2(0.0, -1.0), vec3(0.50, 0.60, 1.0), camW, dir, sceneDist, surf, wp, nW, ft);
+#endif
+            }
+            color += fx * placeShow(PL_TEMPLE, fxAct[PL_TEMPLE], surf, wp) + placeFront(PL_TEMPLE, fxAct[PL_TEMPLE], surf, wp, nW);
+        }
+        if (fxAct[PL_HALL] > 0.002) {
+            vec3 fx = vec3(0.0);
+            if (fxSee(FXV_HALL, camW, dir, sceneDist)) {
+                fx += hall(camW, dir, sceneDist, surf, wp, nW);
+#ifdef FX_HUB_PADS
+                fx += padFx(vec3(0.5, 104.0, -525.0), vec2(0.0, 1.0), vec3(0.35, 0.8, 1.0), camW, dir, sceneDist, surf, wp, nW, ft);
+#endif
+            }
+            color += fx * placeShow(PL_HALL, fxAct[PL_HALL], surf, wp) + placeFront(PL_HALL, fxAct[PL_HALL], surf, wp, nW);
+        }
+        if (fxAct[PL_WORLD] > 0.002) {
+            vec3 fx = vec3(0.0);
+            if (fxSee(FXV_WORLD, camW, dir, sceneDist)) {
+                fx += world(camW, dir, sceneDist, surf, wp, nW);
+#ifdef FX_HUB_PADS
+                fx += padFx(vec3(-52.5, 101.0, -454.5), vec2(1.0, 0.0), vec3(0.35, 0.8, 1.0), camW, dir, sceneDist, surf, wp, nW, ft);
+#endif
+            }
+            color += fx * placeShow(PL_WORLD, fxAct[PL_WORLD], surf, wp) + placeFront(PL_WORLD, fxAct[PL_WORLD], surf, wp, nW);
+        }
+        if (fxAct[PL_ARCADE] > 0.002) {
+            vec3 fx = vec3(0.0);
+            if (fxSee(FXV_ARCADE, camW, dir, sceneDist)) {
+                fx += arcade(camW, dir, sceneDist, surf, wp, nW);
+#ifdef FX_HUB_PADS
+                fx += padFx(vec3(53.5, 101.0, -454.5), vec2(-1.0, 0.0), vec3(0.35, 0.8, 1.0), camW, dir, sceneDist, surf, wp, nW, ft);
+#endif
+            }
+            color += fx * placeShow(PL_ARCADE, fxAct[PL_ARCADE], surf, wp) + placeFront(PL_ARCADE, fxAct[PL_ARCADE], surf, wp, nW);
+        }
+    }
     vec3 effectCamera = camW, effectWorld = wp;
     if (portalSceneCamera(cameraPosition)) {
         float viewSide = portalPixelSide(wp, camW, cameraPosition);

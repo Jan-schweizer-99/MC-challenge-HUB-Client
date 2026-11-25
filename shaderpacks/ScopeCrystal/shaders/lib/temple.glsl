@@ -48,16 +48,6 @@ vec3 templeHelix(vec3 camW, vec3 dir, float sceneDist, float t) {
     return col;
 }
 
-// Lichtstrahl aus der Kuppelspitze in den Himmel
-vec3 templeBeam(vec3 camW, vec3 dir, float sceneDist, float t) {
-    vec3 a = vec3(TEMPLE.x, 171.0, TEMPLE.z), b = vec3(TEMPLE.x, 330.0, TEMPLE.z);
-    vec3 seg = raySegment(a, b, camW, dir);
-    if (seg.z <= 0.0 || seg.z > sceneDist || seg.x > 9.0) return vec3(0.0);
-    float fade = pow(1.0 - seg.y, 1.5) * smoothstep(0.0, 0.02, seg.y);
-    float roll = 0.75 + 0.25 * sin(seg.y * 70.0 - t * 5.0);
-    return (vec3(0.75, 0.95, 1.0) * exp(-seg.x * seg.x / 0.35) * 0.9 * roll + vec3(0.4, 0.55, 1.0) * exp(-seg.x * seg.x / 8.0) * 0.28) * fade;
-}
-
 // Runenringe, die über der Kuppel schweben
 vec3 templeHalo(vec3 camW, vec3 dir, float sceneDist, float t) {
     vec3 col = vec3(0.0);
@@ -158,10 +148,6 @@ vec3 temple(vec3 camW, vec3 dir, float sceneDist, bool hasSurface, vec3 wp, vec3
     if (length(rel.xz) > 150.0 || abs(rel.y) > 120.0) return vec3(0.0);
     float t = frameTimeCounter;
     vec3 col = vec3(0.0);
-#ifdef FX_TEMPLE_BEAM
-    if (fxSee(FXV_BEAM, camW, dir, sceneDist)) col += templeBeam(camW, dir, sceneDist, t);
-#endif
-    if (!fxSee(FXV_TEMPLE, camW, dir, sceneDist)) return col;
 #ifdef FX_TEMPLE_CRYSTAL
     col += templeCrystal(camW, dir, sceneDist, t);
 #endif
