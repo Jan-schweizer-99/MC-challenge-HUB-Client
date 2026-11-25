@@ -255,3 +255,5 @@ option.FX_HALL_ROUND=Runder Boden
 option.FX_HALL_ROUND.comment=Glatte runde Ringe in der Halle.
 option.FX_HUB_SKY=Himmelsfarben
 option.FX_HUB_SKY.comment=Himmel faerbt sich je nach Ort: Hub, Tempel, Hall of Fame und Arenen.
+option.FX_HUB_PADS=Boost-Pads
+option.FX_HUB_PADS.comment=Ringe und Pfeile der Boost-Pads.

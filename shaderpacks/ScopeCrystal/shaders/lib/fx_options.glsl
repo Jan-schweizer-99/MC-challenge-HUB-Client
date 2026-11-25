@@ -11,6 +11,7 @@
 #define FX_HUB_ROUND // Smooth round rings on the hub floor instead of blocky ones.
 #define FX_HUB_READY // Ready ring in the middle, fills up during the countdown.
 #define FX_HUB_SKY // Sky color follows the place: hub, temple, Hall of Fame and arenas.
+#define FX_HUB_PADS // Rings and arrows of the boost pads.
 #define FX_LOBBY // All lobby and bridge effects
 #define FX_LOBBY_CRYSTAL // Glow and pulses of the crystal above the island.
 #define FX_LOBBY_RING // Light ring above the pavilion.
@@ -122,6 +123,7 @@
 #undef FX_HUB_ROUND
 #undef FX_HUB_READY
 #undef FX_HUB_SKY
+#undef FX_HUB_PADS
 #undef FX_LOBBY
 #undef FX_TEMPLE
 #undef FX_HALL
