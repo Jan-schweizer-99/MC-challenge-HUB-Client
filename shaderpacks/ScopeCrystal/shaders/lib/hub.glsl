@@ -1,4 +1,4 @@
-// Challenge-Hub (Welt pvp, Boden y = 100): Polarlicht, schwebendes Pixel-Herz, Lichtwellen auf dem Eisboden,
+// Challenge-Hub (Welt pvp, Boden y = 100): Polarlicht, grosses blaues Pixel-Herz (schwebt bei der Ankunft von oben ein), Lichtwellen auf dem Eisboden,
 // Lichtsaeulen ueber den 10 Sockeln, Schneeglitzern. Keine Portale.
 // Koordinaten muessen zu Hub.java passen (HX, HY, HZ, HR, RING). Braucht pointGlow/rotY aus fx_common.glsl.
 
@@ -11,20 +11,55 @@ int heartCell(ivec3 v) {
 }
 
 vec3 heartColor(int c) {
-    if (c == 1) return vec3(0.16, 0.03, 0.06);
-    if (c == 2) return vec3(0.88, 0.13, 0.23);
-    return vec3(1.0, 0.84, 0.86);
+    if (c == 1) return vec3(0.02, 0.07, 0.24);
+    if (c == 2) return vec3(0.10, 0.42, 1.00);
+    return vec3(0.78, 0.95, 1.0);
 }
 
-// Voxel-Herz per DDA (Blockraster statt glatter Form), dreht sich langsam ueber der Hub-Mitte
+// Ankunft (7 s): 0-3,2 s schwebt es in Spiralen herab und setzt sich Wuerfel fuer Wuerfel zusammen, dann federt es nach,
+// eine Lichtwelle laeuft ueber den Boden, danach schlaegt es ruhig.
+// Alles, was je Bild gleich ist, rechnet composite_vsh einmal (heartA..heartC).
+const float HEART_LAND = 3.2;
+flat in vec4 heartA;                    // Mitte, Bloecke pro Voxel
+flat in vec4 heartB;                    // Sinken e, Sekunden seit Landung, Herzschlag, Zusammenbau
+flat in vec4 heartC;                    // Drehung cos/sin, Sichtbarkeit, Landeblitz
+
+// Lichtwelle ueber den Boden, wenn das Herz landet
+vec3 hubHeartWave(vec3 wp, vec3 nW) {
+    float after = heartB.y;
+    if (after <= 0.0 || after > 2.2 || nW.y < 0.9 || abs(wp.y - HUB.y - 1.0) > 0.2) return vec3(0.0);
+    float rr = length(wp.xz - HUB.xz - vec2(0.5)), d = rr - after * 13.0;
+    if (rr > HUB_R + 1.0) return vec3(0.0);
+    return vec3(0.35, 0.70, 1.0) * ((d < 0.0 ? exp(d / 2.0) : exp(-d * d / 0.15)) * 0.8 + 0.25 * exp(-after * 2.2 - rr / 6.0)) * (1.0 - smoothstep(1.0, 2.2, after));
+}
+
 vec3 hubHeart(vec3 camW, vec3 dir, float sceneDist) {
-    float t = frameTimeCounter;
-    const float S = 0.36;                                          // Bloecke pro Voxel
-    vec3 center = HUB + vec3(0.5, 8.5 + 0.35 * sin(t * 1.3), 0.5);
-    vec3 col = vec3(0.45, 0.85, 1.0) * pointGlow(center, camW, dir, sceneDist, 3.0) * 0.22;
-    mat3 r = rotY(t * 0.55);
-    vec3 o = r * (camW - center) / S + vec3(6.5, 6.0, 1.5);
-    vec3 d = r * dir;
+    float t = frameTimeCounter, e = heartB.x, rest = 1.0 - e, after = heartB.y, beat = heartB.z, assemble = heartB.w;
+    vec3 center = heartA.xyz, rested = HUB + vec3(0.5, 9.6, 0.5);
+    float S = heartA.w, show = heartC.z, flash = heartC.w, p = e * HEART_LAND + after;
+    vec3 ice = vec3(0.35, 0.70, 1.0), col = vec3(0.0);
+    // Lichtspur ueber dem Herz und zwei gegenlaeufige Funkenspiralen, solange es sinkt
+    vec2 o2 = rested.xz - camW.xz;
+    float dd = max(dot(dir.xz, dir.xz), 1e-5), tv = dot(o2, dir.xz) / dd;
+    if (rest > 0.001 && tv > 0.0 && tv < sceneDist) {
+        vec3 q = camW + dir * tv;
+        float d2 = dot(q.xz - rested.xz, q.xz - rested.xz), up = q.y - center.y;
+        float tail = up > 0.0 ? exp(-up / 9.0) : exp(up / 1.5);
+        col += ice * (exp(-d2 / 0.25) * 0.8 + exp(-d2 / 6.0) * 0.22) * tail * show * rest * (0.8 + 0.2 * sin(up * 2.0 + t * 9.0));
+    }
+    if (e < 1.0 || after < 1.2) for (int i = 0; i < 8; i++) {
+        float k = float(i) / 8.0, a = p * 3.4 - k * 4.2, rad = mix(1.5, 8.5, e) * (1.0 - 0.5 * k);
+        float fade = (1.0 - k) * show * (1.0 - smoothstep(0.2, 1.2, after));
+        for (int s = -1; s <= 1; s += 2) {
+            vec3 sp = center + vec3(float(s) * sin(a) * rad, 10.0 * k - 1.0 + 2.0 * rest, cos(a) * rad);
+            col += mix(ice, vec3(1.0), 0.35) * (pointGlow(sp, camW, dir, sceneDist, 0.22) * 1.3 + pointGlow(sp, camW, dir, sceneDist, 1.0) * 0.18) * fade;
+        }
+    }
+    col += vec3(0.30, 0.65, 1.0) * innerGlow(center, camW, dir, sceneDist, 4.2, 8.0) * (0.20 + 0.14 * beat + 0.7 * flash) * show;
+
+    mat3 rot = mat3(heartC.x, 0.0, -heartC.y, 0.0, 1.0, 0.0, heartC.y, 0.0, heartC.x);
+    vec3 o = rot * (camW - center) / S + vec3(6.5, 6.0, 1.5);
+    vec3 d = rot * dir;
     d = sign(d) * max(abs(d), vec3(1e-5));
     vec3 inv = 1.0 / d;
     vec3 t0 = -o * inv, t1 = (vec3(13.0, 12.0, 3.0) - o) * inv;
@@ -32,9 +67,9 @@ vec3 hubHeart(vec3 camW, vec3 dir, float sceneDist) {
     float tn = max(max(tmin.x, tmin.y), max(tmin.z, 0.0));
     float tf = min(min(tmax.x, tmax.y), tmax.z);
     float limit = sceneDist / S;
-    if (tn >= tf || tn > limit) return col;
-    vec3 p = o + d * (tn + 1e-3);
-    ivec3 v = ivec3(floor(p));
+    if (tn < tf && tn <= limit && show > 0.0) {
+    vec3 pv = o + d * (tn + 1e-3);
+    ivec3 v = ivec3(floor(pv));
     ivec3 stp = ivec3(sign(d));
     vec3 tDelta = abs(inv);
     vec3 tMax = (vec3(v) + max(vec3(stp), vec3(0.0)) - o) * inv;
@@ -43,17 +78,23 @@ vec3 hubHeart(vec3 camW, vec3 dir, float sceneDist) {
     for (int i = 0; i < 40; i++) {
         if (tc > tf || tc > limit) break;
         int c = heartCell(v);
-        if (c != 0) {
+        float need = 0.55 * float(v.y) / 12.0 + 0.45 * hash12(vec2(abs(float(v.x) - 6.0) + 13.0 * float(v.z), float(v.y)));   // von unten nach oben
+        if (c != 0 && need < assemble) {
             float shade = axis == 1 ? (stp.y < 0 ? 1.0 : 0.6) : (axis == 0 ? 0.78 : 0.92);
             vec3 f = fract(o + d * tc);
             vec3 g = min(f, 1.0 - f);
             float ex = axis == 0 ? 1.0 : g.x, ey = axis == 1 ? 1.0 : g.y, ez = axis == 2 ? 1.0 : g.z;
             float frost = 1.0 - smoothstep(0.04, 0.1, min(min(ex, ey), ez));   // eisblaue Pixelkanten
-            return heartColor(c) * shade * 1.35 + vec3(0.55, 0.9, 1.0) * frost * 0.6 + col;
+            float fresh = 1.0 - smoothstep(0.0, 0.10, assemble - need);        // frisch gesetzte Wuerfel gluehen
+            float sheen = pow(0.5 + 0.5 * sin(float(v.x) * 0.5 + float(v.y) * 0.45 - t * 1.6), 12.0);   // Glanz wandert schraeg
+            vec3 body = heartColor(c) * shade * (1.30 + 0.25 * beat) + vec3(0.35, 0.65, 1.0) * sheen * 0.35 * step(1.5, float(c));
+            col += body + vec3(0.55, 0.88, 1.0) * (frost * 0.6 + fresh * 0.9 * step(e, 0.999) + flash * 0.5);
+            break;
         }
         if (tMax.x < tMax.y && tMax.x < tMax.z) { tc = tMax.x; tMax.x += tDelta.x; v.x += stp.x; axis = 0; }
         else if (tMax.y < tMax.z) { tc = tMax.y; tMax.y += tDelta.y; v.y += stp.y; axis = 1; }
         else { tc = tMax.z; tMax.z += tDelta.z; v.z += stp.z; axis = 2; }
+    }
     }
     return col;
 }
@@ -200,9 +241,17 @@ vec3 hub(vec3 camW, vec3 dir, float sceneDist, bool hasSurface, vec3 wp, vec3 nW
 #ifdef FX_HUB_AURORA
     if (fxSee(FXV_AURORA, camW, dir, sceneDist)) col += hubAurora(camW, dir, sceneDist);
 #endif
+#ifdef FX_HUB_HEART
+    if ((fxSeen >> FXV_HEART & 1) != 0) {
+        vec3 toC = heartA.xyz - camW;                       // gelandet: nur Pixel nahe am Herz, im Anflug auch die Spur
+        float along = dot(toC, dir), off = dot(toC, toC) - along * along;
+        bool hit = heartB.y > 1.2 ? along > 0.0 && off < 82.0 && along - 10.0 < sceneDist : fxRayBox(FXV_HEART, camW, dir, sceneDist);
+        if (hit) col += hubHeart(camW, dir, sceneDist);
+    }
+#endif
     if (!fxSee(FXV_HUB, camW, dir, sceneDist)) return col;
 #ifdef FX_HUB_HEART
-    col += hubHeart(camW, dir, sceneDist);
+    if (hasSurface) col += hubHeartWave(wp, nW);
 #endif
 #ifdef FX_HUB_SNOW
     col += hubSnow(camW, dir, sceneDist);

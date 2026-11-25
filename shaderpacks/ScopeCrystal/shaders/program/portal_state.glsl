@@ -8,6 +8,14 @@ layout(location = 0) out vec4 outState;
 void main() {
     // Alles ausser den zwei Zustands-Texeln: Bahnen der Arena-Effekte fuer diesen Frame
     ivec2 px = ivec2(gl_FragCoord.xy);
+    if (px == ivec2(2, 0)) {                                // Herz im Hub: Sekunden seit der Ankunft (hoch beim Dasein, schnell runter beim Gehen)
+        vec4 h = texelFetch(colortex4, px, 0);
+        float s = abs(h.w - 2611.0) < 0.1 ? h.x : 0.0;
+        bool here = length(cameraPosition.xz - vec2(0.5, -454.5)) < 46.0;
+        s = clamp(s + min(frameTime, 0.1) * (here ? 1.0 : -2.0), 0.0, 7.0);
+        outState = vec4(s, 0.0, 0.0, 2611.0);
+        return;
+    }
     if (px.y > 0 || px.x > 1) { outState = arenaCacheTexel(px, frameTimeCounter); return; }
     vec4 old = texelFetch(colortex4, ivec2(0, 0), 0);
     vec4 memory = texelFetch(colortex4, ivec2(1, 0), 0);

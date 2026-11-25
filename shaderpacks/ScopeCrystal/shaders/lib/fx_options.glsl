@@ -5,7 +5,7 @@
 #define PORTAL_VIEW // Live view through the ice and fire portal. Off = normal culling, more FPS.
 #define FX_HUB // All hub effects, with lobby, bridges, side places, temple and Hall of Fame
 #define FX_HUB_AURORA // Northern lights above the hub.
-#define FX_HUB_HEART // The floating, spinning heart in the middle.
+#define FX_HUB_HEART // Big blue heart in the middle, floats in from above when you arrive.
 #define FX_HUB_FLOOR // Round light waves, grid and twinkle on the floor.
 #define FX_HUB_PILLARS // Light above the ten pedestals.
 #define FX_HUB_SNOW // Slowly sinking bright dots.

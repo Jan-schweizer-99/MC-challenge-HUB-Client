@@ -5,7 +5,7 @@
 // und im composite nur noch gelesen – statt für jedes Pixel hunderte sin/cos/pow.
 //
 // colortex4-Layout (36 × 28, RGBA32F), Zeile 27 = Gruppen-Hüllkugeln (Batching):
-//   Zeile 0, x 0..1         Portal-Zustand (portal_state.glsl)
+//   Zeile 0, x 0..1         Portal-Zustand (portal_state.glsl), x 2 Ankunftszeit fuer das Hub-Herz
 //   Zeilen 1..8             Kristall-Kugel i: x 0..17 Positionen (Kopf + Schweif), x 18 Hüllkugel
 //   Zeilen 9..14            Komet i:          x 0..25 Positionen (Kopf + Schweif), x 26 Hüllkugel
 //   Zeilen 15..26           Jumppad-Bogen k:  x 0..22 Röhrenpunkte, x 23..28 Partikel (w = fade),
