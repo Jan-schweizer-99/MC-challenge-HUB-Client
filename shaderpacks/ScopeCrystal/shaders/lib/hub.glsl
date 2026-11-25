@@ -35,7 +35,7 @@ vec3 hubHeartWave(vec3 wp, vec3 nW) {
 
 vec3 hubHeart(vec3 camW, vec3 dir, float sceneDist) {
     float t = frameTimeCounter, e = heartB.x, rest = 1.0 - e, after = heartB.y, beat = heartB.z, assemble = heartB.w;
-    vec3 center = heartA.xyz, rested = HUB + vec3(0.5, 9.6, 0.5);
+    vec3 center = heartA.xyz, rested = HUB + vec3(0.5, 17.0, 0.5);
     float S = heartA.w, show = heartC.z, flash = heartC.w, p = e * HEART_LAND + after;
     vec3 ice = vec3(0.35, 0.70, 1.0), col = vec3(0.0);
     // Lichtspur ueber dem Herz und zwei gegenlaeufige Funkenspiralen, solange es sinkt

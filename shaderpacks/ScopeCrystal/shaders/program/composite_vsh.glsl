@@ -48,7 +48,7 @@ void main() {
     float he = clamp(ht / hl, 0.0, 1.0), hr = 1.0 - he, ha = max(ht - hl, 0.0);
     float hb = (pow(max(0.0, sin(tm * 2.3)), 14.0) + 0.6 * pow(max(0.0, sin(tm * 2.3 - 0.6)), 14.0)) * smoothstep(0.5, 2.0, ha);
     float spring = ha > 0.0 ? -1.1 * exp(-ha * 2.0) * sin(ha * 6.5) : 0.0, spin = tm * 0.5 + 10.0 * hr * hr;
-    heartA = vec4(HUB + vec3(0.5, 9.6 + 36.0 * hr * hr * hr + spring + 0.35 * sin(tm * 1.1) * smoothstep(1.0, 3.0, ha), 0.5),
+    heartA = vec4(HUB + vec3(0.5, 17.0 + 36.0 * hr * hr * hr + spring + 0.35 * sin(tm * 1.1) * smoothstep(1.0, 3.0, ha), 0.5),
         0.80 * mix(0.15, 1.0, smoothstep(0.0, 0.85, he)) * (1.0 + 0.045 * hb));
     heartB = vec4(he, ha, hb, smoothstep(0.05, 1.0, ht / (hl + 0.4)) * 1.02);
     heartC = vec4(cos(spin), sin(spin), smoothstep(0.0, 0.25, he), ha > 0.0 ? exp(-ha * 2.2) : 0.0);

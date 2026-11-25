@@ -14,7 +14,7 @@ const vec3 FXV_HI[15] = vec3[15](
     vec3(38.0, 148.0, -473.0), vec3(33.0, 142.0, -522.0), vec3(38.0, 148.0, -517.0), vec3(77.0, 205.0, 77.0),
     vec3(-18.0, 142.0, -420.0), vec3(115.0, 142.0, -420.0),
     vec3(12.0, 334.0, -543.0), vec3(-68.0, 334.0, -443.0), vec3(92.0, 334.0, -443.0),
-    vec3(15.0, 162.0, -440.0));
+    vec3(15.0, 172.0, -440.0));
 
 // Trifft der Strahl die Kiste vor sceneDist?
 bool fxRayBox(int i, vec3 camW, vec3 dir, float sceneDist) {
