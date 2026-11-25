@@ -9,6 +9,8 @@ const float PORTAL_R = 4.5;
 uniform int worldTime;
 // Arenas without a portal: the server moves the frozen clock of "pvp" from 18000 to 18300 (Arena.TIME_NO_PORTAL).
 bool portalEnabled() { return worldTime < 18150 || worldTime > 18450; }
+// Ready-Ring im Hub: 0 leer, 1-9 Anteil der Spieler im Ring, 10-100 Countdown (Hub.ringTick)
+float hubReadySignal() { int n = worldTime - (portalEnabled() ? 18000 : 18300); return n > 0 && n <= 100 ? float(n) : 0.0; }
 bool portalOpeningCell(vec2 localHit) {
     if (!portalEnabled()) return false;
     vec2 cell = floor(localHit);

@@ -233,3 +233,5 @@ option.FX_LOBBY_ROUND=Runder Boden
 option.FX_LOBBY_ROUND.comment=Glatte runde Ringe auf der Lobby-Insel.
 option.FX_TEMPLE_ROUND=Runder Boden
 option.FX_TEMPLE_ROUND.comment=Glatte runde Ringe auf allen Tempel-Etagen.
+option.FX_HUB_READY=Ready-Ring
+option.FX_HUB_READY.comment=Ready-Ring in der Mitte, laeuft beim Countdown voll.

@@ -233,3 +233,5 @@ option.FX_LOBBY_ROUND=Round floor
 option.FX_LOBBY_ROUND.comment=Smooth round rings on the lobby island.
 option.FX_TEMPLE_ROUND=Round floor
 option.FX_TEMPLE_ROUND.comment=Smooth round rings on every temple floor.
+option.FX_HUB_READY=Ready ring
+option.FX_HUB_READY.comment=Ready ring in the middle, fills up during the countdown.

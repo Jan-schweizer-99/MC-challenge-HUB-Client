@@ -9,6 +9,7 @@
 #define FX_HUB_PILLARS // Light above the ten pedestals.
 #define FX_HUB_SNOW // Slowly sinking bright dots.
 #define FX_HUB_ROUND // Smooth round rings on the hub floor instead of blocky ones.
+#define FX_HUB_READY // Ready ring in the middle, fills up during the countdown.
 #define FX_LOBBY // All lobby and bridge effects
 #define FX_LOBBY_CRYSTAL // Glow and pulses of the crystal above the island.
 #define FX_LOBBY_RING // Light ring above the pavilion.
@@ -109,6 +110,7 @@
 #undef FX_HUB_PILLARS
 #undef FX_HUB_SNOW
 #undef FX_HUB_ROUND
+#undef FX_HUB_READY
 #undef FX_LOBBY
 #undef FX_TEMPLE
 #endif
