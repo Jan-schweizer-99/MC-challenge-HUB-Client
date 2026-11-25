@@ -2,7 +2,7 @@
 // FX_ARENA_MODE 0: alle Arena-Effekte aus. 1: die allgemeinen Schalter FX_ALL_* gelten fuer alle Arenen.
 // 2: jede Arena nutzt ihre eigenen Schalter (Untermenues Ice, Lava, End).
 // FX_HUB, FX_LOBBY, FX_TEMPLE, FX_ICE, FX_LAVA, FX_END sind Hauptschalter ihres Bereichs.
-#define FX_HUB // All hub effects
+#define FX_HUB // All hub effects, with lobby, bridges and temple
 #define FX_HUB_AURORA // Northern lights above the hub.
 #define FX_HUB_HEART // The floating, spinning heart in the middle.
 #define FX_HUB_FLOOR // Round light waves, grid and twinkle on the floor.
@@ -98,6 +98,15 @@
 #define FX_END_TORCHES // Torches and their light in arena colors.
 #define FX_END_CRYSTALS // Crystal blocks pulse with light.
 #define FX_END_BEAMS // Crystal beams, End arena only.
+#ifndef FX_HUB
+#undef FX_HUB_AURORA
+#undef FX_HUB_HEART
+#undef FX_HUB_FLOOR
+#undef FX_HUB_PILLARS
+#undef FX_HUB_SNOW
+#undef FX_LOBBY
+#undef FX_TEMPLE
+#endif
 #ifndef FX_LOBBY
 #undef FX_LOBBY_CRYSTAL
 #undef FX_LOBBY_RING
@@ -115,13 +124,6 @@
 #undef FX_TEMPLE_FALLS
 #undef FX_TEMPLE_FIREFLIES
 #undef FX_TEMPLE_LIFTS
-#endif
-#ifndef FX_HUB
-#undef FX_HUB_AURORA
-#undef FX_HUB_HEART
-#undef FX_HUB_FLOOR
-#undef FX_HUB_PILLARS
-#undef FX_HUB_SNOW
 #endif
 #ifndef FX_ICE
 #undef FX_ICE_AURA
