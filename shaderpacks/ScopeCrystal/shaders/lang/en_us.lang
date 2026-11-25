@@ -207,3 +207,5 @@ option.FX_TEMPLE_FIREFLIES=Fireflies
 option.FX_TEMPLE_FIREFLIES.comment=Fireflies between columns and vines.
 option.FX_TEMPLE_BRIDGE=Bridge pulses
 option.FX_TEMPLE_BRIDGE.comment=Light pulses running along the bridge.
+option.FX_TEMPLE_LIFTS=Lift lights
+option.FX_TEMPLE_LIFTS.comment=Light columns above the lifts.

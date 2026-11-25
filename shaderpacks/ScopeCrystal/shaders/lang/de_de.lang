@@ -207,3 +207,5 @@ option.FX_TEMPLE_FIREFLIES=Gluehwuermchen
 option.FX_TEMPLE_FIREFLIES.comment=Gluehwuermchen zwischen Saeulen und Ranken.
 option.FX_TEMPLE_BRIDGE=Bruecken-Pulse
 option.FX_TEMPLE_BRIDGE.comment=Lichtpulse, die ueber die Bruecke laufen.
+option.FX_TEMPLE_LIFTS=Aufzug-Licht
+option.FX_TEMPLE_LIFTS.comment=Lichtsaeulen ueber den Aufzuegen.

@@ -17,6 +17,7 @@
 #define FX_TEMPLE_FALLS // Curtain of light falling from the island.
 #define FX_TEMPLE_FIREFLIES // Fireflies between columns and vines.
 #define FX_TEMPLE_BRIDGE // Light pulses running along the bridge.
+#define FX_TEMPLE_LIFTS // Light columns above the lifts.
 #define FX_ARENA_MODE 1 // [0 1 2] Arena effects: off, same everywhere, per stage
 #define FX_ALL_AURA // Soft glow above the beacon.
 #define FX_ALL_ORBS // Light orbs with trails around the center.
@@ -100,6 +101,7 @@
 #undef FX_TEMPLE_FALLS
 #undef FX_TEMPLE_FIREFLIES
 #undef FX_TEMPLE_BRIDGE
+#undef FX_TEMPLE_LIFTS
 #endif
 #ifndef FX_HUB
 #undef FX_HUB_AURORA

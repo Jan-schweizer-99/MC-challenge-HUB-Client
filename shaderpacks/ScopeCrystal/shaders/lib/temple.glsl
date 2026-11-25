@@ -137,6 +137,22 @@ vec3 templeFloor(vec3 wp, vec3 nW, float t) {
     return col + vec3(0.35, 0.65, 1.0) * wave * 0.16;
 }
 
+// Aufzüge: Lichtsäulen über den Plattformen, Ringe steigen auf
+vec3 templeLifts(vec3 camW, vec3 dir, float sceneDist, float t) {
+    vec3 col = vec3(0.0);
+    for (int s = -1; s <= 1; s += 2) {
+        vec3 a = vec3(TEMPLE.x + float(s) * 11.0, 78.0, TEMPLE.z - 11.0), b = vec3(a.x, 142.0, a.z);
+        vec3 seg = raySegment(a, b, camW, dir);
+        if (seg.z <= 0.0 || seg.z > sceneDist || seg.x > 3.5) continue;
+        float h = mod(seg.y * 64.0, 13.0);                                   // Höhe über dem Etagenboden
+        float fade = exp(-h * 0.28);
+        float ring = exp(-pow(mod(h - t * 2.2, 3.0) - 1.5, 2.0) * 5.0);
+        col += vec3(0.55, 0.8, 1.0) * exp(-seg.x * seg.x / 0.9) * (0.16 + 0.35 * ring) * fade;
+        col += vec3(0.7, 0.5, 1.0) * exp(-seg.x * seg.x / 3.0) * 0.07 * fade;
+    }
+    return col;
+}
+
 // Brücken: Lichtpulse laufen vom Hub über die Lobby zum Tempel
 vec3 templeBridge(vec3 wp, vec3 nW, float t) {
     float x = abs(wp.x - TEMPLE.x);
@@ -166,6 +182,9 @@ vec3 temple(vec3 camW, vec3 dir, float sceneDist, bool hasSurface, vec3 wp, vec3
 #endif
 #ifdef FX_TEMPLE_FALLS
     col += templeFalls(camW, dir, sceneDist, t);
+#endif
+#ifdef FX_TEMPLE_LIFTS
+    col += templeLifts(camW, dir, sceneDist, t);
 #endif
 #ifdef FX_TEMPLE_FIREFLIES
     col += templeFireflies(camW, dir, sceneDist, t);
