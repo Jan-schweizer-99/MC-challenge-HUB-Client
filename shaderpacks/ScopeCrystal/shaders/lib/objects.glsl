@@ -1,10 +1,10 @@
 // Voxel-Objekte: je Ort eins (objects_spec.glsl). Schweben bei der Ankunft in Spiralen von oben ein, setzen sich Wuerfel fuer Wuerfel
 // zusammen, federn nach, schicken eine Lichtwelle ueber den Boden und leben dann ruhig weiter. Deckend, mit eigener Tiefe.
-// Alles, was je Bild gleich ist, rechnet composite_vsh einmal: Platz 0 = Hub-Herz, Platz 1 = naechster anderer Ort.
-flat in vec4 obA[2];                    // Mitte, Bloecke pro Voxel
-flat in vec4 obB[2];                    // Sinken e, Sekunden seit Landung, Herzschlag, Zusammenbau
-flat in vec4 obC[2];                    // Drehung cos/sin, Sichtbarkeit, Landeblitz
-flat in int obT[2];                     // Objekt, -1 = keins
+// Alles, was je Bild gleich ist, rechnet composite_vsh einmal: Platz 0 = Hub-Herz, Platz 1 = naechstes Gebaeude, Platz 2 = Lobby-Schwerter.
+flat in vec4 obA[3];                    // Mitte, Bloecke pro Voxel
+flat in vec4 obB[3];                    // Sinken e, Sekunden seit Landung, Herzschlag, Zusammenbau
+flat in vec4 obC[3];                    // Drehung cos/sin, Sichtbarkeit, Landeblitz
+flat in int obT[3];                     // Objekt, -1 = keins
 
 // Pixel-Herz wie im Server-Icon: 13 x 12, je Zelle 2 Bit (0 leer, 1 Umriss, 2 Blau, 3 Glanz), Zeile 0 = oben
 const int HEART[12] = int[12](1376592, 6964900, 27941565, 27962029, 27634025, 27634025, 6990500, 1747600, 436800, 108800, 25600, 4096);

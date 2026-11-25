@@ -29,23 +29,26 @@ vec4 objRest(int p) {
 }
 float objGround(int p) { return p == 3 ? 104.0 : 101.0; }
 
-// Gebaute Bloecke ausblenden, solange das Voxel-Objekt des Ortes zu sehen ist
+// Reichweite der Ankunft (Abstand zur Ortsmitte): die Schwerter sind schon im ganzen Hub da
+float objRange(int p) { return p == 1 ? 84.0 : placeRange(p).z + 2.0; }
+
+// Gebaute Bloecke (fuer Spieler ohne Effekte) sind immer ausgeblendet, auch von weitem
 bool objHidden(vec3 w) {
     if (w.z > -380.0 || w.y < 106.5 || w.y > 130.0) return false;
 #ifdef FX_HUB_HEART
-    if (abs(w.x - 0.5) < 7.0) { if (abs(w.z + 454.5) < 1.6) return w.y > 110.9 && w.y < 123.1 && objTime(0) > 0.02; }
+    if (abs(w.x - 0.5) < 7.0) { if (abs(w.z + 454.5) < 1.6) return w.y > 110.9 && w.y < 123.1; }
 #endif
 #ifdef FX_HALL_CUP
-    if (w.z < -540.0) return w.y > 106.98 && w.y < 121.5 && length(w.xz - vec2(0.5, -554.5)) < 7.3 && objTime(3) > 0.02;
+    if (w.z < -540.0) return w.y > 106.98 && w.y < 121.5 && length(w.xz - vec2(0.5, -554.5)) < 7.3;
 #endif
 #ifdef FX_LOBBY_SWORDS
-    if (w.z > -410.0) return w.y > 111.9 && w.y < 127.1 && abs(w.x - 0.5) < 7.6 && abs(w.z + 399.5) < 1.6 && objTime(1) > 0.02;
+    if (w.z > -410.0) return w.y > 111.9 && w.y < 127.1 && abs(w.x - 0.5) < 7.6 && abs(w.z + 399.5) < 1.6;
 #endif
 #ifdef FX_WORLD_SPHERE
-    if (w.x < -60.0) return length(w - vec3(CHAL.x, 121.5, CHAL.z)) < 7.95 && objTime(4) > 0.02;
+    if (w.x < -60.0) return length(w - vec3(CHAL.x, 121.5, CHAL.z)) < 7.95;
 #endif
 #ifdef FX_ARCADE_CUBE
-    if (w.x > 60.0) return w.y > 106.98 && w.y < 114.02 && max(abs(w.x - ARCADE.x), abs(w.z - ARCADE.z)) < 3.6 && objTime(5) > 0.02;
+    if (w.x > 60.0) return w.y > 106.98 && w.y < 114.02 && max(abs(w.x - ARCADE.x), abs(w.z - ARCADE.z)) < 3.6;
 #endif
     return false;
 }

@@ -126,12 +126,12 @@ void main() {
     float ft = frameTimeCounter;
     bool objHit = false;
     if (cameraPosition.z < -200.0) {                        // Voxel-Objekte zuerst: deckend, alles dahinter bleibt verdeckt
-        for (int i = 0; i < 2; i++) if (obT[i] >= 0) {
+        for (int i = 0; i < 3; i++) if (obT[i] >= 0) {
             float h;
             vec3 oc = objTrace(i, camW, dir, sceneDist, h);
             if (h > 0.0) { color = oc; sceneDist = h; objHit = true; surf = false; }
         }
-        for (int i = 0; i < 2; i++) if (obT[i] >= 0) {
+        for (int i = 0; i < 3; i++) if (obT[i] >= 0) {
             color += objGlow(i, camW, dir, sceneDist);
             if (surf) color += objWave(i, wp, nW);
         }

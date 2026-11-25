@@ -14,7 +14,7 @@ void main() {
         int p = px.x - 2;
         vec4 h = texelFetch(colortex4, px, 0);
         float s = abs(h.w - 2611.0) < 0.1 ? h.x : 0.0;
-        bool here = objOn(p) && length(cameraPosition.xz - placeCenter(p).xz) < placeRange(p).z + 2.0;
+        bool here = objOn(p) && length(cameraPosition.xz - placeCenter(p).xz) < objRange(p);
         s = clamp(s + min(frameTime, 0.1) * (here ? 1.0 : -2.0), 0.0, OBJ_FULL);
         outState = vec4(s, 0.0, 0.0, 2611.0);
         return;

@@ -10,8 +10,8 @@ flat out float fxAct[6];                                // Aufbau je Ort (lib/pl
 uniform float skyPosX, skyPosZ;                         // geglaettete Position: auch Teleports bauen weich auf
 #include "/lib/places.glsl"
 uniform float frameTimeCounter;
-flat out vec4 obA[2], obB[2], obC[2];                   // Voxel-Objekte (lib/objects.glsl)
-flat out int obT[2];
+flat out vec4 obA[3], obB[3], obC[3];                   // Voxel-Objekte (lib/objects.glsl)
+flat out int obT[3];
 #include "/lib/objects_spec.glsl"
 flat out int fxSeen;                                   // ein Bit je Effekt-Bereich im Blickfeld
 
@@ -44,13 +44,14 @@ void main() {
     mat4 m = gbufferProjection * gbufferModelView;
     vec3 local = cameraPosition;                        // Arena-Kiste liegt in Insel-Koordinaten
     local.x -= arenaOffsetX(arenaSideAt(cameraPosition));
-    // Voxel-Objekte: Platz 0 Hub-Herz, Platz 1 der naechste andere Ort
+    // Voxel-Objekte: Platz 0 Hub-Herz, Platz 1 das naechste Gebaeude, Platz 2 die Lobby-Schwerter
     obT[0] = objOn(0) && objTime(0) > 0.0 ? 0 : -1;
     obT[1] = -1;
+    obT[2] = objOn(1) && objTime(1) > 0.0 ? 1 : -1;
     float closest = 1e6;
-    for (int p = 1; p < 6; p++) if (objOn(p) && objTime(p) > 0.0 && length(cameraPosition.xz - placeCenter(p).xz) < closest) { closest = length(cameraPosition.xz - placeCenter(p).xz); obT[1] = p; }
+    for (int p = 3; p < 6; p++) if (objOn(p) && objTime(p) > 0.0 && length(cameraPosition.xz - placeCenter(p).xz) < closest) { closest = length(cameraPosition.xz - placeCenter(p).xz); obT[1] = p; }
     float tm = frameTimeCounter;
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 3; i++) {
         int p = max(obT[i], 0);
         vec4 rest = objRest(p);
         float ht = objTime(p), he = clamp(ht / OBJ_LAND, 0.0, 1.0), hr = 1.0 - he, ha = max(ht - OBJ_LAND, 0.0);

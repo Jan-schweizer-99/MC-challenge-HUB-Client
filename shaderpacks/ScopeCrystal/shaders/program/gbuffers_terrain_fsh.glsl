@@ -24,6 +24,7 @@ layout(location = 2) out vec4 outLight;   // Lightmap (Fackel, Himmel)
 #ifdef PVP_WORLD
 #include "/lib/arena_floor.glsl"
 #include "/lib/hub_floor.glsl"
+#include "/lib/places.glsl"
 #include "/lib/objects_spec.glsl"
 bool terrainFx(int mask) { return !arenaPaletteRegion(worldPos) || fxOn(mask, arenaSideAt(worldPos)); }
 #endif
