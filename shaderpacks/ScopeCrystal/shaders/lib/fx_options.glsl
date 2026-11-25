@@ -1,13 +1,22 @@
 // Effekt-Schalter (Menue "Stage Effects").
 // FX_ARENA_MODE 0: alle Arena-Effekte aus. 1: die allgemeinen Schalter FX_ALL_* gelten fuer alle Arenen.
 // 2: jede Arena nutzt ihre eigenen Schalter (Untermenues Ice, Lava, End).
-// FX_HUB, FX_ICE, FX_LAVA, FX_END sind Hauptschalter ihres Bereichs.
+// FX_HUB, FX_TEMPLE, FX_ICE, FX_LAVA, FX_END sind Hauptschalter ihres Bereichs.
 #define FX_HUB // All hub effects
 #define FX_HUB_AURORA // Northern lights above the hub.
 #define FX_HUB_HEART // The floating, spinning heart in the middle.
 #define FX_HUB_FLOOR // Round light waves, grid and twinkle on the floor.
 #define FX_HUB_PILLARS // Light above the ten pedestals.
 #define FX_HUB_SNOW // Slowly sinking bright dots.
+#define FX_TEMPLE // All arena temple effects
+#define FX_TEMPLE_CRYSTAL // Glow and rising pulses of the crystal column.
+#define FX_TEMPLE_HELIX // Two mirrored light bands around the crystal.
+#define FX_TEMPLE_BEAM // Beam of light from the dome into the sky.
+#define FX_TEMPLE_HALO // Rune rings floating above the dome.
+#define FX_TEMPLE_FLOOR // Light circles and soft waves on every floor.
+#define FX_TEMPLE_FALLS // Curtain of light falling from the island.
+#define FX_TEMPLE_FIREFLIES // Fireflies between columns and vines.
+#define FX_TEMPLE_BRIDGE // Light pulses running along the bridge.
 #define FX_ARENA_MODE 1 // [0 1 2] Arena effects: off, same everywhere, per stage
 #define FX_ALL_AURA // Soft glow above the beacon.
 #define FX_ALL_ORBS // Light orbs with trails around the center.
@@ -82,6 +91,16 @@
 #define FX_END_TORCHES // Torches and their light in arena colors.
 #define FX_END_CRYSTALS // Crystal blocks pulse with light.
 #define FX_END_BEAMS // Crystal beams, End arena only.
+#ifndef FX_TEMPLE
+#undef FX_TEMPLE_CRYSTAL
+#undef FX_TEMPLE_HELIX
+#undef FX_TEMPLE_BEAM
+#undef FX_TEMPLE_HALO
+#undef FX_TEMPLE_FLOOR
+#undef FX_TEMPLE_FALLS
+#undef FX_TEMPLE_FIREFLIES
+#undef FX_TEMPLE_BRIDGE
+#endif
 #ifndef FX_HUB
 #undef FX_HUB_AURORA
 #undef FX_HUB_HEART

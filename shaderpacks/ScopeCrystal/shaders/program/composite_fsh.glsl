@@ -8,6 +8,7 @@
 #include "/lib/fx_common.glsl"
 #include "/lib/hub.glsl"
 #include "/lib/arena.glsl"
+#include "/lib/temple.glsl"
 #endif
 
 
@@ -110,6 +111,7 @@ void main() {
 #ifdef PVP_WORLD
     bool surf = depth0 < 1.0 && mat >= 0;
     color += hub(camW, dir, sceneDist, surf, wp, nW);
+    color += temple(camW, dir, sceneDist, surf, wp, nW);
     vec3 effectCamera = camW, effectWorld = wp;
     if (portalSceneCamera(cameraPosition)) {
         float viewSide = portalPixelSide(wp, camW, cameraPosition);
