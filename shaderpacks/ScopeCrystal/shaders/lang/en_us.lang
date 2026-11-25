@@ -289,3 +289,5 @@ option.FX_WORLD_BEAM=Sky beam
 option.FX_WORLD_BEAM.comment=Beam of light into the sky, always visible.
 option.FX_ARCADE_BEAM=Sky beam
 option.FX_ARCADE_BEAM.comment=Beam of light into the sky, always visible.
+option.PORTAL_VIEW=Live portal
+option.PORTAL_VIEW.comment=Live view through the ice and fire portal. Off = the game skips everything you cannot see, more FPS.

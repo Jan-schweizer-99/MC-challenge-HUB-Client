@@ -289,3 +289,5 @@ option.FX_WORLD_BEAM=Himmelsstrahl
 option.FX_WORLD_BEAM.comment=Lichtstrahl in den Himmel, immer sichtbar.
 option.FX_ARCADE_BEAM=Himmelsstrahl
 option.FX_ARCADE_BEAM.comment=Lichtstrahl in den Himmel, immer sichtbar.
+option.PORTAL_VIEW=Live-Portal
+option.PORTAL_VIEW.comment=Echter Blick durch das Eis-Feuer-Portal. Aus = das Spiel laesst alles weg, was du nicht siehst, mehr FPS.

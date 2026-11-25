@@ -2,6 +2,7 @@
 // FX_ARENA_MODE 0: alle Arena-Effekte aus. 1: die allgemeinen Schalter FX_ALL_* gelten fuer alle Arenen.
 // 2: jede Arena nutzt ihre eigenen Schalter (Untermenues Ice, Lava, End).
 // FX_HUB, FX_LOBBY, FX_TEMPLE, FX_HALL, FX_ICE, FX_LAVA, FX_END sind Hauptschalter ihres Bereichs.
+#define PORTAL_VIEW // Live view through the ice and fire portal. Off = normal culling, more FPS.
 #define FX_HUB // All hub effects, with lobby, bridges, side places, temple and Hall of Fame
 #define FX_HUB_AURORA // Northern lights above the hub.
 #define FX_HUB_HEART // The floating, spinning heart in the middle.
