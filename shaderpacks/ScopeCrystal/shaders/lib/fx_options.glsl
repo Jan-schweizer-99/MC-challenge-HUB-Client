@@ -1,11 +1,33 @@
-// Effekt-Schalter je Stage (Menue "Stage Effects"): Hub und jede Arena einzeln.
-// Die Ueberschriften im Menue (FX_HUB, FX_ICE, FX_LAVA, FX_END) sind Hauptschalter.
+// Effekt-Schalter (Menue "Stage Effects").
+// FX_GENERAL an: die allgemeinen Schalter FX_ALL_* gelten fuer alle Arenen.
+// FX_GENERAL aus: jede Arena nutzt ihre eigenen Schalter (Untermenues Ice, Lava, End).
+// FX_HUB, FX_ARENAS, FX_ICE, FX_LAVA, FX_END sind Hauptschalter ihres Bereichs.
 #define FX_HUB // All hub effects
 #define FX_HUB_AURORA // Northern lights above the hub.
 #define FX_HUB_HEART // The floating, spinning heart in the middle.
 #define FX_HUB_FLOOR // Pixel waves, grid and twinkle on the floor.
 #define FX_HUB_PILLARS // Light above the ten pedestals.
 #define FX_HUB_SNOW // Slowly sinking bright dots.
+#define FX_ARENAS // All arena effects
+#define FX_GENERAL // Same settings in all arenas
+#define FX_ALL_AURA // Soft glow above the beacon.
+#define FX_ALL_ORBS // Light orbs with trails around the center.
+#define FX_ALL_SHAFT // Light rings and rising sparks in the center.
+#define FX_ALL_COMETS // Flying cubes with glowing edges and trails.
+#define FX_ALL_ARCS // Light paths of the jump pads.
+#define FX_ALL_SKY // Aurora, in the End arena the ender sky.
+#define FX_ALL_ROUND_FLOOR // Smooth round rings instead of blocky ones.
+#define FX_ALL_CIRCLES // Thin light circles and scale on the floor.
+#define FX_ALL_WAVES // Waves running out from the center.
+#define FX_ALL_SPOKES // Light pulses on the floor spokes.
+#define FX_ALL_SPARKLE // Sparkle on the outer ring.
+#define FX_ALL_SPAWNS // Pulsing rings around the spawn blocks.
+#define FX_ALL_EDGES // Glowing block edges on walls and stands.
+#define FX_ALL_DOTS // Dots running along the stands.
+#define FX_ALL_PILLARS // Glow and pulses in the wall pillars.
+#define FX_ALL_TORCHES // Torches and their light in arena colors.
+#define FX_ALL_CRYSTALS // Crystal blocks pulse with light.
+#define FX_ALL_BEAMS // Crystal beams, End arena only.
 #define FX_ICE // All effects of this arena
 #define FX_ICE_AURA // Soft glow above the beacon.
 #define FX_ICE_ORBS // Light orbs with trails around the center.
@@ -126,8 +148,172 @@
 #undef FX_END_CRYSTALS
 #undef FX_END_BEAMS
 #endif
+#ifndef FX_ARENAS
+#undef FX_ALL_AURA
+#undef FX_ALL_ORBS
+#undef FX_ALL_SHAFT
+#undef FX_ALL_COMETS
+#undef FX_ALL_ARCS
+#undef FX_ALL_SKY
+#undef FX_ALL_ROUND_FLOOR
+#undef FX_ALL_CIRCLES
+#undef FX_ALL_WAVES
+#undef FX_ALL_SPOKES
+#undef FX_ALL_SPARKLE
+#undef FX_ALL_SPAWNS
+#undef FX_ALL_EDGES
+#undef FX_ALL_DOTS
+#undef FX_ALL_PILLARS
+#undef FX_ALL_TORCHES
+#undef FX_ALL_CRYSTALS
+#undef FX_ALL_BEAMS
+#undef FX_ICE_AURA
+#undef FX_ICE_ORBS
+#undef FX_ICE_SHAFT
+#undef FX_ICE_COMETS
+#undef FX_ICE_ARCS
+#undef FX_ICE_SKY
+#undef FX_ICE_ROUND_FLOOR
+#undef FX_ICE_CIRCLES
+#undef FX_ICE_WAVES
+#undef FX_ICE_SPOKES
+#undef FX_ICE_SPARKLE
+#undef FX_ICE_SPAWNS
+#undef FX_ICE_EDGES
+#undef FX_ICE_DOTS
+#undef FX_ICE_PILLARS
+#undef FX_ICE_TORCHES
+#undef FX_ICE_CRYSTALS
+#undef FX_LAVA_AURA
+#undef FX_LAVA_ORBS
+#undef FX_LAVA_SHAFT
+#undef FX_LAVA_COMETS
+#undef FX_LAVA_ARCS
+#undef FX_LAVA_SKY
+#undef FX_LAVA_ROUND_FLOOR
+#undef FX_LAVA_CIRCLES
+#undef FX_LAVA_WAVES
+#undef FX_LAVA_SPOKES
+#undef FX_LAVA_SPARKLE
+#undef FX_LAVA_SPAWNS
+#undef FX_LAVA_EDGES
+#undef FX_LAVA_DOTS
+#undef FX_LAVA_PILLARS
+#undef FX_LAVA_TORCHES
+#undef FX_LAVA_CRYSTALS
+#undef FX_END_AURA
+#undef FX_END_ORBS
+#undef FX_END_SHAFT
+#undef FX_END_COMETS
+#undef FX_END_ARCS
+#undef FX_END_SKY
+#undef FX_END_ROUND_FLOOR
+#undef FX_END_CIRCLES
+#undef FX_END_WAVES
+#undef FX_END_SPOKES
+#undef FX_END_SPARKLE
+#undef FX_END_SPAWNS
+#undef FX_END_EDGES
+#undef FX_END_DOTS
+#undef FX_END_PILLARS
+#undef FX_END_TORCHES
+#undef FX_END_CRYSTALS
+#undef FX_END_BEAMS
+#endif
 
 // Je Effekt eine Maske: 1 = Eis, 2 = Lava, 4 = End; 0 = nirgends, wird nicht kompiliert
+#ifdef FX_GENERAL
+#ifdef FX_ALL_AURA
+#define FXM_AURA 7
+#else
+#define FXM_AURA 0
+#endif
+#ifdef FX_ALL_ORBS
+#define FXM_ORBS 7
+#else
+#define FXM_ORBS 0
+#endif
+#ifdef FX_ALL_SHAFT
+#define FXM_SHAFT 7
+#else
+#define FXM_SHAFT 0
+#endif
+#ifdef FX_ALL_COMETS
+#define FXM_COMETS 7
+#else
+#define FXM_COMETS 0
+#endif
+#ifdef FX_ALL_ARCS
+#define FXM_ARCS 7
+#else
+#define FXM_ARCS 0
+#endif
+#ifdef FX_ALL_SKY
+#define FXM_SKY 7
+#else
+#define FXM_SKY 0
+#endif
+#ifdef FX_ALL_ROUND_FLOOR
+#define FXM_ROUND_FLOOR 7
+#else
+#define FXM_ROUND_FLOOR 0
+#endif
+#ifdef FX_ALL_CIRCLES
+#define FXM_CIRCLES 7
+#else
+#define FXM_CIRCLES 0
+#endif
+#ifdef FX_ALL_WAVES
+#define FXM_WAVES 7
+#else
+#define FXM_WAVES 0
+#endif
+#ifdef FX_ALL_SPOKES
+#define FXM_SPOKES 7
+#else
+#define FXM_SPOKES 0
+#endif
+#ifdef FX_ALL_SPARKLE
+#define FXM_SPARKLE 7
+#else
+#define FXM_SPARKLE 0
+#endif
+#ifdef FX_ALL_SPAWNS
+#define FXM_SPAWNS 7
+#else
+#define FXM_SPAWNS 0
+#endif
+#ifdef FX_ALL_EDGES
+#define FXM_EDGES 7
+#else
+#define FXM_EDGES 0
+#endif
+#ifdef FX_ALL_DOTS
+#define FXM_DOTS 7
+#else
+#define FXM_DOTS 0
+#endif
+#ifdef FX_ALL_PILLARS
+#define FXM_PILLARS 7
+#else
+#define FXM_PILLARS 0
+#endif
+#ifdef FX_ALL_TORCHES
+#define FXM_TORCHES 7
+#else
+#define FXM_TORCHES 0
+#endif
+#ifdef FX_ALL_CRYSTALS
+#define FXM_CRYSTALS 7
+#else
+#define FXM_CRYSTALS 0
+#endif
+#ifdef FX_ALL_BEAMS
+#define FXM_BEAMS 4
+#else
+#define FXM_BEAMS 0
+#endif
+#else
 #ifdef FX_ICE_AURA
 #define FXI_AURA 1
 #else
@@ -406,6 +592,7 @@
 #define FXE_BEAMS 0
 #endif
 #define FXM_BEAMS (FXE_BEAMS)
+#endif
 
 // Ist der Effekt in dieser Arena an? (side: 0 Eis, 1 Lava, 2 End)
 bool fxOn(int mask, int side) { return ((mask >> side) & 1) == 1; }
