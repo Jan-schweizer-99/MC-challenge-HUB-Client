@@ -479,6 +479,7 @@ vec3 arena(vec3 camW, vec3 dir, float sceneDist, bool hasSurface, bool isSky, ve
     if (length(rel.xz) > 90.0 || abs(rel.y) > 70.0) return vec3(0.0);
     float t = frameTimeCounter;
     vec3 col = vec3(0.0);
+    if (fxSee(FXV_ARENA, camW, dir, sceneDist)) {        // Himmel (unten) gilt immer
 #if FXM_AURA + FXM_ORBS > 0
     col += crystalAura(camW, dir, sceneDist, t, side);
 #endif
@@ -506,6 +507,7 @@ vec3 arena(vec3 camW, vec3 dir, float sceneDist, bool hasSurface, bool isSky, ve
     if (side == 2) col += endBeams(camW, dir, sceneDist, t);
     }
 #endif
+    }
 #if FXM_SKY > 0
     if (fxOn(FXM_SKY, side)) {
     if (isSky) col += side == 2 ? endSky(dir, t) : aurora(dir, t);

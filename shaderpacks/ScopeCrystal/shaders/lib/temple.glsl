@@ -158,14 +158,15 @@ vec3 temple(vec3 camW, vec3 dir, float sceneDist, bool hasSurface, vec3 wp, vec3
     if (length(rel.xz) > 150.0 || abs(rel.y) > 120.0) return vec3(0.0);
     float t = frameTimeCounter;
     vec3 col = vec3(0.0);
+#ifdef FX_TEMPLE_BEAM
+    if (fxSee(FXV_BEAM, camW, dir, sceneDist)) col += templeBeam(camW, dir, sceneDist, t);
+#endif
+    if (!fxSee(FXV_TEMPLE, camW, dir, sceneDist)) return col;
 #ifdef FX_TEMPLE_CRYSTAL
     col += templeCrystal(camW, dir, sceneDist, t);
 #endif
 #ifdef FX_TEMPLE_HELIX
     col += templeHelix(camW, dir, sceneDist, t);
-#endif
-#ifdef FX_TEMPLE_BEAM
-    col += templeBeam(camW, dir, sceneDist, t);
 #endif
 #ifdef FX_TEMPLE_HALO
     col += templeHalo(camW, dir, sceneDist, t);

@@ -6,6 +6,9 @@
 #include "/lib/common.glsl"
 #ifdef PVP_WORLD
 #include "/lib/fx_common.glsl"
+#include "/lib/fx_view.glsl"
+flat in int fxSeen;
+bool fxSee(int i, vec3 camW, vec3 dir, float sceneDist) { return (fxSeen >> i & 1) != 0 && fxRayBox(i, camW, dir, sceneDist); }
 #include "/lib/hub.glsl"
 #include "/lib/arena.glsl"
 #include "/lib/temple.glsl"
@@ -113,9 +116,9 @@ void main() {
 #ifdef PVP_WORLD
     bool surf = depth0 < 1.0 && mat >= 0;
     color += hub(camW, dir, sceneDist, surf, wp, nW);
-    color += temple(camW, dir, sceneDist, surf, wp, nW);
-    color += lobby(camW, dir, sceneDist, surf, wp, nW);
-    color += hall(camW, dir, sceneDist, surf, wp, nW);
+    if (fxSee(FXV_TEMPLE, camW, dir, sceneDist) || fxSee(FXV_BEAM, camW, dir, sceneDist)) color += temple(camW, dir, sceneDist, surf, wp, nW);
+    if (fxSee(FXV_LOBBY, camW, dir, sceneDist)) color += lobby(camW, dir, sceneDist, surf, wp, nW);
+    if (fxSee(FXV_HALL, camW, dir, sceneDist)) color += hall(camW, dir, sceneDist, surf, wp, nW);
     vec3 effectCamera = camW, effectWorld = wp;
     if (portalSceneCamera(cameraPosition)) {
         float viewSide = portalPixelSide(wp, camW, cameraPosition);

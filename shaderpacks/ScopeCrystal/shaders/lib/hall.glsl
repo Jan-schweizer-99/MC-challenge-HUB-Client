@@ -145,20 +145,21 @@ vec3 hall(vec3 camW, vec3 dir, float sceneDist, bool hasSurface, vec3 wp, vec3 n
     if (length(rel.xz) > 160.0 || abs(rel.y) > 120.0) return vec3(0.0);
     float t = frameTimeCounter;
     vec3 col = vec3(0.0);
+    bool inside = fxSee(FXV_HALL_IN, camW, dir, sceneDist), top = fxSee(FXV_HALL_TOP, camW, dir, sceneDist);
 #ifdef FX_HALL_TROPHY
-    col += hallTrophy(camW, dir, sceneDist, t);
+    if (inside) col += hallTrophy(camW, dir, sceneDist, t);
 #endif
 #ifdef FX_HALL_CROWN
-    col += hallCrown(camW, dir, sceneDist, hasSurface, wp, nW, t);
+    if (top) col += hallCrown(camW, dir, sceneDist, hasSurface, wp, nW, t);
 #endif
 #ifdef FX_HALL_BURST
-    col += hallBurst(camW, dir, sceneDist, t);
+    if (top) col += hallBurst(camW, dir, sceneDist, t);
 #endif
 #ifdef FX_HALL_NICHES
-    col += hallNiches(camW, dir, sceneDist, hasSurface, wp, nW, t);
+    if (inside) col += hallNiches(camW, dir, sceneDist, hasSurface, wp, nW, t);
 #endif
 #ifdef FX_HALL_DUST
-    col += hallDust(camW, dir, sceneDist, t);
+    if (inside) col += hallDust(camW, dir, sceneDist, t);
 #endif
 #ifdef FX_HALL_FLOOR
     if (hasSurface) col += hallFloor(wp, nW, t);

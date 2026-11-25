@@ -198,8 +198,9 @@ vec3 hub(vec3 camW, vec3 dir, float sceneDist, bool hasSurface, vec3 wp, vec3 nW
     if (max(abs(rel.x), abs(rel.z)) > 120.0 || abs(rel.y) > 80.0) return vec3(0.0);
     vec3 col = vec3(0.0);
 #ifdef FX_HUB_AURORA
-    col += hubAurora(camW, dir, sceneDist);
+    if (fxSee(FXV_AURORA, camW, dir, sceneDist)) col += hubAurora(camW, dir, sceneDist);
 #endif
+    if (!fxSee(FXV_HUB, camW, dir, sceneDist)) return col;
 #ifdef FX_HUB_HEART
     col += hubHeart(camW, dir, sceneDist);
 #endif
