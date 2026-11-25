@@ -8,6 +8,7 @@
 #define FX_HUB_FLOOR // Round light waves, grid and twinkle on the floor.
 #define FX_HUB_PILLARS // Light above the ten pedestals.
 #define FX_HUB_SNOW // Slowly sinking bright dots.
+#define FX_HUB_ROUND // Smooth round rings on the hub floor instead of blocky ones.
 #define FX_LOBBY // All lobby and bridge effects
 #define FX_LOBBY_CRYSTAL // Glow and pulses of the crystal above the island.
 #define FX_LOBBY_RING // Light ring above the pavilion.
@@ -16,6 +17,7 @@
 #define FX_LOBBY_BOARDS // Running light on the arena and game mode boards.
 #define FX_LOBBY_FROST // Sparkling ice where the bridge meets the hub.
 #define FX_LOBBY_BRIDGE // Light pulses running along the bridges.
+#define FX_LOBBY_ROUND // Smooth round rings on the lobby island.
 #define FX_TEMPLE // All arena temple effects
 #define FX_TEMPLE_CRYSTAL // Glow and rising pulses of the crystal column.
 #define FX_TEMPLE_HELIX // Two mirrored light bands around the crystal.
@@ -25,6 +27,7 @@
 #define FX_TEMPLE_FALLS // Curtain of light falling from the island.
 #define FX_TEMPLE_FIREFLIES // Fireflies between columns and vines.
 #define FX_TEMPLE_LIFTS // Light columns above the lifts.
+#define FX_TEMPLE_ROUND // Smooth round rings on every temple floor.
 #define FX_ARENA_MODE 1 // [0 1 2] Arena effects: off, same everywhere, per stage
 #define FX_ALL_AURA // Soft glow above the beacon.
 #define FX_ALL_ORBS // Light orbs with trails around the center.
@@ -105,6 +108,7 @@
 #undef FX_HUB_FLOOR
 #undef FX_HUB_PILLARS
 #undef FX_HUB_SNOW
+#undef FX_HUB_ROUND
 #undef FX_LOBBY
 #undef FX_TEMPLE
 #endif
@@ -116,6 +120,7 @@
 #undef FX_LOBBY_BOARDS
 #undef FX_LOBBY_FROST
 #undef FX_LOBBY_BRIDGE
+#undef FX_LOBBY_ROUND
 #endif
 #ifndef FX_TEMPLE
 #undef FX_TEMPLE_CRYSTAL
@@ -126,6 +131,7 @@
 #undef FX_TEMPLE_FALLS
 #undef FX_TEMPLE_FIREFLIES
 #undef FX_TEMPLE_LIFTS
+#undef FX_TEMPLE_ROUND
 #endif
 #ifndef FX_ICE
 #undef FX_ICE_AURA

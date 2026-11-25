@@ -23,6 +23,7 @@ layout(location = 2) out vec4 outLight;
 
 #ifdef PVP_WORLD
 #include "/lib/arena_floor.glsl"
+#include "/lib/hub_floor.glsl"
 #endif
 
 void main() {
@@ -58,7 +59,8 @@ void main() {
     // Darum seine durchsichtigen Pixel NICHT verwerfen – sonst bleibt nur das Rahmengitter übrig.
     vec3 nW = mat3(gbufferModelViewInverse) * normalize(viewNormal);
     bool roundTop = arenaRole == 4 && arenaFloorSurface(worldPos, nW);
-    if (c.a < 0.02 && !roundTop) discard;
+    int hubZone = arenaRole == 5 ? hubFloorZone(worldPos, nW) : 0;          // Glasstreifen im Boden werden mit gemalt
+    if (c.a < 0.02 && !roundTop && hubZone == 0) discard;
 #else
     if (c.a < 0.02) discard;
 #endif
@@ -68,6 +70,7 @@ void main() {
 #endif
     int surfaceMat = mat == 0 ? 2 : mat;
 #ifdef PVP_WORLD
+    if (hubZone > 0) c = vec4(hubRoundFloor(hubZone, worldPos, glcolor.rgb, texture(lightmap, lmcoord).rgb, frameTimeCounter, surfaceMat), 1.0);
     if (roundTop) {
         c = vec4(roundArenaFloor(worldPos, glcolor.rgb, texture(lightmap, lmcoord).rgb, frameTimeCounter), 1.0);
         surfaceMat = 3;

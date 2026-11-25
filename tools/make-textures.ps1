@@ -41,7 +41,7 @@ New-Item -ItemType Directory -Force $OutDir | Out-Null
 $zip = [IO.Compression.ZipFile]::OpenRead($Jar)
 try {
     $mat = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'materials.json') -Raw | ConvertFrom-Json
-    $names = @($mat | ForEach-Object { $_.blueTex; $_.lavaTex }) + @($mat | ForEach-Object { $_.endTex })   # end column starts at 36
+    $names = @($mat | ForEach-Object { $_.blueTex; $_.lavaTex }) + @($mat | ForEach-Object { $_.endTex }) + @('packed_ice', 'snow')   # end column starts at 36, hub extras at 54
     New-Atlas $zip $names $true (Join-Path $OutDir 'arena-palette.png')
     New-Atlas $zip @('polished_blackstone', 'blackstone', 'magma', 'lava_still') $false (Join-Path $OutDir 'lava-floor.png')
 } finally { $zip.Dispose() }

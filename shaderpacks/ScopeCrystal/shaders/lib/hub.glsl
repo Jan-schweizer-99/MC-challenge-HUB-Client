@@ -111,7 +111,14 @@ vec3 hubFloor(vec3 wp, vec3 nW) {
     vec3 fw = max(fwidth(wp), vec3(1e-4));
     vec2 d1 = abs(fract(wp.xz - 0.5) - 0.5) / fw.xz;
     float line = max(1.0 - clamp(d1.x - 0.5, 0.0, 1.0), 1.0 - clamp(d1.y - 0.5, 0.0, 1.0));
+#ifdef FX_HUB_ROUND
+    line = 0.0;                                                             // kein Blockgitter, nur feine Funken
+    vec2 px = floor(vec2(abs(wp.x - 0.5), wp.z) * 16.0);
+    float h = hash12(px);
+    float twinkle = step(0.9975, h) * pow(0.5 + 0.5 * sin(t * (1.0 + 2.0 * fract(h * 713.0)) + h * 5000.0), 6.0) * (1.0 - smoothstep(0.03, 0.09, fr));
+#else
     float twinkle = step(0.985, hash12(cell + vec2(floor(t * 2.0))));
+#endif
     return vec3(0.45, 0.85, 1.0) * (line * 0.07) + waves + vec3(0.9, 0.97, 1.0) * twinkle * 0.35;
 }
 

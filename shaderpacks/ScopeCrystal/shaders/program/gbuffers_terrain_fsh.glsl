@@ -23,6 +23,7 @@ layout(location = 2) out vec4 outLight;   // Lightmap (Fackel, Himmel)
 
 #ifdef PVP_WORLD
 #include "/lib/arena_floor.glsl"
+#include "/lib/hub_floor.glsl"
 bool terrainFx(int mask) { return !arenaPaletteRegion(worldPos) || fxOn(mask, arenaSideAt(worldPos)); }
 #endif
 
@@ -138,6 +139,11 @@ void main() {
         c.rgb = roundArenaFloor(worldPos, glcolor.rgb, light, frameTimeCounter);
         c.a = 1.0;                            // auch über Glas (Lava-Insel) deckend
         surfaceMat = 3;
+    }
+    int hubZone = crystal == 1 ? 0 : hubFloorZone(worldPos, nW);
+    if (hubZone > 0) {                        // runde Böden in Hub, Insel und Tempel
+        c.rgb = hubRoundFloor(hubZone, worldPos, glcolor.rgb, light, frameTimeCounter, surfaceMat);
+        c.a = 1.0;
     }
     if (terrainFx(FXM_CRYSTALS)) {
     if (crystal == 1) {                       // Kristalle leuchten pulsierend von selbst
