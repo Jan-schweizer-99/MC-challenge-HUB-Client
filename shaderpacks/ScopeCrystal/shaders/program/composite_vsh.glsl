@@ -13,6 +13,9 @@ uniform float frameTimeCounter;
 flat out vec4 obA[3], obB[3], obC[3];                   // Voxel-Objekte (lib/objects.glsl)
 flat out int obT[3];
 #include "/lib/objects_spec.glsl"
+flat out int islesSeen;                                // one bit per floating island in view (lib/isles.glsl)
+#define ISLES_VERTEX
+#include "/lib/isles.glsl"
 flat out int fxSeen;                                   // ein Bit je Effekt-Bereich im Blickfeld
 
 bool fxInView(int i, mat4 m, vec3 cam) {
@@ -74,6 +77,7 @@ void main() {
 #endif
     bool on[14] = bool[14](fxAct[PL_HUB] > 0.002, fxAct[PL_HUB] > 0.002, fxAct[PL_TEMPLE] > 0.002, true, fxAct[PL_LOBBY] > 0.002, fxAct[PL_HALL] > 0.002, fxAct[PL_HALL] > 0.002,
         fxAct[PL_HALL] > 0.002, true, fxAct[PL_WORLD] > 0.002, fxAct[PL_ARCADE] > 0.002, true, true, true);
+    islesSeen = cameraPosition.z < -200.0 ? islesVisible(gbufferModelView, cameraPosition) : 0;
     fxSeen = 0;
     for (int i = 0; i < FXV_COUNT; i++) if (on[i] && fxNear(i, i == FXV_ARENA ? local : cameraPosition) && fxInView(i, m, i == FXV_ARENA ? local : cameraPosition)) fxSeen |= 1 << i;
 #endif

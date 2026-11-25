@@ -34,6 +34,13 @@
 #define FX_TEMPLE_FIREFLIES // Fireflies between columns and vines.
 #define FX_TEMPLE_LIFTS // Light columns above the lifts.
 #define FX_TEMPLE_ROUND // Smooth round rings on every temple floor.
+#define FX_ISLES // All effects of the floating islands
+#define FX_ISLES_GLOW // Soft light below the islands.
+#define FX_ISLES_VEINS // Veins of light in the rock, sparks on top.
+#define FX_ISLES_FALLS // Frozen waterfalls start to flow.
+#define FX_ISLES_SPIRITS // Small lights wandering around the islands.
+#define FX_ISLES_LINKS // Threads of light between the islands.
+#define FX_ISLES_MAGIC // The wonder of each island: whale, moon gate, crystals, petals.
 #define FX_ARCADE // All Arcade effects
 #define FX_ARCADE_DICE // Glow and candy lights around the die.
 #define FX_ARCADE_BULBS // Running bulbs and stripes on the tent.
@@ -151,6 +158,15 @@
 #undef FX_ARCADE
 #undef FX_WORLD
 #undef FX_HALL
+#undef FX_ISLES
+#endif
+#ifndef FX_ISLES
+#undef FX_ISLES_GLOW
+#undef FX_ISLES_VEINS
+#undef FX_ISLES_FALLS
+#undef FX_ISLES_SPIRITS
+#undef FX_ISLES_LINKS
+#undef FX_ISLES_MAGIC
 #endif
 #ifndef FX_LOBBY
 #undef FX_LOBBY_CRYSTAL

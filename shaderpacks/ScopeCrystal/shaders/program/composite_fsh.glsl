@@ -8,6 +8,7 @@
 #include "/lib/fx_common.glsl"
 #include "/lib/fx_view.glsl"
 flat in int fxSeen;
+flat in int islesSeen;
 flat in float fxAct[6];
 #include "/lib/places.glsl"
 #include "/lib/objects_spec.glsl"
@@ -21,6 +22,7 @@ bool fxSee(int i, vec3 camW, vec3 dir, float sceneDist) { return (fxSeen >> i & 
 #include "/lib/hall.glsl"
 #include "/lib/sides.glsl"
 #include "/lib/beams.glsl"
+#include "/lib/isles.glsl"
 #include "/lib/sky.glsl"
 #endif
 
@@ -137,6 +139,9 @@ void main() {
         }
     }
     color += skyBeams(camW, dir, sceneDist, ft);
+#ifdef FX_ISLES
+    if (islesSeen != 0) color += isles(camW, dir, sceneDist, surf, wp, nW, ft);
+#endif
     if (cameraPosition.z < -200.0) {
         if (fxAct[PL_HUB] > 0.002) {
             vec3 fx = hub(camW, dir, sceneDist, surf, wp, nW);

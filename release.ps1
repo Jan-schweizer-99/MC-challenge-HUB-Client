@@ -6,6 +6,7 @@ Set-Location $PSScriptRoot
 [IO.Directory]::SetCurrentDirectory($PSScriptRoot)
 $repo = 'Jan-schweizer-99/MC-challenge-HUB-Client'
 function Assert-Ok([string]$what) { if ($LASTEXITCODE -ne 0) { throw "$what failed" } }
+if ((Get-Content 'shaderpacks/ScopeCrystal/shaders/version.txt' -Raw).Trim() -ne $Version) { throw "shaders/version.txt must contain $Version" }
 if (git status --porcelain) { throw 'Uncommitted changes - commit first.' }
 
 # Only our own files may be published.
