@@ -184,3 +184,8 @@ option.FX_ARENA_MODE.comment=Off = no arena effects. General = the switches belo
 value.FX_ARENA_MODE.0=Off
 value.FX_ARENA_MODE.1=General
 value.FX_ARENA_MODE.2=Per stage
+profile.DEFAULT=Default
+profile.ULTRA=Ultra
+profile.PERFORMANCE=Performance
+profile.OFF=Effects off
+profile.comment=Default = reset everything. Ultra = all effects plus reflections and fancy glass. Performance = without the heavy effects. Effects off = no hub and arena effects. Clicking while Custom resets to Default.

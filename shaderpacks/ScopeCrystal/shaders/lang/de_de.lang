@@ -184,3 +184,8 @@ option.FX_ARENA_MODE.comment=Aus = keine Arena-Effekte. Allgemein = die Schalter
 value.FX_ARENA_MODE.0=Aus
 value.FX_ARENA_MODE.1=Allgemein
 value.FX_ARENA_MODE.2=Pro Stage
+profile.DEFAULT=Standard
+profile.ULTRA=Ultra
+profile.PERFORMANCE=Leistung
+profile.OFF=Effekte aus
+profile.comment=Standard = alles zuruecksetzen. Ultra = alle Effekte plus Spiegelungen und Fancy-Glas. Leistung = ohne die schweren Effekte. Effekte aus = keine Hub- und Arena-Effekte. Ein Klick bei Custom setzt auf Standard zurueck.
