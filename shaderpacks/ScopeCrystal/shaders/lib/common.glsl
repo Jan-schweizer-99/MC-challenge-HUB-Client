@@ -2,7 +2,7 @@
 uniform float arenaLavaMix;
 
 // Challenge-Hub (Welt "pvp", Boden y = 100) – gleiche Werte wie Hub.java (HX, HY, HZ, HR, RING)
-const vec3 HUB = vec3(-20000.0, 100.0, -20000.0);
+const vec3 HUB = vec3(0.0, 100.0, -455.0);
 const float HUB_R = 23.0;
 const float HUB_RING = 14.0;
 

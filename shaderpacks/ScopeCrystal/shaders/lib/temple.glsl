@@ -137,12 +137,13 @@ vec3 templeFloor(vec3 wp, vec3 nW, float t) {
     return col + vec3(0.35, 0.65, 1.0) * wave * 0.16;
 }
 
-// Brücke: Lichtpulse laufen auf dem Eisstreifen zum Tempel
+// Brücken: Lichtpulse laufen vom Hub über die Lobby zum Tempel
 vec3 templeBridge(vec3 wp, vec3 nW, float t) {
     float x = abs(wp.x - TEMPLE.x);
-    if (nW.y < 0.9 || x > 2.5 || wp.z < -393.0 || wp.z > -356.0 || wp.y < 100.5 || wp.y > 104.6) return vec3(0.0);
+    if (nW.y < 0.9 || x > 2.5 || wp.z < -434.0 || wp.z > -356.0 || wp.y < 100.5 || wp.y > 104.6) return vec3(0.0);
+    if (wp.z > -410.0 && wp.z < -391.0) return vec3(0.0);                    // Lobby zwischen den beiden Brücken
     float pulse = pow(fract((wp.z + x * 0.8) / 9.0 - t * 0.45), 7.0);
-    float ends = smoothstep(-393.0, -389.0, wp.z) * (1.0 - smoothstep(-361.0, -356.0, wp.z));
+    float ends = smoothstep(-434.0, -430.0, wp.z) * (1.0 - smoothstep(-361.0, -356.0, wp.z));
     return vec3(0.45, 0.85, 1.0) * (pulse * 0.5 + 0.05) * exp(-x * x * 0.45) * ends;
 }
 
