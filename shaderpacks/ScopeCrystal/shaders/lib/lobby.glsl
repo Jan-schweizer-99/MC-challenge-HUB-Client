@@ -26,23 +26,24 @@ vec3 lobbyRing(vec3 camW, vec3 dir, float sceneDist, float t) {
     return mix(vec3(0.4, 0.85, 1.0), vec3(0.8, 0.5, 1.0), run) * (line * (0.35 + run) + exp(-pow(r - 8.0, 2.0) / 0.8) * (0.05 + 0.15 * run));
 }
 
-// Fliegende Würfel mit leuchtenden Kanten wie in der Arena, in gespiegelten Paaren um die Insel
+// Fliegende Würfel mit leuchtenden Kanten wie in der Arena, in gespiegelten Paaren auf dem Lichtring über dem Pavillon
 vec3 lobbyCubePos(int i, float t) {
-    float fi = float(i), a = t * (0.34 - 0.05 * fi) + fi * 1.9;
-    float r = 14.5 + 2.2 * fi + 1.5 * sin(t * 0.3 + fi * 2.0);
-    return vec3(sin(a) * r, 17.0 + 3.2 * fi + 2.0 * sin(a * 2.0 + fi * 1.3), -cos(a) * r * 0.85);
+    // auf dem Lichtring (Radius 8), gleichmaessig verteilt, leicht auf und ab schwebend
+    float fi = float(i), a = t * 0.42 + fi * 2.0944;
+    float r = 8.0 + 0.35 * sin(a * 3.0 + fi);
+    return vec3(sin(a) * r, 11.2 + 0.9 * sin(a * 2.0 + fi * 1.3) + 0.25 * sin(t * 0.9), -cos(a) * r);
 }
 
 vec3 lobbyCubes(vec3 camW, vec3 dir, float sceneDist, float t) {
-    if (!rayNear(LOBBY + vec3(0.0, 20.0, 0.0), 30.0, camW, dir, sceneDist)) return vec3(0.0);
+    if (!rayNear(LOBBY + vec3(0.0, 11.2, 0.0), 13.5, camW, dir, sceneDist)) return vec3(0.0);
     vec3 col = vec3(0.0);
     for (int m = 0; m < 2; m++) {
         // zweiter Durchgang: Blickstrahl gespiegelt = exakt gespiegelter Würfel
         vec3 mir = vec3(m == 0 ? 1.0 : -1.0, 1.0, 1.0), o = (camW - LOBBY) * mir, d = dir * mir;
         for (int i = 0; i < 3; i++) {
             vec3 p = lobbyCubePos(i, t);
-            if (!rayNear(p, 8.5, o, d, sceneDist)) continue;               // Würfel samt Schweif
-            float s = 0.55 + 0.15 * float(i);
+            if (!rayNear(p, 5.5, o, d, sceneDist)) continue;               // Würfel samt Schweif
+            float s = 0.42 + 0.08 * float(i);
             vec3 c = i == 0 ? vec3(0.35, 0.85, 1.0) : i == 1 ? vec3(0.75, 0.5, 1.0) : vec3(0.55, 0.95, 0.95);
             if (rayNear(p, s * 1.74, o, d, sceneDist)) {
                 mat3 rot = transpose(rotX(t * (0.8 + 0.2 * float(i))) * rotY(t * 1.1 + float(i) * 2.0));

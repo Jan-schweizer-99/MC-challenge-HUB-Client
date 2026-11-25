@@ -226,4 +226,4 @@ screen.HUB_FX.comment=Single switches for hub, lobby, bridges and temple.
 screen.ARENA_FX=\u00a7aArena effects
 screen.ARENA_FX.comment=Single switches for this area.
 option.FX_LOBBY_CUBES=Flying cubes
-option.FX_LOBBY_CUBES.comment=Glowing cubes flying around the island.
+option.FX_LOBBY_CUBES.comment=Glowing cubes flying along the light ring.

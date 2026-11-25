@@ -226,4 +226,4 @@ screen.HUB_FX.comment=Einzelne Schalter fuer Hub, Lobby, Bruecken und Tempel.
 screen.ARENA_FX=\u00a7aArena-Effekte
 screen.ARENA_FX.comment=Einzelne Schalter fuer diesen Bereich.
 option.FX_LOBBY_CUBES=Fliegende Wuerfel
-option.FX_LOBBY_CUBES.comment=Leuchtende Wuerfel, die um die Insel fliegen.
+option.FX_LOBBY_CUBES.comment=Leuchtende Wuerfel, die am Lichtring entlang fliegen.
