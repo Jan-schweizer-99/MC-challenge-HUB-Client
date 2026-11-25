@@ -64,11 +64,14 @@ vec3 lobbyFrost(vec3 wp, vec3 nW, float t) {
     float ax = abs(wp.x - LOBBY.x);
     if (wp.z < -434.5 || wp.z > -416.0 || ax > 12.5 || wp.y < 88.0 || wp.y > 112.0) return vec3(0.0);
     float ice = clamp((-417.0 - wp.z) / 13.0, 0.0, 1.0);
-    vec3 cell = floor(vec3(ax, wp.y, wp.z) * 5.0);
-    float h = hash12(cell.xy + cell.z * 7.13);
-    float spark = step(0.965, h) * pow(0.5 + 0.5 * sin(t * (1.0 + 2.0 * fract(h * 91.0)) + h * 400.0), 6.0);
+    // Funken in Texturpixeln (16 je Block); knapp unter der Oberflaeche abtasten, sonst flackert die Blockgrenze streifig
+    vec3 p = (vec3(ax, wp.y, wp.z) - vec3(sign(wp.x - LOBBY.x) * nW.x, nW.y, nW.z) * 0.03) * 16.0;
+    vec3 cell = floor(p);
+    float h = hash12(cell.xz + cell.y * 17.31);
+    float size = max(length(dFdx(p)), length(dFdy(p)));                     // Pixel groesser als ein Funke: ausblenden statt flimmern
+    float spark = step(0.988, h) * pow(0.5 + 0.5 * sin(t * (0.8 + 1.4 * fract(h * 911.0)) + h * 4000.0), 8.0) * (1.0 - smoothstep(0.6, 1.6, size));
     float sheen = pow(0.5 + 0.5 * sin(ax * 0.5 + wp.y * 0.7 - wp.z * 0.45 - t * 1.1), 14.0);
-    return (vec3(0.85, 0.97, 1.0) * spark * 0.7 + vec3(0.35, 0.7, 1.0) * sheen * 0.10) * ice;
+    return (vec3(0.85, 0.97, 1.0) * spark * 0.45 + vec3(0.35, 0.7, 1.0) * sheen * 0.10) * ice;
 }
 
 // Brücken: Lichtpulse laufen vom Hub über die Insel zum Tempel
