@@ -23,6 +23,7 @@
 #define FX_LOBBY_FROST // Sparkling ice where the bridge meets the hub.
 #define FX_LOBBY_BRIDGE // Light pulses running along the bridges.
 #define FX_LOBBY_ROUND // Smooth round rings on the lobby island.
+#define FX_LOBBY_SWORDS // Floating crossed swords, fly in when you arrive.
 #define FX_TEMPLE // All arena temple effects
 #define FX_TEMPLE_CRYSTAL // Glow and rising pulses of the crystal column.
 #define FX_TEMPLE_HELIX // Two mirrored light bands around the crystal.
@@ -40,6 +41,7 @@
 #define FX_ARCADE_CONFETTI // Confetti sinking under the tent.
 #define FX_ARCADE_ROUND // Smooth round fields on the arcade floor.
 #define FX_ARCADE_BEAM // Beam of light into the sky, always visible.
+#define FX_ARCADE_CUBE // Tumbling voxel die, flies in when you arrive.
 #define FX_WORLD // All World Sanctum effects
 #define FX_WORLD_GLOBE // Atmosphere and satellites of the floating globe.
 #define FX_WORLD_GATES // Swirling light in the ten gates.
@@ -47,6 +49,7 @@
 #define FX_WORLD_SPORES // Spores rising from the gardens.
 #define FX_WORLD_ROUND // Smooth round rings on the sanctum floor.
 #define FX_WORLD_BEAM // Beam of light into the sky, always visible.
+#define FX_WORLD_SPHERE // Spinning voxel globe, flies in when you arrive.
 #define FX_HALL // All Hall of Fame effects
 #define FX_HALL_TROPHY // Golden glow and rising sparks around the trophy.
 #define FX_HALL_CROWN // Light running along the crown, sparkling tips.
@@ -57,6 +60,7 @@
 #define FX_HALL_WALK // Light pulses and sparkle on the bridge.
 #define FX_HALL_ROUND // Smooth round rings on the hall floor.
 #define FX_HALL_BEAM // Beam of light into the sky, always visible.
+#define FX_HALL_CUP // Voxel trophy instead of the built one, flies in when you arrive.
 #define FX_ARENA_MODE 1 // [0 1 2] Arena effects: off, same everywhere, per stage
 #define FX_ALL_AURA // Soft glow above the beacon.
 #define FX_ALL_ORBS // Light orbs with trails around the center.
@@ -157,6 +161,7 @@
 #undef FX_LOBBY_FROST
 #undef FX_LOBBY_BRIDGE
 #undef FX_LOBBY_ROUND
+#undef FX_LOBBY_SWORDS
 #endif
 #ifndef FX_TEMPLE
 #undef FX_TEMPLE_CRYSTAL
@@ -176,6 +181,7 @@
 #undef FX_ARCADE_CONFETTI
 #undef FX_ARCADE_ROUND
 #undef FX_ARCADE_BEAM
+#undef FX_ARCADE_CUBE
 #endif
 #ifndef FX_WORLD
 #undef FX_WORLD_GLOBE
@@ -184,6 +190,7 @@
 #undef FX_WORLD_SPORES
 #undef FX_WORLD_ROUND
 #undef FX_WORLD_BEAM
+#undef FX_WORLD_SPHERE
 #endif
 #ifndef FX_HALL
 #undef FX_HALL_TROPHY
@@ -195,6 +202,7 @@
 #undef FX_HALL_WALK
 #undef FX_HALL_ROUND
 #undef FX_HALL_BEAM
+#undef FX_HALL_CUP
 #endif
 #ifndef FX_ICE
 #undef FX_ICE_AURA

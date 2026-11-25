@@ -10,6 +10,8 @@
 flat in int fxSeen;
 flat in float fxAct[6];
 #include "/lib/places.glsl"
+#include "/lib/objects_spec.glsl"
+#include "/lib/objects.glsl"
 bool fxSee(int i, vec3 camW, vec3 dir, float sceneDist) { return (fxSeen >> i & 1) != 0 && fxRayBox(i, camW, dir, sceneDist); }
 #include "/lib/hub.glsl"
 #include "/lib/arena.glsl"
@@ -122,6 +124,18 @@ void main() {
 #ifdef PVP_WORLD
     bool surf = depth0 < 1.0 && mat >= 0;
     float ft = frameTimeCounter;
+    bool objHit = false;
+    if (cameraPosition.z < -200.0) {                        // Voxel-Objekte zuerst: deckend, alles dahinter bleibt verdeckt
+        for (int i = 0; i < 2; i++) if (obT[i] >= 0) {
+            float h;
+            vec3 oc = objTrace(i, camW, dir, sceneDist, h);
+            if (h > 0.0) { color = oc; sceneDist = h; objHit = true; surf = false; }
+        }
+        for (int i = 0; i < 2; i++) if (obT[i] >= 0) {
+            color += objGlow(i, camW, dir, sceneDist);
+            if (surf) color += objWave(i, wp, nW);
+        }
+    }
     color += skyBeams(camW, dir, sceneDist, ft);
     if (cameraPosition.z < -200.0) {
         if (fxAct[PL_HUB] > 0.002) {
@@ -195,7 +209,8 @@ void main() {
         effectCamera.x += offset; effectWorld.x += offset;
     }
 #ifdef FX_HUB_SKY
-    if (depth0 >= 1.0) color += skyZones(dir, frameTimeCounter, arenaSideAt(effectCamera));
+    if (objHit) {}
+    else if (depth0 >= 1.0) color += skyZones(dir, frameTimeCounter, arenaSideAt(effectCamera));
     else if (mat < 0 && wp.y > 185.0 && wp.y < 202.0 && sceneDist > 40.0) color += skyZones(dir, frameTimeCounter, arenaSideAt(effectCamera)) * 0.45;   // Wolken
 #endif
     float edge = 0.0;

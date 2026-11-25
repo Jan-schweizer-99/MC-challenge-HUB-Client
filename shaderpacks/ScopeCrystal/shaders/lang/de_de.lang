@@ -291,3 +291,11 @@ option.FX_ARCADE_BEAM=Himmelsstrahl
 option.FX_ARCADE_BEAM.comment=Lichtstrahl in den Himmel, immer sichtbar.
 option.PORTAL_VIEW=Live-Portal
 option.PORTAL_VIEW.comment=Echter Blick durch das Eis-Feuer-Portal. Aus = das Spiel laesst alles weg, was du nicht siehst, mehr FPS.
+option.FX_LOBBY_SWORDS=Gekreuzte Schwerter
+option.FX_LOBBY_SWORDS.comment=Schwebende Schwerter, fliegen bei der Ankunft ein.
+option.FX_HALL_CUP=Schwebender Pokal
+option.FX_HALL_CUP.comment=Voxel-Pokal statt des gebauten, schwebt bei der Ankunft ein.
+option.FX_WORLD_SPHERE=Drehender Globus
+option.FX_WORLD_SPHERE.comment=Drehender Voxel-Globus, schwebt bei der Ankunft ein.
+option.FX_ARCADE_CUBE=Taumelnder Wuerfel
+option.FX_ARCADE_CUBE.comment=Taumelnder Voxel-Wuerfel, schwebt bei der Ankunft ein.

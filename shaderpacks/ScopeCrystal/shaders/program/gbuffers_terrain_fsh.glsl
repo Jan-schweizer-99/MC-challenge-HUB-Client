@@ -24,6 +24,7 @@ layout(location = 2) out vec4 outLight;   // Lightmap (Fackel, Himmel)
 #ifdef PVP_WORLD
 #include "/lib/arena_floor.glsl"
 #include "/lib/hub_floor.glsl"
+#include "/lib/objects_spec.glsl"
 bool terrainFx(int mask) { return !arenaPaletteRegion(worldPos) || fxOn(mask, arenaSideAt(worldPos)); }
 #endif
 
@@ -46,6 +47,9 @@ float nearestTorch(vec3 wp, out float tAng) {
 }
 
 void main() {
+#ifdef PVP_WORLD
+    if (objHidden(worldPos)) discard;                       // hier zeichnet composite das Voxel-Objekt
+#endif
 #ifdef PVP_WORLD
 #ifndef PORTAL_HAND
     if (!portalFragmentVisible(worldPos, cameraPosition + gbufferModelViewInverse[3].xyz, cameraPosition)) discard;

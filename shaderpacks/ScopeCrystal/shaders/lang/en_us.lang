@@ -291,3 +291,11 @@ option.FX_ARCADE_BEAM=Sky beam
 option.FX_ARCADE_BEAM.comment=Beam of light into the sky, always visible.
 option.PORTAL_VIEW=Live portal
 option.PORTAL_VIEW.comment=Live view through the ice and fire portal. Off = the game skips everything you cannot see, more FPS.
+option.FX_LOBBY_SWORDS=Crossed swords
+option.FX_LOBBY_SWORDS.comment=Floating crossed swords, fly in when you arrive.
+option.FX_HALL_CUP=Floating trophy
+option.FX_HALL_CUP.comment=Voxel trophy instead of the built one, flies in when you arrive.
+option.FX_WORLD_SPHERE=Spinning globe
+option.FX_WORLD_SPHERE.comment=Spinning voxel globe, flies in when you arrive.
+option.FX_ARCADE_CUBE=Tumbling die
+option.FX_ARCADE_CUBE.comment=Tumbling voxel die, flies in when you arrive.

@@ -1,5 +1,7 @@
 #include "/lib/common.glsl"
 #include "/lib/arena_paths.glsl"
+#include "/lib/places.glsl"
+#include "/lib/objects_spec.glsl"
 uniform float frameTimeCounter;
 uniform vec3 cameraPosition;
 uniform mat4 gbufferModelViewInverse;
@@ -8,11 +10,12 @@ layout(location = 0) out vec4 outState;
 void main() {
     // Alles ausser den zwei Zustands-Texeln: Bahnen der Arena-Effekte fuer diesen Frame
     ivec2 px = ivec2(gl_FragCoord.xy);
-    if (px == ivec2(2, 0)) {                                // Herz im Hub: Sekunden seit der Ankunft (hoch beim Dasein, schnell runter beim Gehen)
+    if (px.y == 0 && px.x >= 2 && px.x <= 7) {              // Voxel-Objekte: Sekunden seit der Ankunft je Ort (hoch beim Dasein, schnell runter beim Gehen)
+        int p = px.x - 2;
         vec4 h = texelFetch(colortex4, px, 0);
         float s = abs(h.w - 2611.0) < 0.1 ? h.x : 0.0;
-        bool here = length(cameraPosition.xz - vec2(0.5, -454.5)) < 46.0;
-        s = clamp(s + min(frameTime, 0.1) * (here ? 1.0 : -2.0), 0.0, 7.0);
+        bool here = objOn(p) && length(cameraPosition.xz - placeCenter(p).xz) < placeRange(p).z + 2.0;
+        s = clamp(s + min(frameTime, 0.1) * (here ? 1.0 : -2.0), 0.0, OBJ_FULL);
         outState = vec4(s, 0.0, 0.0, 2611.0);
         return;
     }
