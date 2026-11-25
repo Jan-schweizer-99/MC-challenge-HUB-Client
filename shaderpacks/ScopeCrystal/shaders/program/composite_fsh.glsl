@@ -128,10 +128,10 @@ void main() {
             vec3 fx = hub(camW, dir, sceneDist, surf, wp, nW);
 #ifdef FX_HUB_PADS
             if (fxSee(FXV_HUB, camW, dir, sceneDist)) {
-                fx += padFx(vec3(-19.0, 101.0, -454.5), vec2(-1.0, 0.0), vec3(0.45, 1.0, 0.65), camW, dir, sceneDist, surf, wp, nW, ft);
-                fx += padFx(vec3(20.0, 101.0, -454.5), vec2(1.0, 0.0), vec3(1.0, 0.5, 0.78), camW, dir, sceneDist, surf, wp, nW, ft);
-                fx += padFx(vec3(0.5, 101.0, -435.5), vec2(0.0, 1.0), vec3(0.50, 0.60, 1.0), camW, dir, sceneDist, surf, wp, nW, ft);
-                fx += padFx(vec3(0.5, 101.0, -474.5), vec2(0.0, -1.0), vec3(1.0, 0.75, 0.25), camW, dir, sceneDist, surf, wp, nW, ft);
+                fx += padFx(vec3(-9.0, 101.0, -454.5), vec2(-1.0, 0.0), vec3(0.45, 1.0, 0.65), camW, dir, sceneDist, surf, wp, nW, ft);
+                fx += padFx(vec3(10.0, 101.0, -454.5), vec2(1.0, 0.0), vec3(1.0, 0.5, 0.78), camW, dir, sceneDist, surf, wp, nW, ft);
+                fx += padFx(vec3(0.5, 101.0, -445.0), vec2(0.0, 1.0), vec3(0.50, 0.60, 1.0), camW, dir, sceneDist, surf, wp, nW, ft);
+                fx += padFx(vec3(0.5, 101.0, -464.0), vec2(0.0, -1.0), vec3(1.0, 0.75, 0.25), camW, dir, sceneDist, surf, wp, nW, ft);
             }
 #endif
             color += fx * placeShow(PL_HUB, fxAct[PL_HUB], surf, wp) + placeFront(PL_HUB, fxAct[PL_HUB], surf, wp, nW);
