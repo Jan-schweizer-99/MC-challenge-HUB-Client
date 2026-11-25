@@ -129,7 +129,7 @@ vec3 hubPillars(vec3 camW, vec3 dir, float sceneDist) {
     float dd = max(dot(dir.xz, dir.xz), 1e-5);
     for (int s = 0; s < 10; s++) {
         float a = radians(-90.0 + float(s) * 36.0);
-        vec2 pos = HUB.xz + vec2(round(cos(a) * HUB_RING), round(sin(a) * HUB_RING)) + vec2(0.5);
+        vec2 pos = HUB.xz + vec2(cos(a), sin(a)) * HUB_RING + vec2(0.5);
         float tt = dot(pos - camW.xz, dir.xz) / dd;
         if (tt < 0.0 || tt > sceneDist) continue;
         vec3 q = camW + dir * tt;

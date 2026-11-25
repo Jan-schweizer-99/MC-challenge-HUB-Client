@@ -86,7 +86,8 @@ vec3 hubRoundFloor(int zone, vec3 wp, vec3 tint, vec3 light, float t, out int su
 #undef HUB_LAYER
     if (used < 1.0) {
         // Strahlen zwischen den Feldern ebenfalls kantengeglättet
-        float u = deg / seg, w = abs(fract(u) - 0.5), aa = max(fw / max(r, 0.5) * 57.3 / seg, 1e-3);
+        float u = deg / seg + (zone == 1 ? 0.5 : 0.0);               // Hub: Sockel stehen mitten auf ihrem Feld
+        float w = abs(fract(u) - 0.5), aa = max(fw / max(r, 0.5) * 57.3 / seg, 1e-3);
         float odd = mod(floor(u), 2.0);
         float edge = 0.5 * (1.0 - smoothstep(0.0, aa, 0.5 - w));                     // an der Grenze halb/halb
         float mixB = mix(odd, 1.0 - odd, edge);
