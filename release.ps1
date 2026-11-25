@@ -10,7 +10,7 @@ if (git status --porcelain) { throw 'Uncommitted changes - commit first.' }
 
 # Only our own files may be published.
 $files = @(git ls-files)
-$bad = @($files | Where-Object { $_ -match '\.(jar|class|key|secret|bak|zip)$|arena-palette\.png|lava-floor\.png|server\.properties|rcon|\.panel-key' })
+$bad = @($files | Where-Object { $_ -notmatch '^clientmod/shadermenu-[\d.]+\.jar$' -and $_ -match '\.(jar|class|key|secret|bak|zip)$|arena-palette\.png|lava-floor\.png|server\.properties|rcon|\.panel-key' })
 if ($bad) { throw "Must not be published: $($bad -join ', ')" }
 # Compare with the real secret values of the local server (values are never printed).
 $vals = @()
@@ -23,7 +23,7 @@ foreach ($v in $vals) { if ($text.Contains($v)) { throw 'SECRET FOUND in tracked
 "Secret check: $($vals.Count) values, 0 hits"
 
 New-Item -ItemType Directory -Force dist | Out-Null
-$common = 'install.ps1', 'install.txt', 'tools', 'shaderpacks'
+$common = 'install.ps1', 'install.txt', 'tools', 'shaderpacks', 'clientmod'
 $full = 'dist/MC-challenge-HUB-Client.zip'; $shader = 'dist/ScopeCrystal-Shader.zip'
 git archive --format=zip -o $full HEAD install.cmd config @common; Assert-Ok 'git archive'
 git archive --format=zip -o $shader HEAD update-shader.cmd @common; Assert-Ok 'git archive'

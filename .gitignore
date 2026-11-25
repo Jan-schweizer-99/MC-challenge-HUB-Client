@@ -10,6 +10,7 @@
 !/tools/
 !/config/
 !/shaderpacks/
+!/clientmod/
 /config/*
 !/config/iris.properties
 /shaderpacks/*
@@ -18,6 +19,8 @@
 **/arena-palette.png
 **/lava-floor.png
 *.jar
+# our own small client mod (shader button), the only jar that may be published
+!/clientmod/shadermenu-*.jar
 *.zip
 *.bak
 .panel-key
