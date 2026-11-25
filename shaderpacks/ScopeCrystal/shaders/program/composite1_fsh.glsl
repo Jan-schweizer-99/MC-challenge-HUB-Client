@@ -77,6 +77,7 @@ void main() {
                        :            mix(0.06, 0.55, fres);        // glänzende Blöcke
         float sky = texture(colortex2, texcoord).g;               // Himmelslicht: drinnen kein Himmel
         vec3 rW = mat3(gbufferModelViewInverse) * r;
+        if (mat >= 3) strength *= smoothstep(-0.6, -0.2, (mat3(gbufferModelViewInverse) * n).y);   // Unterseiten spiegeln nur Rauschen
         vec3 refl = mix(fogColor, skyColor, clamp(rW.y * 1.5 + 0.2, 0.0, 1.0)) * smoothstep(0.3, 0.9, sky);
         vec2 hit;
         // Suchschritte je Stufe: Wasser/Glas bekommen mehr Reichweite als die schwach spiegelnden Blöcke

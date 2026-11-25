@@ -16,5 +16,11 @@ float pointGlow(vec3 p, vec3 camW, vec3 dir, float sceneDist, float radius) {
     return exp(-d2 / (radius * radius));
 }
 
+// Leuchten, dessen Mitte im Inneren eines Koerpers liegt: klingt bis zur Tiefe soft hinter der Oberflaeche weich aus statt hart abzuschneiden
+float softDepth(float depth, float sceneDist, float soft) { return smoothstep(0.0, soft, sceneDist + soft - depth); }
+float innerGlow(vec3 p, vec3 camW, vec3 dir, float sceneDist, float radius, float soft) {
+    return pointGlow(p, camW, dir, 1e6, radius) * softDepth(dot(p - camW, dir), sceneDist, soft);
+}
+
 mat3 rotY(float a) { float c = cos(a), s = sin(a); return mat3(c, 0, -s, 0, 1, 0, s, 0, c); }
 mat3 rotX(float a) { float c = cos(a), s = sin(a); return mat3(1, 0, 0, 0, c, s, 0, -s, c); }

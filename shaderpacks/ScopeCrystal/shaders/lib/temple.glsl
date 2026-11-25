@@ -19,10 +19,11 @@ float templeAngle(vec2 q) { return atan(abs(q.x), -q.y); }
 vec3 templeCrystal(vec3 camW, vec3 dir, float sceneDist, float t) {
     vec3 a = vec3(TEMPLE.x, 78.0, TEMPLE.z), b = vec3(TEMPLE.x, 151.0, TEMPLE.z);
     vec3 seg = raySegment(a, b, camW, dir);
-    if (seg.z <= 0.0 || seg.z - 2.6 > sceneDist || seg.x > 9.0) return vec3(0.0);
+    if (seg.z <= 0.0 || seg.z - 6.0 > sceneDist || seg.x > 9.0) return vec3(0.0);
+    float soft = softDepth(seg.z, sceneDist, 6.0);
     float pulse = exp(-pow(fract(seg.y * 4.0 - t * 0.22) - 0.5, 2.0) * 55.0);
     vec3 col = vec3(0.55, 0.35, 1.0) * exp(-seg.x * seg.x / 7.0) * (0.20 + 0.06 * sin(t * 1.3));
-    return col + vec3(0.6, 0.9, 1.0) * exp(-seg.x * seg.x / 5.0) * pulse * 0.45;
+    return (col + vec3(0.6, 0.9, 1.0) * exp(-seg.x * seg.x / 5.0) * pulse * 0.45) * soft;
 }
 
 // Zwei gespiegelte Lichtbänder winden sich um die Säule nach oben

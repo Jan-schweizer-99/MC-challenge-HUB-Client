@@ -5,10 +5,11 @@ const vec3 LOBBY = vec3(0.5, 101.0, -399.5);
 // Schwebender Kristall: Schein und Lichtpulse von unten nach oben
 vec3 lobbyCrystal(vec3 camW, vec3 dir, float sceneDist, float t) {
     vec3 seg = raySegment(LOBBY + vec3(0.0, 11.0, 0.0), LOBBY + vec3(0.0, 22.0, 0.0), camW, dir);
-    if (seg.z <= 0.0 || seg.z - 2.2 > sceneDist || seg.x > 7.0) return vec3(0.0);
+    if (seg.z <= 0.0 || seg.z - 5.0 > sceneDist || seg.x > 7.0) return vec3(0.0);
+    float soft = softDepth(seg.z, sceneDist, 5.0);
     float pulse = exp(-pow(fract(seg.y * 1.2 - t * 0.35) - 0.5, 2.0) * 30.0);
     float ends = smoothstep(0.0, 0.1, seg.y) * (1.0 - smoothstep(0.9, 1.0, seg.y));
-    return (vec3(0.6, 0.4, 1.0) * exp(-seg.x * seg.x / 5.0) * 0.28 + vec3(0.6, 0.9, 1.0) * exp(-seg.x * seg.x / 3.0) * pulse * 0.4) * (0.4 + 0.6 * ends);
+    return (vec3(0.6, 0.4, 1.0) * exp(-seg.x * seg.x / 5.0) * 0.28 + vec3(0.6, 0.9, 1.0) * exp(-seg.x * seg.x / 3.0) * pulse * 0.4) * (0.4 + 0.6 * ends) * soft;
 }
 
 // Lichtring über dem Pavillon, gespiegelte Lichtpunkte laufen von vorn nach hinten

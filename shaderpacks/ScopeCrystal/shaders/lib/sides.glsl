@@ -19,13 +19,13 @@ const vec3 WORLD_BLUE = vec3(0.35, 0.75, 1.0);
 // Globus: Atmosphäre und drei umlaufende Satelliten mit Schweif
 vec3 worldGlobe(vec3 camW, vec3 dir, float sceneDist, float t) {
     vec3 c = CHAL + vec3(0.0, 20.5, 0.0);
-    if (!rayNear(c, 17.0, camW, dir, sceneDist + 8.0)) return vec3(0.0);
+    if (!rayNear(c, 17.0, camW, dir, sceneDist + 14.0)) return vec3(0.0);
     vec3 oc = c - camW;
     float tc = dot(oc, dir), d = sqrt(max(dot(oc, oc) - tc * tc, 0.0));
     vec3 col = vec3(0.0);
-    if (tc > 0.0 && tc - 7.5 < sceneDist) {
+    if (tc > 0.0 && tc - 14.0 < sceneDist) {
         float rim = exp(-pow((d - 7.4) / 1.5, 2.0));
-        col += mix(WORLD_BLUE, WORLD_GREEN, 0.3 + 0.3 * sin(t * 0.4)) * (rim * 0.30 + exp(-d * d / 60.0) * 0.06);
+        col += mix(WORLD_BLUE, WORLD_GREEN, 0.3 + 0.3 * sin(t * 0.4)) * (rim * 0.30 + exp(-d * d / 60.0) * 0.08) * softDepth(tc, sceneDist, 14.0);
     }
     for (int i = 0; i < 3; i++) {
         float fi = float(i);
@@ -119,8 +119,8 @@ const vec3 CANDY_BLUE = vec3(0.4, 0.82, 1.0);
 // Großer Würfel: Schein, kreisende Lichtkugeln in Bonbonfarben
 vec3 arcadeDice(vec3 camW, vec3 dir, float sceneDist, float t) {
     vec3 c = ARCADE + vec3(0.0, 9.5, 0.0);
-    if (!rayNear(c, 13.0, camW, dir, sceneDist + 4.0)) return vec3(0.0);
-    vec3 col = mix(CANDY_PINK, CANDY_BLUE, 0.5 + 0.5 * sin(t * 0.8)) * pointGlow(c, camW, dir, sceneDist + 4.0, 5.5) * 0.14;
+    if (!rayNear(c, 13.0, camW, dir, sceneDist + 9.0)) return vec3(0.0);
+    vec3 col = mix(CANDY_PINK, CANDY_BLUE, 0.5 + 0.5 * sin(t * 0.8)) * innerGlow(c, camW, dir, sceneDist, 5.5, 9.0) * 0.16;
     for (int i = 0; i < 4; i++) {
         float fi = float(i), a = t * 0.7 + fi * 0.7854;
         for (int j = 0; j < 4; j++) {
@@ -150,7 +150,7 @@ vec3 arcadeBulbs(vec3 camW, vec3 dir, float sceneDist, bool hasSurface, vec3 wp,
         col += mix(CANDY_PINK, CANDY_BLUE, 0.5 + 0.5 * sin(r * 0.4 - t)) * run * 0.10;
     }
     vec3 top = ARCADE + vec3(0.0, 33.0, 0.0);
-    col += vec3(1.0, 0.85, 0.4) * (pointGlow(top, camW, dir, sceneDist + 1.0, 0.8) * 0.8 + pointGlow(top, camW, dir, sceneDist + 1.0, 4.0) * 0.18) * (0.7 + 0.3 * sin(t * 3.0));
+    col += vec3(1.0, 0.85, 0.4) * (pointGlow(top, camW, dir, sceneDist + 1.0, 0.8) * 0.8 + innerGlow(top, camW, dir, sceneDist, 4.0, 5.0) * 0.18) * (0.7 + 0.3 * sin(t * 3.0));
     return col;
 }
 

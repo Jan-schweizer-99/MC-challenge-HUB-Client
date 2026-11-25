@@ -12,8 +12,8 @@ vec3 hallTrophy(vec3 camW, vec3 dir, float sceneDist, float t) {
     if (!rayNear(HALL + vec3(0.0, 13.0, 0.0), 24.0, camW, dir, sceneDist)) return vec3(0.0);
     vec3 col = vec3(0.0);
     vec3 seg = raySegment(HALL + vec3(0.0, 2.0, 0.0), HALL + vec3(0.0, 17.0, 0.0), camW, dir);
-    if (seg.z > 0.0 && seg.z - 4.0 < sceneDist) col += HALL_GOLD * exp(-seg.x * seg.x / 9.0) * (0.10 + 0.04 * sin(t * 1.4));
-    col += vec3(0.7, 0.9, 1.0) * pointGlow(HALL + vec3(0.0, 24.5, 0.0), camW, dir, sceneDist + 3.0, 4.2) * (0.22 + 0.08 * sin(t * 1.9));
+    if (seg.z > 0.0 && seg.z - 9.0 < sceneDist) col += HALL_GOLD * exp(-seg.x * seg.x / 9.0) * (0.12 + 0.04 * sin(t * 1.4)) * softDepth(seg.z, sceneDist, 9.0);
+    col += vec3(0.7, 0.9, 1.0) * innerGlow(HALL + vec3(0.0, 24.5, 0.0), camW, dir, sceneDist, 4.2, 7.0) * (0.22 + 0.08 * sin(t * 1.9));
     for (int i = 0; i < 7; i++) {
         float fi = float(i), k = fract(fi / 7.0 + t * 0.07), a = k * 9.0 + t * 0.3;
         float r = mix(5.2, 2.0, smoothstep(0.55, 1.0, k)), fade = smoothstep(0.0, 0.1, k) * (1.0 - smoothstep(0.85, 1.0, k));
