@@ -5,7 +5,7 @@
 #define FX_HUB // All hub effects
 #define FX_HUB_AURORA // Northern lights above the hub.
 #define FX_HUB_HEART // The floating, spinning heart in the middle.
-#define FX_HUB_FLOOR // Pixel waves, grid and twinkle on the floor.
+#define FX_HUB_FLOOR // Round light waves, grid and twinkle on the floor.
 #define FX_HUB_PILLARS // Light above the ten pedestals.
 #define FX_HUB_SNOW // Slowly sinking bright dots.
 #define FX_ARENA_MODE 1 // [0 1 2] Arena effects: off, same everywhere, per stage

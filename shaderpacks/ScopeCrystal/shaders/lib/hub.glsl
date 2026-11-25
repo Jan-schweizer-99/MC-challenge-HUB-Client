@@ -1,4 +1,4 @@
-// Challenge-Hub (Welt pvp, Boden y = 100): Polarlicht, schwebendes Pixel-Herz, Pixelwellen auf dem Eisboden,
+// Challenge-Hub (Welt pvp, Boden y = 100): Polarlicht, schwebendes Pixel-Herz, Lichtwellen auf dem Eisboden,
 // Lichtsaeulen ueber den 10 Sockeln, Schneeglitzern. Keine Portale.
 // Koordinaten muessen zu Hub.java passen (HX, HY, HZ, HR, RING). Braucht pointGlow/rotY aus fx_common.glsl.
 
@@ -87,21 +87,32 @@ vec3 hubAurora(vec3 camW, vec3 dir, float sceneDist) {
     return min(col * dt * 0.06, vec3(1.2));
 }
 
-// Pixelwellen + Blockgitter auf der Oberseite des Eisbodens (y = 101)
+// Runde Lichtwellen + Blockgitter auf der Oberseite des Eisbodens (y = 101)
 vec3 hubFloor(vec3 wp, vec3 nW) {
     vec3 rel = wp - HUB;
     float rr = length(rel.xz - vec2(0.5));
     if (rr > HUB_R + 0.5 || nW.y < 0.9 || rel.y < 0.5 || rel.y > 1.5) return vec3(0.0);
     float t = frameTimeCounter;
     vec2 cell = floor(wp.xz);
-    float rc = length(cell + vec2(0.5) - HUB.xz - vec2(0.5));
-    float w = fract((rc - t * 4.0) / 14.0);
-    float ring = step(w, 0.07);
+    // Zwei weiche Kreiswellen: feine helle Front, dahinter langer Nachglanz; starten sanft in der Mitte
+    // und verklingen vor dem Rand. Kantenglaettung ueber die Pixelbreite, auch bei flachem Blick.
+    float fr = max(fwidth(rr), 1e-3);
+    vec3 waves = vec3(0.0);
+    for (int i = 0; i < 2; i++) {
+        float ph = fract(t * 0.14 + float(i) * 0.5);
+        float front = HUB_R * (1.0 - (1.0 - ph) * (1.0 - ph) * 0.75 - (1.0 - ph) * 0.25);   // laeuft schnell los, wird ruhiger
+        float d = rr - front;
+        float lw = 0.07 + fr;
+        float line = exp(-d * d / (lw * lw)) * min(1.0, 0.09 / lw + 0.25);
+        float trail = d < 0.0 ? exp(d / 2.2) : exp(-d * d / (0.12 + fr * fr));
+        float fade = smoothstep(0.0, 0.08, ph) * (1.0 - smoothstep(0.55, 1.0, ph));
+        waves += (vec3(0.85, 0.97, 1.0) * line * 0.55 + vec3(0.30, 0.72, 1.0) * trail * 0.16) * fade;
+    }
     vec3 fw = max(fwidth(wp), vec3(1e-4));
     vec2 d1 = abs(fract(wp.xz - 0.5) - 0.5) / fw.xz;
     float line = max(1.0 - clamp(d1.x - 0.5, 0.0, 1.0), 1.0 - clamp(d1.y - 0.5, 0.0, 1.0));
     float twinkle = step(0.985, hash12(cell + vec2(floor(t * 2.0))));
-    return vec3(0.45, 0.85, 1.0) * (ring * 0.28 + line * 0.07) + vec3(0.9, 0.97, 1.0) * twinkle * 0.35;
+    return vec3(0.45, 0.85, 1.0) * (line * 0.07) + waves + vec3(0.9, 0.97, 1.0) * twinkle * 0.35;
 }
 
 // Weiche Lichtsaeulen ueber den 10 Sockeln (gleiche Winkel wie Hub.slotPos)
