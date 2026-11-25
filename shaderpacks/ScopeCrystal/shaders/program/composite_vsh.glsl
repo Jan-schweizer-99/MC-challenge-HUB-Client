@@ -40,14 +40,11 @@ void main() {
     mat4 m = gbufferProjection * gbufferModelView;
     vec3 local = cameraPosition;                        // Arena-Kiste liegt in Insel-Koordinaten
     local.x -= arenaOffsetX(arenaSideAt(cameraPosition));
-    // Welcher Ort ist dran? Nur der naechste baut sich auf, der andere klingt ab
-    float best = 0.0;
+    // Welcher Ort ist dran? Die Reichweiten schliessen andere Gebaeude aus
     for (int p = 0; p < 6; p++) {
         vec3 k = placeRange(p);
         fxAct[p] = 1.0 - smoothstep(k.y, k.z, length(vec2(skyPosX, skyPosZ) - placeCenter(p).xz));
-        best = max(best, fxAct[p]);
     }
-    for (int p = 0; p < 6; p++) fxAct[p] *= smoothstep(best - 0.7, best - 0.2, fxAct[p]);
 #ifndef FX_HUB_DYNAMIC
     for (int p = 0; p < 6; p++) fxAct[p] = 1.0;
 #endif

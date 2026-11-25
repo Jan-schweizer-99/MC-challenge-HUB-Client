@@ -6,10 +6,11 @@ vec3 placeCenter(int p) {
     return p == PL_HUB ? vec3(0.5, 101.0, -454.5) : p == PL_LOBBY ? vec3(0.5, 101.0, -399.5) : p == PL_TEMPLE ? vec3(0.5, 104.0, -343.5)
         : p == PL_HALL ? vec3(0.5, 104.0, -554.5) : p == PL_WORLD ? CHAL : ARCADE;
 }
-// Reichweite des Aufbaus, voll an ab / aus ab (Abstand des Spielers zur Mitte)
+// Reichweite des Aufbaus, voll an ab / aus ab (Abstand des Spielers zur Mitte).
+// Gebaeude starten auf halbem Hub-Kreis (11,5 Bloecke Richtung Gebaeude) und sind am Hub-Rand (23) voll da.
 vec3 placeRange(int p) {
-    return p == PL_HUB ? vec3(62.0, 31.0, 46.0) : p == PL_LOBBY ? vec3(36.0, 16.0, 31.0) : p == PL_TEMPLE ? vec3(88.0, 38.0, 52.0)
-        : p == PL_HALL ? vec3(72.0, 42.0, 60.0) : vec3(74.0, 33.0, 47.0);
+    return p == PL_HUB ? vec3(62.0, 24.0, 44.0) : p == PL_LOBBY ? vec3(36.0, 32.0, 43.5) : p == PL_TEMPLE ? vec3(88.0, 88.0, 99.5)
+        : p == PL_HALL ? vec3(72.0, 77.0, 88.5) : vec3(74.0, 57.0, 68.5);
 }
 vec3 placeTint(int p) {
     return p == PL_HUB ? vec3(0.4, 0.8, 1.0) : p == PL_LOBBY ? vec3(0.55, 0.65, 1.0) : p == PL_TEMPLE ? vec3(0.75, 0.5, 1.0)
