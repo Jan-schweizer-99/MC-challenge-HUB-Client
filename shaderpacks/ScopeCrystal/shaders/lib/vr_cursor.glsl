@@ -16,7 +16,6 @@ uniform sampler2D vrCursorData;
 uniform sampler2D vrArrowTex;
 uniform mat4 gbufferModelView;
 uniform mat4 gbufferProjection;
-uniform mat4 gbufferProjectionInverse;
 uniform vec3 cameraPosition;
 uniform float viewWidth;
 uniform float viewHeight;
@@ -120,9 +119,11 @@ vec3 vrCursor(vec3 color) {
             vec3 up3 = vec3(dir, 0.0);
             up3 = normalize(up3 - nrm * dot(up3, nrm));
             vec3 right3 = cross(up3, -nrm);
+            // view ray of this pixel straight from the projection (works with any depth convention and the
+            // off-centre projections of a headset): at z = -1, ndc = (P00 x + P20 z) / -z  ->  x = (ndc + P20) / P00
             vec2 ndc = frag / vec2(viewWidth, viewHeight) * 2.0 - 1.0;
-            vec4 rv = gbufferProjectionInverse * vec4(ndc, 1.0, 1.0);
-            vec3 ray = normalize(rv.xyz / rv.w);
+            vec3 ray = normalize(vec3((ndc.x + gbufferProjection[2][0]) / gbufferProjection[0][0],
+                                      (ndc.y + gbufferProjection[2][1]) / gbufferProjection[1][1], -1.0));
             float hitT = dot(c, nrm) / max(dot(ray, nrm), 1e-4);
             vec3 hit = ray * hitT - c;
             vec2 local = vec2(dot(hit, right3), dot(hit, up3)) / arrowHalf;     // -1..1
