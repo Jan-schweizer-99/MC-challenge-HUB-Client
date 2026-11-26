@@ -28,6 +28,8 @@ Then connect the Quest (Link cable or Air Link) and play the VR profile.
 Problems with controllers or the picture? install-vr-steamvr.cmd sets the profile back to SteamVR.
 The shader starts with the profile "Performance": VR draws every picture twice.
 Updates: Esc -> Shader -> Update shader inside the VR profile.
+Seated profile (Quest 3, play sitting with mouse and keyboard): Esc -> Shader -> VR ->
+"Load seated profile", or press F8. "Save as seated profile" keeps your own settings instead.
 
 GOOD TO KNOW
 - Fullbright: B turns it on/off (with the shader). Choose "Caves" or "Full" once in

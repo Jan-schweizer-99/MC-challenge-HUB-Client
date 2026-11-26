@@ -119,6 +119,12 @@ try {
                 $from = Join-Path $McDir $f; $to = Join-Path $GameDir $f
                 if ((Test-Path $from) -and -not (Test-Path $to)) { Copy-Item $from $to }
             }
+            # ready-made Vivecraft profiles (Esc -> Shader -> VR, key F8); never over the player's own saved ones
+            $vrp = Join-Path $cfgDir 'scope_shadermenur-profiles'
+            New-Item -ItemType Directory -Force $vrp | Out-Null
+            foreach ($f in Get-ChildItem (Join-Path $here 'configr-profiles') -Filter '*.json' -ErrorAction SilentlyContinue) {
+                if (-not (Test-Path (Join-Path $vrp $f.Name))) { Copy-Item -LiteralPath $f.FullName $vrp }
+            }
             # VR draws every picture twice: the shader starts with the profile PERFORMANCE
             $opts = Join-Path $GameDir 'shaderpacks\ScopeCrystal.txt'
             if (-not (Test-Path $opts)) {
