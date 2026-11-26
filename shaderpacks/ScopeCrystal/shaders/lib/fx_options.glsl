@@ -24,6 +24,7 @@
 #define FX_LOBBY_BRIDGE // Light pulses running along the bridges.
 #define FX_LOBBY_ROUND // Smooth round rings on the lobby island.
 #define FX_LOBBY_SWORDS // Floating crossed swords, fly in when you arrive.
+#define FX_LOBBY_READY // Ready ring in the middle of the lobby, fills up during the countdown.
 #define FX_TEMPLE // All arena temple effects
 #define FX_TEMPLE_CRYSTAL // Glow and rising pulses of the crystal column.
 #define FX_TEMPLE_HELIX // Two mirrored light bands around the crystal.
@@ -178,6 +179,7 @@
 #undef FX_LOBBY_BRIDGE
 #undef FX_LOBBY_ROUND
 #undef FX_LOBBY_SWORDS
+#undef FX_LOBBY_READY
 #endif
 #ifndef FX_TEMPLE
 #undef FX_TEMPLE_CRYSTAL

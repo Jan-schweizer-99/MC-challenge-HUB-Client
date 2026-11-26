@@ -18,6 +18,8 @@ bool portalEnabled() {
 }
 // Ready-Ring im Hub: 0 leer, 1-9 Anteil der Spieler im Ring, 10-100 Countdown (Hub.ringTick)
 float hubReadySignal() { int n = worldTime - (portalClock() ? 18000 : 18300); return n > 0 && n <= 100 ? float(n) : 0.0; }
+// Ready-Ring der Arena-Lobby (Arena.ringSignal): 101..149, 1..9 Spieler im Ring, 10..49 Countdown
+float arenaReadySignal() { int n = worldTime - (portalClock() ? 18000 : 18300); return n > 100 && n < 150 ? float(n - 100) : 0.0; }
 bool portalOpeningCell(vec2 localHit) {
     if (!portalEnabled()) return false;
     vec2 cell = floor(localHit);

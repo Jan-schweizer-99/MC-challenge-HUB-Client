@@ -137,6 +137,42 @@ vec3 lobbyBridge(vec3 wp, vec3 nW, float t) {
     return vec3(0.45, 0.85, 1.0) * (pulse * 0.5 + 0.05) * exp(-x * x * 0.45) * ends;
 }
 
+// Ready-Ring in der Mitte (ArenaInvites, Radius 4.55): ruhiges Leuchten, füllt sich mit den Eingeladenen,
+// beim Countdown läuft er vom Hub her nach hinten voll. Gespiegelt um x = 0.5.
+vec3 lobbyReady(vec3 camW, vec3 dir, float sceneDist, bool hasSurface, vec3 wp, vec3 nW, float t) {
+    float n = arenaReadySignal();
+    float fill = n >= 10.0 ? (n - 10.0) / 39.0 : 0.0, team = n > 0.0 && n < 10.0 ? n / 9.0 : 0.0;
+    vec3 base = n >= 10.0 ? vec3(1.0, 0.4, 0.85) : vec3(0.7, 0.55, 1.0);
+    vec3 col = vec3(0.0);
+    vec2 c = LOBBY.xz;
+    if (hasSurface && nW.y > 0.9 && abs(wp.y - LOBBY.y) < 0.2) {
+        vec2 q = wp.xz - c;
+        float r = length(q), fw = max(fwidth(r), 1e-3), ang = atan(abs(q.x), -q.y) / 3.14159;
+        float line = exp(-pow((r - 4.55) / (0.09 + fw), 2.0));
+        float done = n >= 10.0 ? 1.0 - smoothstep(fill - 0.01, fill + 0.01, ang) : 0.0;
+        col += base * line * (0.22 + 0.1 * sin(t * 1.6) + 0.6 * team + 1.1 * done);
+        if (r < 4.55) col += base * (exp((r - 4.55) / 1.0) * (0.04 + 0.16 * team + 0.22 * done) + (n >= 10.0 ? 0.10 * fill * (0.6 + 0.4 * sin(t * 9.0 - r * 2.0)) : 0.0));
+    }
+    if (n <= 0.0) return col;
+    // Lichtwand über dem Ring
+    vec2 o = camW.xz - c;
+    float a = dot(dir.xz, dir.xz), b = dot(o, dir.xz), e = b * b - a * (dot(o, o) - 20.7);
+    if (e <= 0.0 || a < 1e-6) return col;
+    float s = sqrt(e);
+    for (int i = 0; i < 2; i++) {
+        float d = (i == 0 ? -b - s : -b + s) / a;
+        if (d <= 0.0 || d > sceneDist) continue;
+        vec3 p = camW + dir * d;
+        float h = p.y - LOBBY.y, top = n >= 10.0 ? 1.0 + 3.0 * fill : 0.7;
+        if (h < 0.0 || h > top) continue;
+        vec2 q = p.xz - c;
+        float ang = atan(abs(q.x), -q.y) / 3.14159;
+        float on = n >= 10.0 ? 1.0 - smoothstep(fill - 0.02, fill + 0.02, ang) : team;
+        col += base * pow(1.0 - h / top, 2.0) * (0.75 + 0.25 * sin(ang * 40.0 - t * 3.0)) * on * (n >= 10.0 ? 0.38 : 0.2);
+    }
+    return col;
+}
+
 vec3 lobby(vec3 camW, vec3 dir, float sceneDist, bool hasSurface, vec3 wp, vec3 nW) {
     vec3 rel = camW - LOBBY;
     if (length(rel.xz) > 130.0 || abs(rel.y) > 100.0) return vec3(0.0);
@@ -162,6 +198,9 @@ vec3 lobby(vec3 camW, vec3 dir, float sceneDist, bool hasSurface, vec3 wp, vec3 
 #endif
 #ifdef FX_LOBBY_BRIDGE
     if (hasSurface) col += lobbyBridge(wp, nW, t);
+#endif
+#ifdef FX_LOBBY_READY
+    col += lobbyReady(camW, dir, sceneDist, hasSurface, wp, nW, t);
 #endif
     return col;
 }
