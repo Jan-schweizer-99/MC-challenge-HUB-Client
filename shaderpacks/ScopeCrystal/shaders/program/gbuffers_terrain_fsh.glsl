@@ -76,7 +76,7 @@ void main() {
     }
 #endif
     vec3 albedo = c.rgb;
-    vec3 light = texture(lightmap, lmcoord).rgb;
+    vec3 light = fullbright(texture(lightmap, lmcoord).rgb);
 #ifdef PVP_WORLD
     if (terrainFx(FXM_TORCHES)) {
     // Fackellicht in der Arena nach Ort färben – nur in der Nähe der Fackeln, andere Lichtquellen bleiben

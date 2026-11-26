@@ -64,7 +64,7 @@ void main() {
     }
 #endif
     c.rgb = mix(c.rgb, entityColor.rgb, entityColor.a);   // rotes Aufblinken bei Treffern
-    c.rgb *= texture(lightmap, lmcoord).rgb;
+    c.rgb *= fullbright(texture(lightmap, lmcoord).rgb);
     outColor = c;
     outData = vec4(0.0, 0.0, 0.0, 0.0);
     outLight = vec4(lmcoord, 0.0, 1.0);

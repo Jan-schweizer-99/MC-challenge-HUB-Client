@@ -18,7 +18,8 @@ In game: Esc -> Shader -> Update shader (from version 1.0.9 on). By hand:
 Your shader settings are kept. The Shader Menu mod is updated too. Use /getshader on the server for the latest link.
 
 GOOD TO KNOW
-- Fullbright: Gamma Utils, toggle key under Options -> Controls -> Gamma Utils.
+- Fullbright: B turns it on/off (with the shader). Choose "Caves" or "Full" once in
+  Esc -> Shader. Without the shader: Gamma Utils, key under Options -> Controls -> Gamma Utils.
 - K turns the shader on/off, F9 switches the shader profile.
 - Pause menu -> Shader: profile, effects and all settings. Keys can be changed in
   Options -> Controls -> Shader.

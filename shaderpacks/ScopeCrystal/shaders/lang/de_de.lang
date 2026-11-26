@@ -313,3 +313,9 @@ option.FX_ISLES_LINKS=Lichtfaeden
 option.FX_ISLES_LINKS.comment=Lichtfaeden zwischen den Inseln.
 option.FX_ISLES_MAGIC=Wunder
 option.FX_ISLES_MAGIC.comment=Wal, Mondtor, Kristalle, Blueten und mehr.
+option.FULLBRIGHT=Fullbright
+option.FULLBRIGHT.comment=Schaltet Fullbright an oder aus. Schneller: die Fullbright-Taste (Optionen -> Steuerung -> Shader, Standard B).
+option.FULLBRIGHT_MODE=Fullbright-Art
+option.FULLBRIGHT_MODE.comment=Hoehlen = Dunkles wird heller, Fackeln und Lampen sieht man noch. Voll = alles taghell.
+value.FULLBRIGHT_MODE.1=Hoehlen
+value.FULLBRIGHT_MODE.2=Voll

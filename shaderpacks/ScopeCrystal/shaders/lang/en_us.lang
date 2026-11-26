@@ -313,3 +313,9 @@ option.FX_ISLES_LINKS=Light threads
 option.FX_ISLES_LINKS.comment=Threads of light between the islands.
 option.FX_ISLES_MAGIC=Wonders
 option.FX_ISLES_MAGIC.comment=Whale, moon gate, crystals, petals and more.
+option.FULLBRIGHT=Fullbright
+option.FULLBRIGHT.comment=Turns fullbright on or off. Quicker: the fullbright key (Options -> Controls -> Shader, default B).
+option.FULLBRIGHT_MODE=Fullbright mode
+option.FULLBRIGHT_MODE.comment=Caves = dark spots get lighter, torches and lamps still show. Full = everything as bright as day.
+value.FULLBRIGHT_MODE.1=Caves
+value.FULLBRIGHT_MODE.2=Full

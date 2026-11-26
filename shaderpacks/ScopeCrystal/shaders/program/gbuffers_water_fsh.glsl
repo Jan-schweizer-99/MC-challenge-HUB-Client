@@ -69,15 +69,15 @@ void main() {
 #else
     if (c.a < 0.02) discard;
 #endif
-    c.rgb *= texture(lightmap, lmcoord).rgb;
+    c.rgb *= fullbright(texture(lightmap, lmcoord).rgb);
 #if REFLECTIONS > 0
     if (mat == 1) c.a = max(c.a, 0.55);       // Wasser etwas dichter, damit die Spiegelung trägt
 #endif
     int surfaceMat = mat == 0 ? 2 : mat;
 #ifdef PVP_WORLD
-    if (hubZone > 0) c = vec4(hubRoundFloor(hubZone, worldPos, glcolor.rgb, texture(lightmap, lmcoord).rgb, frameTimeCounter, surfaceMat), 1.0);
+    if (hubZone > 0) c = vec4(hubRoundFloor(hubZone, worldPos, glcolor.rgb, fullbright(texture(lightmap, lmcoord).rgb), frameTimeCounter, surfaceMat), 1.0);
     if (roundTop) {
-        c = vec4(roundArenaFloor(worldPos, glcolor.rgb, texture(lightmap, lmcoord).rgb, frameTimeCounter), 1.0);
+        c = vec4(roundArenaFloor(worldPos, glcolor.rgb, fullbright(texture(lightmap, lmcoord).rgb), frameTimeCounter), 1.0);
         surfaceMat = 3;
     }
 #endif

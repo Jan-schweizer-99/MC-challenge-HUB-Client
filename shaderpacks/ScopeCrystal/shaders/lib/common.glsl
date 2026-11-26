@@ -33,6 +33,21 @@ float arenaOffsetX(int side) { return side == 2 ? END_X : side == 1 ? TWIN_X : 0
 
 // Shader-Optionen (Optionen > Shaderpacks > ScopeCrystal). Standard = Vanilla-Look.
 #define REFLECTIONS 0 // [0 1 2 3] Spiegelungen: 0 aus, 1 niedrig (Wasser/Glas), 2 mittel (+ glänzende Blöcke), 3 hoch
+//#define FULLBRIGHT // Fullbright an/aus (Taste im Shader-Menue-Mod)
+#define FULLBRIGHT_MODE 1 // [1 2] Fullbright-Art: 1 Hoehlen (dunkle Stellen aufgehellt, Licht bleibt sichtbar), 2 voll (alles taghell)
+
+// Lightmap colour with the fullbright option applied
+vec3 fullbright(vec3 light) {
+#ifdef FULLBRIGHT
+#if FULLBRIGHT_MODE == 2
+    return vec3(1.0);
+#else
+    return max(light, vec3(0.65));
+#endif
+#else
+    return light;
+#endif
+}
 #define GLASS_STYLE 0 // [0 1 2] Glas: 0 Vanilla, 1 klar (durchgehende Scheiben), 2 fancy (+ Glanzstreifen)
 
 int decodeMat(float a) { return int(a * 8.0 + 0.5) - 1; }   // -1 = Himmel/keine Daten
