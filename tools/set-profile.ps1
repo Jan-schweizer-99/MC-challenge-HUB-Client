@@ -1,9 +1,9 @@
-# Gives the Fabric profile its own name and icon in the Minecraft launcher.
+# Gives the Fabric profile its own name and icon (blue hardcore heart with VR headset) in the Minecraft launcher.
 # Removes the separate "MC-challenge-HUB VR" profile of older installs (its folder mc-hub-vr stays).
 # Close the launcher first, it overwrites the file on exit.
 param([string]$McDir = (Join-Path $env:APPDATA '.minecraft'), [string]$Backup = '')
 $ErrorActionPreference = 'Stop'
-$icon = 'data:image/png;base64,' + [Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $PSScriptRoot 'icon.png')))
+$icon = 'data:image/png;base64,' + [Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $PSScriptRoot 'icon-vr.png')))
 if (-not $Backup) { $Backup = Join-Path $McDir ('mc-hub-backup\' + (Get-Date -Format 'yyyy-MM-dd_HH-mm-ss')) }
 $done = 0
 foreach ($name in 'launcher_profiles.json', 'launcher_profiles_microsoft_store.json') {
