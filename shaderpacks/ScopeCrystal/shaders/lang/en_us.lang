@@ -321,3 +321,5 @@ option.FULLBRIGHT_MODE=Fullbright mode
 option.FULLBRIGHT_MODE.comment=Caves = dark spots get lighter, torches and lamps still show. Full = everything as bright as day.
 value.FULLBRIGHT_MODE.1=Caves
 value.FULLBRIGHT_MODE.2=Full
+option.VR_CURSOR=VR cursor
+option.VR_CURSOR.comment=Draws the VR cursor of the Scopemods mod (trail and arrow) in the shader, over glass, water and clouds. Settings: Esc -> Scopemods -> VR -> Customise cursor.

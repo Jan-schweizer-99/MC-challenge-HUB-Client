@@ -321,3 +321,5 @@ option.FULLBRIGHT_MODE=Fullbright-Art
 option.FULLBRIGHT_MODE.comment=Hoehlen = Dunkles wird heller, Fackeln und Lampen sieht man noch. Voll = alles taghell.
 value.FULLBRIGHT_MODE.1=Hoehlen
 value.FULLBRIGHT_MODE.2=Voll
+option.VR_CURSOR=VR-Cursor
+option.VR_CURSOR.comment=Zeichnet den VR-Cursor der Scopemods-Mod (Spur und Pfeil) im Shader, ueber Glas, Wasser und Wolken. Einstellungen: Esc -> Scopemods -> VR -> Cursor anpassen.
