@@ -4,6 +4,7 @@
 !/README.md
 !/install.ps1
 !/install.cmd
+!/install-steamvr.cmd
 !/update-shader.cmd
 !/install.txt
 !/release.ps1
