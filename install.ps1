@@ -1,7 +1,8 @@
 # MC-challenge-HUB client installer (see install.txt).
 #   install.ps1               Fabric, mods, shaderpack, Iris setting
 #   install.ps1 -ShaderOnly   only replaces the shaderpack and our shader menu mod
-param([switch]$ShaderOnly, [string]$Java = '', [string]$McDir = (Join-Path $env:APPDATA '.minecraft'), [switch]$NoPause)
+#   install.ps1 -VR           second, separate profile with Vivecraft in .minecraft\mc-hub-vr (the normal one stays)
+param([switch]$ShaderOnly, [switch]$VR, [string]$Java = '', [string]$McDir = (Join-Path $env:APPDATA '.minecraft'), [switch]$NoPause)
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -16,6 +17,9 @@ $mods = @(
     @{ file = 'Gamma-Utils-Fabric-3.2.2+mc26.3.jar'; url = 'https://cdn.modrinth.com/data/wdLuzzEP/versions/k6ywOirE/Gamma-Utils-Fabric-3.2.2%2Bmc26.3.jar'; hash = '6cc6029537b7741af1c7b36a9f44e22bf379c4851c4d44918acc24d2d74009d4739eb1a1296078ac2b8d3d9430083b9452a168059d3ca090394656adbad02575' }
     @{ file = 'cloth-config-fabric-26.3.159.jar'; url = 'https://cdn.modrinth.com/data/9s6osm5g/versions/fg2uyxOW/cloth-config-fabric-26.3.159.jar'; hash = '8924e19d41845096724fa10f3717bc51964a0edbbbcad0ff1e6c6187a398b08f356e49579a657c2dc44a7f92e3850771f3ca70bf8c1f654de60425163b91dbb1' }
 )
+# VR only: Vivecraft (needs SteamVR; Quest via Link, Air Link or Virtual Desktop)
+$vivecraft = @{ file = 'vivecraft-26.3-1.3.18-fabric.jar'; url = 'https://cdn.modrinth.com/data/wGoQDPN5/versions/eV5kQTVM/vivecraft-26.3-1.3.18-fabric.jar'; hash = 'f952c991d2a3a1b63c2746408e6a056b3db108e6f2cde33e2466d6228212bb9fbc667abaedce31943dcc0b7f04d1fe8e060fc8f32b92e34337a7c1fe33e8e761' }
+if ($VR) { $mods += $vivecraft }
 $fabric = @{ url = 'https://maven.fabricmc.net/net/fabricmc/fabric-installer/1.1.2/fabric-installer-1.1.2.jar'; hash = '61e035bf7bf70153e127440ce34de47c9036f0a2d0c65d1529454bd35ceefe4f' }
 
 function Get-Checked([string]$url, [string]$hash, [string]$out) {
@@ -36,6 +40,9 @@ function Find-Java {
     throw 'No Java found. Run Minecraft 26.3 once, or use: install.ps1 -Java "C:\path\to\java.exe"'
 }
 
+# Own game folder for VR: mods, settings and shader apart from the normal profile
+$GameDir = if ($VR) { Join-Path $McDir 'mc-hub-vr' } else { $McDir }
+
 $code = 0
 try {
     $jar = Join-Path $McDir 'versions\26.3\26.3.jar'
@@ -45,7 +52,7 @@ try {
     # Our own mod: shader button in the pause menu (needs Iris and Fabric API).
     $menu = Get-ChildItem (Join-Path $here 'clientmod') -Filter 'shadermenu-*.jar' | Select-Object -First 1
     if (-not $menu) { throw 'Shader menu mod not found. Please extract the whole ZIP first.' }
-    $modDir = Join-Path $McDir 'mods'
+    $modDir = Join-Path $GameDir 'mods'
     foreach ($f in @(Get-ChildItem $modDir -Filter 'shadermenu-*.jar' -ErrorAction SilentlyContinue)) {
         try { [IO.File]::Open($f.FullName, 'Open', 'ReadWrite', 'None').Close() } catch { throw 'Minecraft is still running. Close it, then run this again.' }
     }
@@ -71,22 +78,39 @@ try {
         }
     }
 
-    $backup = Join-Path $McDir ('mc-hub-backup\' + (Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'))
-    New-Item -ItemType Directory -Force $backup, (Join-Path $McDir 'shaderpacks') | Out-Null
-    $pack = Join-Path $McDir 'shaderpacks\ScopeCrystal'
+    $backup = Join-Path $GameDir ('mc-hub-backup\' + (Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'))
+    New-Item -ItemType Directory -Force $backup, (Join-Path $GameDir 'shaderpacks') | Out-Null
+    $pack = Join-Path $GameDir 'shaderpacks\ScopeCrystal'
     if (Test-Path $pack) { Move-Item $pack (Join-Path $backup 'ScopeCrystal') }
     Copy-Item -Recurse (Join-Path $tmp 'ScopeCrystal') $pack
     if (-not $ShaderOnly) {
         if (Test-Path $modDir) { Move-Item $modDir (Join-Path $backup 'mods') }
-        $cfgDir = Join-Path $McDir 'config'
+        $cfgDir = Join-Path $GameDir 'config'
         New-Item -ItemType Directory -Force $modDir, $cfgDir | Out-Null
         foreach ($m in $mods) { Copy-Item -LiteralPath (Join-Path $tmp $m.file) $modDir }
         Copy-Item -LiteralPath $menu.FullName $modDir
         $cfg = Join-Path $cfgDir 'iris.properties'
         if (Test-Path $cfg) { Copy-Item $cfg $backup }
         Copy-Item (Join-Path $here 'config\iris.properties') $cfg -Force
+        if ($VR) {
+            # once: language, keys, sound and the server list of the normal profile
+            foreach ($f in 'options.txt', 'servers.dat') {
+                $from = Join-Path $McDir $f; $to = Join-Path $GameDir $f
+                if ((Test-Path $from) -and -not (Test-Path $to)) { Copy-Item $from $to }
+            }
+            # VR draws every picture twice: the shader starts with the profile PERFORMANCE
+            $opts = Join-Path $GameDir 'shaderpacks\ScopeCrystal.txt'
+            if (-not (Test-Path $opts)) {
+                $line = Get-Content (Join-Path $pack 'shaders\shaders.properties') | Where-Object { $_ -like 'profile.PERFORMANCE=*' } | Select-Object -First 1
+                $out = foreach ($o in ($line -replace '^profile\.PERFORMANCE=', '') -split ' ') {
+                    if (-not $o) { continue }
+                    if ($o -like '!*') { "$($o.Substring(1))=false" } elseif ($o -like '*=*') { $o } else { "$o=true" }
+                }
+                [IO.File]::WriteAllLines($opts, [string[]]$out)
+            }
+        }
         # only cosmetic: a problem here must not fail the install
-        try { & (Join-Path $here 'tools\set-profile.ps1') -McDir $McDir -Backup $backup }
+        try { & (Join-Path $here 'tools\set-profile.ps1') -McDir $McDir -Backup $backup -VR:$VR }
         catch { Write-Host "Note: launcher icon not set ($($_.Exception.Message))" -ForegroundColor Yellow }
     }
     if ($ShaderOnly) {
@@ -98,6 +122,10 @@ try {
     Write-Host ''
     Write-Host "Done. Your previous files are in: $backup" -ForegroundColor Green
     if ($ShaderOnly) { Write-Host 'Start Minecraft to use the new shader.' -ForegroundColor Green }
+    elseif ($VR) {
+        Write-Host 'Launcher -> profile "MC-challenge-HUB VR" -> Play. Start SteamVR first' -ForegroundColor Green
+        Write-Host '(Quest: Link cable, Air Link or Virtual Desktop). The normal profile is unchanged.' -ForegroundColor Green
+    }
     else { Write-Host 'Launcher -> profile "MC-challenge-HUB" -> Play.' -ForegroundColor Green }
 } catch {
     Write-Host ''

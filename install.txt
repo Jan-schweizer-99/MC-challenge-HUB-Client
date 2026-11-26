@@ -18,6 +18,13 @@ the menu updates too without restarting Minecraft. By hand:
 2. Double-click update-shader.cmd.
 Your shader settings are kept. The Shader Menu mod is updated too. Use /getshader on the server for the latest link.
 
+VR (Quest 3 and other SteamVR headsets)
+Double-click install-vr.cmd. It adds a second launcher profile "MC-challenge-HUB VR"
+with Vivecraft and its own folder (.minecraft\mc-hub-vr); the normal profile stays as it is.
+Start SteamVR first (Quest: Link cable, Air Link or Virtual Desktop), then play the VR profile.
+The shader starts with the profile "Performance": VR draws every picture twice.
+Updates: Esc -> Shader -> Update shader inside the VR profile.
+
 GOOD TO KNOW
 - Fullbright: B turns it on/off (with the shader). Choose "Caves" or "Full" once in
   Esc -> Shader. Without the shader: Gamma Utils, key under Options -> Controls -> Gamma Utils.
