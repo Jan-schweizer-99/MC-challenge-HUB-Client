@@ -13,7 +13,6 @@
 !/clientmod/
 /config/*
 !/config/iris.properties
-!/config/vr-profiles/
 /shaderpacks/*
 !/shaderpacks/ScopeCrystal/
 # Generated from the player's own Minecraft (Mojang textures) - never publish

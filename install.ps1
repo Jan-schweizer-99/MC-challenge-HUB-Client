@@ -44,7 +44,7 @@ try {
     if (-not (Test-Path $jar)) { throw 'Minecraft 26.3 not found. Start Minecraft Java 26.3 once in the launcher, close it, then run this again.' }
     $packSrc = Join-Path $here 'shaderpacks\ScopeCrystal'
     if (-not (Test-Path $packSrc)) { throw 'Shaderpack not found. Please extract the whole ZIP first.' }
-    # Our own mod: shader button in the pause menu, VR profiles, OpenComposite (needs Iris and Fabric API).
+    # Our own mod Scopemods: pause menu with shader settings, VR profiles, OpenComposite (needs Iris and Fabric API).
     $menu = Get-ChildItem (Join-Path $here 'clientmod') -Filter 'shadermenu-*.jar' | Select-Object -First 1
     if (-not $menu) { throw 'Shader menu mod not found. Please extract the whole ZIP first.' }
     $modDir = Join-Path $McDir 'mods'
@@ -84,12 +84,6 @@ try {
     $cfg = Join-Path $cfgDir 'iris.properties'
     if (Test-Path $cfg) { Copy-Item $cfg $backup }
     Copy-Item (Join-Path $here 'config\iris.properties') $cfg -Force
-    # ready-made Vivecraft profiles (Esc -> Shader -> VR, key F8); never over the player's own saved ones
-    $vrp = Join-Path $cfgDir 'scope_shadermenu\vr-profiles'
-    New-Item -ItemType Directory -Force $vrp | Out-Null
-    foreach ($f in Get-ChildItem (Join-Path $here 'config\vr-profiles') -Filter '*.json' -ErrorAction SilentlyContinue) {
-        if (-not (Test-Path (Join-Path $vrp $f.Name))) { Copy-Item -LiteralPath $f.FullName $vrp }
-    }
     # name and icon; a problem here must not fail the install
     try { & (Join-Path $here 'tools\set-profile.ps1') -McDir $McDir -Backup $backup }
     catch { Write-Host "Note: launcher profile not updated ($($_.Exception.Message))" -ForegroundColor Yellow }
