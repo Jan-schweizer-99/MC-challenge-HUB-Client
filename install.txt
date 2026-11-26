@@ -21,7 +21,11 @@ Your shader settings are kept. The Shader Menu mod is updated too. Use /getshade
 VR (Quest 3 and other SteamVR headsets)
 Double-click install-vr.cmd. It adds a second launcher profile "MC-challenge-HUB VR"
 with Vivecraft and its own folder (.minecraft\mc-hub-vr); the normal profile stays as it is.
-Start SteamVR first (Quest: Link cable, Air Link or Virtual Desktop), then play the VR profile.
+VR runs WITHOUT SteamVR, straight on the Meta runtime (OpenComposite, only in this profile;
+other SteamVR games are not touched). That usually runs smoother. Once before playing:
+Meta Quest Link app -> Settings -> General -> "OpenXR Runtime" -> set Meta Quest Link as active.
+Then connect the Quest (Link cable or Air Link) and play the VR profile.
+Problems with controllers or the picture? install-vr-steamvr.cmd sets the profile back to SteamVR.
 The shader starts with the profile "Performance": VR draws every picture twice.
 Updates: Esc -> Shader -> Update shader inside the VR profile.
 

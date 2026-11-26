@@ -1,8 +1,10 @@
 # MC-challenge-HUB client installer (see install.txt).
 #   install.ps1               Fabric, mods, shaderpack, Iris setting
 #   install.ps1 -ShaderOnly   only replaces the shaderpack and our shader menu mod
-#   install.ps1 -VR           second, separate profile with Vivecraft in .minecraft\mc-hub-vr (the normal one stays)
-param([switch]$ShaderOnly, [switch]$VR, [string]$Java = '', [string]$McDir = (Join-Path $env:APPDATA '.minecraft'), [switch]$NoPause)
+#   install.ps1 -VR           second, separate profile with Vivecraft in .minecraft\mc-hub-vr (the normal one stays);
+#                             VR runs through OpenComposite straight on the OpenXR runtime (Meta Quest Link), no SteamVR
+#   install.ps1 -VR -SteamVR  the same, but through SteamVR
+param([switch]$ShaderOnly, [switch]$VR, [switch]$SteamVR, [string]$Java = '', [string]$McDir = (Join-Path $env:APPDATA '.minecraft'), [switch]$NoPause)
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -20,6 +22,11 @@ $mods = @(
 # VR only: Vivecraft (needs SteamVR; Quest via Link, Air Link or Virtual Desktop)
 $vivecraft = @{ file = 'vivecraft-26.3-1.3.18-fabric.jar'; url = 'https://cdn.modrinth.com/data/wGoQDPN5/versions/eV5kQTVM/vivecraft-26.3-1.3.18-fabric.jar'; hash = 'f952c991d2a3a1b63c2746408e6a056b3db108e6f2cde33e2466d6228212bb9fbc667abaedce31943dcc0b7f04d1fe8e060fc8f32b92e34337a7c1fe33e8e761' }
 if ($VR) { $mods += $vivecraft }
+# VR without SteamVR: OpenComposite answers Vivecraft's OpenVR calls and forwards them to the OpenXR runtime.
+# Only for this profile (LWJGL loads this openvr_api.dll), the system and other SteamVR games stay as they are.
+# Fixed build of the openxr branch (commit a27e7e6, 2025-05-30), https://gitlab.com/znixian/OpenOVR, GPLv3.
+$openComposite = @{ file = 'openvr_api.dll'; url = 'https://opencomposite.znix.xyz/builds/download_build?commit=a27e7e6a64bdcd1eff6b7fba1ea2ea34bcf1273d&build_id=52366409&artefact_id=JjRFMXaxas695QK-'; hash = '3ef564d69b5af1e9ff6bc0d4d55aa32334636a70e084e9c51103953d366e0d13d9871f809e4342c64381de0494b018cd51c43837c37a2837ed6577ced6f19db1' }
+$useOpenXR = $VR -and -not $SteamVR
 $fabric = @{ url = 'https://maven.fabricmc.net/net/fabricmc/fabric-installer/1.1.2/fabric-installer-1.1.2.jar'; hash = '61e035bf7bf70153e127440ce34de47c9036f0a2d0c65d1529454bd35ceefe4f' }
 
 function Get-Checked([string]$url, [string]$hash, [string]$out) {
@@ -65,6 +72,11 @@ try {
     if (-not $ShaderOnly) {
         $javaExe = Find-Java
         foreach ($m in $mods) { Write-Host "Downloading $($m.file) ..."; Get-Checked $m.url $m.hash (Join-Path $tmp $m.file) }
+        if ($useOpenXR) {
+            Write-Host 'Downloading OpenComposite (VR without SteamVR) ...'
+            New-Item -ItemType Directory -Force (Join-Path $tmp 'opencomposite') | Out-Null
+            Get-Checked $openComposite.url $openComposite.hash (Join-Path $tmp 'opencomposite\openvr_api.dll')
+        }
         Write-Host 'Downloading Fabric installer ...'
         Get-Checked $fabric.url $fabric.hash (Join-Path $tmp 'fabric-installer.jar')
         # Both launcher variants may be installed; Fabric wants each one named.
@@ -92,6 +104,15 @@ try {
         $cfg = Join-Path $cfgDir 'iris.properties'
         if (Test-Path $cfg) { Copy-Item $cfg $backup }
         Copy-Item (Join-Path $here 'config\iris.properties') $cfg -Force
+        $ocDll = ''
+        if ($useOpenXR) {
+            $ocDir = Join-Path $GameDir 'opencomposite'
+            New-Item -ItemType Directory -Force $ocDir | Out-Null
+            $ocDll = Join-Path $ocDir 'openvr_api.dll'
+            Copy-Item -LiteralPath (Join-Path $tmp 'opencomposite\openvr_api.dll') $ocDll -Force
+            # Vivecraft asks for every device property it knows; Quest headsets dislike Vulkan for the OpenXR start
+            [IO.File]::WriteAllLines((Join-Path $ocDir 'opencomposite.ini'), [string[]]@('admitUnknownProps=true', 'initUsingVulkan=false'))
+        }
         if ($VR) {
             # once: language, keys, sound and the server list of the normal profile
             foreach ($f in 'options.txt', 'servers.dat') {
@@ -110,7 +131,7 @@ try {
             }
         }
         # only cosmetic: a problem here must not fail the install
-        try { & (Join-Path $here 'tools\set-profile.ps1') -McDir $McDir -Backup $backup -VR:$VR }
+        try { & (Join-Path $here 'tools\set-profile.ps1') -McDir $McDir -Backup $backup -VR:$VR -OpenVRDll $ocDll }
         catch { Write-Host "Note: launcher icon not set ($($_.Exception.Message))" -ForegroundColor Yellow }
     }
     if ($ShaderOnly) {
@@ -123,8 +144,11 @@ try {
     Write-Host "Done. Your previous files are in: $backup" -ForegroundColor Green
     if ($ShaderOnly) { Write-Host 'Start Minecraft to use the new shader.' -ForegroundColor Green }
     elseif ($VR) {
-        Write-Host 'Launcher -> profile "MC-challenge-HUB VR" -> Play. Start SteamVR first' -ForegroundColor Green
-        Write-Host '(Quest: Link cable, Air Link or Virtual Desktop). The normal profile is unchanged.' -ForegroundColor Green
+        if ($useOpenXR) {
+            Write-Host 'VR runs without SteamVR. Once: Meta Quest Link app -> Settings -> General ->' -ForegroundColor Green
+            Write-Host '"OpenXR Runtime": set Meta Quest Link as active. Connect the Quest (Link cable or Air Link).' -ForegroundColor Green
+        } else { Write-Host 'Start SteamVR first (Quest: Link cable, Air Link or Virtual Desktop).' -ForegroundColor Green }
+        Write-Host 'Launcher -> profile "MC-challenge-HUB VR" -> Play. The normal profile is unchanged.' -ForegroundColor Green
     }
     else { Write-Host 'Launcher -> profile "MC-challenge-HUB" -> Play.' -ForegroundColor Green }
 } catch {
