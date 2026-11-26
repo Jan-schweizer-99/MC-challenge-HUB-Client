@@ -27,8 +27,8 @@ Seated profile (sitting, mouse and keyboard): Esc -> Shader -> VR -> "Load seate
 or press F8. It also hides the chat. "Save as seated profile" keeps your own settings instead.
 
 GOOD TO KNOW
-- Fullbright: B turns it on/off (with the shader). Choose "Caves" or "Full" once in
-  Esc -> Shader. Without the shader: Gamma Utils, key under Options -> Controls -> Gamma Utils.
+- Fullbright: B turns it on/off, with and without the shader (K). Choose "Caves" or "Full"
+  once in Esc -> Shader. Without the shader it raises the brightness (Gamma Utils).
 - K turns the shader on/off, F9 switches the shader profile.
 - Pause menu -> Shader: profile, effects and all settings. Keys can be changed in
   Options -> Controls -> Shader.
