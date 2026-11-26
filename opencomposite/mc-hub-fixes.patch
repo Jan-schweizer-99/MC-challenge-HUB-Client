@@ -1,0 +1,61 @@
+diff --git a/DrvOpenXR/XrHMD.cpp b/DrvOpenXR/XrHMD.cpp
+index ffeab79..5df3b76 100644
+--- a/DrvOpenXR/XrHMD.cpp
++++ b/DrvOpenXR/XrHMD.cpp
+@@ -2,6 +2,8 @@
+ // Created by ZNix on 25/10/2020.
+ //
+ 
++#include <chrono>
++#include <thread>
+ #include "XrHMD.h"
+ 
+ #include "../OpenOVR/Misc/Config.h"
+diff --git a/OpenOVR/Reimpl/BaseInput.cpp b/OpenOVR/Reimpl/BaseInput.cpp
+index 1091a21..6ea5101 100644
+--- a/OpenOVR/Reimpl/BaseInput.cpp
++++ b/OpenOVR/Reimpl/BaseInput.cpp
+@@ -2317,20 +2317,34 @@ EVRInputError BaseInput::GetActionOrigins(VRActionSetHandle_t actionSetHandle, V
+ 	XrBoundSourcesForActionEnumerateInfo info = { XR_TYPE_BOUND_SOURCES_FOR_ACTION_ENUMERATE_INFO };
+ 	info.action = act->xr;
+ 
+-	// 20 will be more than enough, saves a second call
+-	XrPath tmp[20];
+-	uint32_t count;
+-	OOVR_FAILED_XR_ABORT(xrEnumerateBoundSourcesForAction(xr_session.get(), &info, std::size(tmp), &count, tmp));
++	// MC-challenge-HUB patch: two-call idiom. The Meta Quest Link runtime reported more sources than the fixed
++	// buffer of 20 held, so the loop below read past its end (garbage paths, then a crash).
++	uint32_t count = 0;
++	if (XR_FAILED(xrEnumerateBoundSourcesForAction(xr_session.get(), &info, 0, &count, nullptr)) || count == 0)
++		return VRInputError_None;
++	std::vector<XrPath> tmp(count, XR_NULL_PATH);
++	uint32_t written = 0;
++	if (XR_FAILED(xrEnumerateBoundSourcesForAction(xr_session.get(), &info, count, &written, tmp.data())))
++		return VRInputError_None;
++	count = std::min(written, count);
+ 
+ 	// Now for each source find the /user/hand/abc substring that it starts with
+ 	char buff[XR_MAX_PATH_LENGTH + 1];
+ 	for (uint32_t i = 0; i < count; i++) {
+-		uint32_t len;
+-		OOVR_FAILED_XR_ABORT(xrPathToString(xr_instance, tmp[i], XR_MAX_PATH_LENGTH, &len, buff));
++		// MC-challenge-HUB patch: some runtimes (Meta Quest Link) return XR_NULL_PATH for a bound source.
++		// Skip it instead of aborting the game (Vivecraft calls this every time actions overlap).
++		if (tmp[i] == XR_NULL_PATH)
++			continue;
++		uint32_t len = 0;
++		if (XR_FAILED(xrPathToString(xr_instance, tmp[i], XR_MAX_PATH_LENGTH, &len, buff)) || len == 0)
++			continue;
+ 
+-		std::string path(buff, len);
+-		int endOfHandPos = path.find('/', strlen("/user/hand/") + 1);
+-		path.erase(endOfHandPos);
++		std::string path(buff, len - 1);
++		if (path.rfind("/user/hand/", 0) != 0)
++			continue;
++		size_t endOfHandPos = path.find('/', strlen("/user/hand/") + 1);
++		if (endOfHandPos != std::string::npos)
++			path.erase(endOfHandPos);
+ 		sources.insert(std::move(path));
+ 	}
+ 

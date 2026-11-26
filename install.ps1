@@ -1,8 +1,6 @@
-# MC-challenge-HUB client installer (see install.txt).
-#   install.ps1               Fabric, mods, shaderpack, Iris setting
-#   install.ps1 -ShaderOnly   only replaces the shaderpack and our shader menu mod
-#   install.ps1 -SteamVR      VR (Vivecraft) through SteamVR instead of straight on the OpenXR runtime (OpenComposite)
-param([switch]$ShaderOnly, [switch]$SteamVR, [string]$Java = '', [string]$McDir = (Join-Path $env:APPDATA '.minecraft'), [switch]$NoPause)
+# MC-challenge-HUB client installer (see install.txt). Installs and updates: run it again for a new version.
+# Fabric, mods (Vivecraft included, VR stays off until the "VR" button), shaderpack, our menu mod, Iris setting.
+param([string]$Java = '', [string]$McDir = (Join-Path $env:APPDATA '.minecraft'), [switch]$NoPause)
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -16,14 +14,10 @@ $mods = @(
     @{ file = 'iris-fabric-1.11.7+mc26.3.jar'; url = 'https://cdn.modrinth.com/data/YL57xq9U/versions/vTN4NRGW/iris-fabric-1.11.7%2Bmc26.3.jar'; hash = 'd8d3312f77fc52a48e4a6cd836fda33669bdebcb4de0b8c0d30adc808b287330a533e0baef355cc1ce6336a26851d9775369a802a4666b7b7a6266af20088f42' }
     @{ file = 'Gamma-Utils-Fabric-3.2.2+mc26.3.jar'; url = 'https://cdn.modrinth.com/data/wdLuzzEP/versions/k6ywOirE/Gamma-Utils-Fabric-3.2.2%2Bmc26.3.jar'; hash = '6cc6029537b7741af1c7b36a9f44e22bf379c4851c4d44918acc24d2d74009d4739eb1a1296078ac2b8d3d9430083b9452a168059d3ca090394656adbad02575' }
     @{ file = 'cloth-config-fabric-26.3.159.jar'; url = 'https://cdn.modrinth.com/data/9s6osm5g/versions/fg2uyxOW/cloth-config-fabric-26.3.159.jar'; hash = '8924e19d41845096724fa10f3717bc51964a0edbbbcad0ff1e6c6187a398b08f356e49579a657c2dc44a7f92e3850771f3ca70bf8c1f654de60425163b91dbb1' }
+    # VR: off until the "VR" button in the main menu; without a headset it does practically nothing.
+    # Runs without SteamVR: our menu mod brings OpenComposite (folder opencomposite, GPLv3, source and patch there).
+    @{ file = 'vivecraft-26.3-1.3.18-fabric.jar'; url = 'https://cdn.modrinth.com/data/wGoQDPN5/versions/eV5kQTVM/vivecraft-26.3-1.3.18-fabric.jar'; hash = 'f952c991d2a3a1b63c2746408e6a056b3db108e6f2cde33e2466d6228212bb9fbc667abaedce31943dcc0b7f04d1fe8e060fc8f32b92e34337a7c1fe33e8e761' }
 )
-# Vivecraft: VR is off until the "VR" button in the main menu turns it on; without a headset nothing changes.
-$mods += @{ file = 'vivecraft-26.3-1.3.18-fabric.jar'; url = 'https://cdn.modrinth.com/data/wGoQDPN5/versions/eV5kQTVM/vivecraft-26.3-1.3.18-fabric.jar'; hash = 'f952c991d2a3a1b63c2746408e6a056b3db108e6f2cde33e2466d6228212bb9fbc667abaedce31943dcc0b7f04d1fe8e060fc8f32b92e34337a7c1fe33e8e761' }
-# VR without SteamVR: OpenComposite answers Vivecraft's OpenVR calls and forwards them to the OpenXR runtime.
-# Only for our launcher profile (LWJGL loads this openvr_api.dll), the system and other SteamVR games stay as they are.
-# Fixed build of the openxr branch (commit a27e7e6, 2025-05-30), https://gitlab.com/znixian/OpenOVR, GPLv3.
-$openComposite = @{ file = 'openvr_api.dll'; url = 'https://opencomposite.znix.xyz/builds/download_build?commit=a27e7e6a64bdcd1eff6b7fba1ea2ea34bcf1273d&build_id=52366409&artefact_id=JjRFMXaxas695QK-'; hash = '3ef564d69b5af1e9ff6bc0d4d55aa32334636a70e084e9c51103953d366e0d13d9871f809e4342c64381de0494b018cd51c43837c37a2837ed6577ced6f19db1' }
-$useOpenXR = -not $SteamVR
 $fabric = @{ url = 'https://maven.fabricmc.net/net/fabricmc/fabric-installer/1.1.2/fabric-installer-1.1.2.jar'; hash = '61e035bf7bf70153e127440ce34de47c9036f0a2d0c65d1529454bd35ceefe4f' }
 
 function Get-Checked([string]$url, [string]$hash, [string]$out) {
@@ -50,7 +44,7 @@ try {
     if (-not (Test-Path $jar)) { throw 'Minecraft 26.3 not found. Start Minecraft Java 26.3 once in the launcher, close it, then run this again.' }
     $packSrc = Join-Path $here 'shaderpacks\ScopeCrystal'
     if (-not (Test-Path $packSrc)) { throw 'Shaderpack not found. Please extract the whole ZIP first.' }
-    # Our own mod: shader button in the pause menu (needs Iris and Fabric API).
+    # Our own mod: shader button in the pause menu, VR profiles, OpenComposite (needs Iris and Fabric API).
     $menu = Get-ChildItem (Join-Path $here 'clientmod') -Filter 'shadermenu-*.jar' | Select-Object -First 1
     if (-not $menu) { throw 'Shader menu mod not found. Please extract the whole ZIP first.' }
     $modDir = Join-Path $McDir 'mods'
@@ -63,25 +57,18 @@ try {
     Write-Host 'Building textures from your Minecraft ...'
     Copy-Item -Recurse $packSrc (Join-Path $tmp 'ScopeCrystal')
     & (Join-Path $here 'tools\make-textures.ps1') -Jar $jar -OutDir (Join-Path $tmp 'ScopeCrystal\shaders\textures')
-    if (-not $ShaderOnly) {
-        $javaExe = Find-Java
-        foreach ($m in $mods) { Write-Host "Downloading $($m.file) ..."; Get-Checked $m.url $m.hash (Join-Path $tmp $m.file) }
-        if ($useOpenXR) {
-            Write-Host 'Downloading OpenComposite (VR without SteamVR) ...'
-            New-Item -ItemType Directory -Force (Join-Path $tmp 'opencomposite') | Out-Null
-            Get-Checked $openComposite.url $openComposite.hash (Join-Path $tmp 'opencomposite\openvr_api.dll')
-        }
-        Write-Host 'Downloading Fabric installer ...'
-        Get-Checked $fabric.url $fabric.hash (Join-Path $tmp 'fabric-installer.jar')
-        # Both launcher variants may be installed; Fabric wants each one named.
-        $launchers = @()
-        if (Test-Path (Join-Path $McDir 'launcher_profiles.json')) { $launchers += 'win32' }
-        if (Test-Path (Join-Path $McDir 'launcher_profiles_microsoft_store.json')) { $launchers += 'microsoft_store' }
-        if (-not $launchers) { throw 'Minecraft launcher not found. Start it once, close it, then run this again.' }
-        foreach ($l in $launchers) {
-            & $javaExe -jar (Join-Path $tmp 'fabric-installer.jar') client -mcversion 26.3 -loader 0.20.1 -launcher $l -dir $McDir | Out-Host
-            if ($LASTEXITCODE -ne 0) { throw 'Fabric installer failed.' }
-        }
+    $javaExe = Find-Java
+    foreach ($m in $mods) { Write-Host "Downloading $($m.file) ..."; Get-Checked $m.url $m.hash (Join-Path $tmp $m.file) }
+    Write-Host 'Downloading Fabric installer ...'
+    Get-Checked $fabric.url $fabric.hash (Join-Path $tmp 'fabric-installer.jar')
+    # Both launcher variants may be installed; Fabric wants each one named.
+    $launchers = @()
+    if (Test-Path (Join-Path $McDir 'launcher_profiles.json')) { $launchers += 'win32' }
+    if (Test-Path (Join-Path $McDir 'launcher_profiles_microsoft_store.json')) { $launchers += 'microsoft_store' }
+    if (-not $launchers) { throw 'Minecraft launcher not found. Start it once, close it, then run this again.' }
+    foreach ($l in $launchers) {
+        & $javaExe -jar (Join-Path $tmp 'fabric-installer.jar') client -mcversion 26.3 -loader 0.20.1 -launcher $l -dir $McDir | Out-Host
+        if ($LASTEXITCODE -ne 0) { throw 'Fabric installer failed.' }
     }
 
     $backup = Join-Path $McDir ('mc-hub-backup\' + (Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'))
@@ -89,48 +76,26 @@ try {
     $pack = Join-Path $McDir 'shaderpacks\ScopeCrystal'
     if (Test-Path $pack) { Move-Item $pack (Join-Path $backup 'ScopeCrystal') }
     Copy-Item -Recurse (Join-Path $tmp 'ScopeCrystal') $pack
-    if (-not $ShaderOnly) {
-        if (Test-Path $modDir) { Move-Item $modDir (Join-Path $backup 'mods') }
-        $cfgDir = Join-Path $McDir 'config'
-        New-Item -ItemType Directory -Force $modDir, $cfgDir | Out-Null
-        foreach ($m in $mods) { Copy-Item -LiteralPath (Join-Path $tmp $m.file) $modDir }
-        Copy-Item -LiteralPath $menu.FullName $modDir
-        $cfg = Join-Path $cfgDir 'iris.properties'
-        if (Test-Path $cfg) { Copy-Item $cfg $backup }
-        Copy-Item (Join-Path $here 'config\iris.properties') $cfg -Force
-        $ocDll = ''
-        if ($useOpenXR) {
-            $ocDir = Join-Path $McDir 'opencomposite'
-            New-Item -ItemType Directory -Force $ocDir | Out-Null
-            $ocDll = Join-Path $ocDir 'openvr_api.dll'
-            Copy-Item -LiteralPath (Join-Path $tmp 'opencomposite\openvr_api.dll') $ocDll -Force
-            # Vivecraft asks for every device property it knows; Quest headsets dislike Vulkan for the OpenXR start
-            [IO.File]::WriteAllLines((Join-Path $ocDir 'opencomposite.ini'), [string[]]@('admitUnknownProps=true', 'initUsingVulkan=false'))
-        }
-        # ready-made Vivecraft profiles (Esc -> Shader -> VR, key F8); never over the player's own saved ones
-        $vrp = Join-Path $cfgDir 'scope_shadermenu\vr-profiles'
-        New-Item -ItemType Directory -Force $vrp | Out-Null
-        foreach ($f in Get-ChildItem (Join-Path $here 'config\vr-profiles') -Filter '*.json' -ErrorAction SilentlyContinue) {
-            if (-not (Test-Path (Join-Path $vrp $f.Name))) { Copy-Item -LiteralPath $f.FullName $vrp }
-        }
-        # name, icon and the OpenVR library for VR; a problem here must not fail the install
-        try { & (Join-Path $here 'tools\set-profile.ps1') -McDir $McDir -Backup $backup -OpenVRDll $ocDll }
-        catch { Write-Host "Note: launcher profile not updated ($($_.Exception.Message))" -ForegroundColor Yellow }
+    if (Test-Path $modDir) { Move-Item $modDir (Join-Path $backup 'mods') }
+    $cfgDir = Join-Path $McDir 'config'
+    New-Item -ItemType Directory -Force $modDir, $cfgDir | Out-Null
+    foreach ($m in $mods) { Copy-Item -LiteralPath (Join-Path $tmp $m.file) $modDir }
+    Copy-Item -LiteralPath $menu.FullName $modDir
+    $cfg = Join-Path $cfgDir 'iris.properties'
+    if (Test-Path $cfg) { Copy-Item $cfg $backup }
+    Copy-Item (Join-Path $here 'config\iris.properties') $cfg -Force
+    # ready-made Vivecraft profiles (Esc -> Shader -> VR, key F8); never over the player's own saved ones
+    $vrp = Join-Path $cfgDir 'scope_shadermenu\vr-profiles'
+    New-Item -ItemType Directory -Force $vrp | Out-Null
+    foreach ($f in Get-ChildItem (Join-Path $here 'config\vr-profiles') -Filter '*.json' -ErrorAction SilentlyContinue) {
+        if (-not (Test-Path (Join-Path $vrp $f.Name))) { Copy-Item -LiteralPath $f.FullName $vrp }
     }
-    if ($ShaderOnly) {
-        if ((Get-ChildItem $modDir -Filter 'iris-*.jar' -ErrorAction SilentlyContinue) -and (Get-ChildItem $modDir -Filter 'fabric-api-*.jar' -ErrorAction SilentlyContinue)) {
-            Get-ChildItem $modDir -Filter 'shadermenu-*.jar' | Move-Item -Destination $backup
-            Copy-Item -LiteralPath $menu.FullName $modDir
-        } else { Write-Host 'Note: shader menu mod skipped (Iris or Fabric API not found in mods).' -ForegroundColor Yellow }
-    }
+    # name and icon; a problem here must not fail the install
+    try { & (Join-Path $here 'tools\set-profile.ps1') -McDir $McDir -Backup $backup }
+    catch { Write-Host "Note: launcher profile not updated ($($_.Exception.Message))" -ForegroundColor Yellow }
     Write-Host ''
     Write-Host "Done. Your previous files are in: $backup" -ForegroundColor Green
-    if ($ShaderOnly) { Write-Host 'Start Minecraft to use the new shader.' -ForegroundColor Green }
-    else {
-        Write-Host 'Launcher -> profile "MC-challenge-HUB" -> Play.' -ForegroundColor Green
-        if ($useOpenXR) { Write-Host 'VR (optional): see install.txt, then "VR" in the main menu.' -ForegroundColor Green }
-        else { Write-Host 'VR (optional): start SteamVR first, then "VR" in the main menu.' -ForegroundColor Green }
-    }
+    Write-Host 'Launcher -> profile "MC-challenge-HUB" -> Play. VR (optional): see install.txt.' -ForegroundColor Green
 } catch {
     Write-Host ''
     Write-Host "ERROR: $($_.Exception.Message)" -ForegroundColor Red

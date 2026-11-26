@@ -26,8 +26,8 @@ foreach ($v in $vals) { if ($text.Contains($v)) { throw 'SECRET FOUND in tracked
 New-Item -ItemType Directory -Force dist | Out-Null
 $common = 'install.ps1', 'install.txt', 'tools', 'shaderpacks', 'clientmod'
 $full = 'dist/MC-challenge-HUB-Client.zip'; $shader = 'dist/ScopeCrystal-Shader.zip'
-git archive --format=zip -o $full HEAD install.cmd install-steamvr.cmd config @common; Assert-Ok 'git archive'
-git archive --format=zip -o $shader HEAD update-shader.cmd @common; Assert-Ok 'git archive'
+git archive --format=zip -o $full HEAD install.cmd config opencomposite @common; Assert-Ok 'git archive'
+git archive --format=zip -o $shader HEAD @common; Assert-Ok 'git archive'
 Get-Item $full, $shader | ForEach-Object { '{0}  {1:N0} KB' -f $_.Name, ($_.Length / 1KB) }
 
 if ($Publish) {
