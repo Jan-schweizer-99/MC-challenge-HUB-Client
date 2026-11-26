@@ -16,6 +16,7 @@ uniform sampler2D vrCursorData;
 uniform sampler2D vrArrowTex;
 uniform mat4 gbufferModelView;
 uniform mat4 gbufferProjection;
+uniform mat4 gbufferProjectionInverse;
 uniform vec3 cameraPosition;
 uniform float viewWidth;
 uniform float viewHeight;
@@ -37,25 +38,17 @@ float vrcInt16(int hi, int lo) {
     return float(v);
 }
 
-// screen position in pixels (xy), view depth (z, negative in front), pixels per metre at that depth (w)
+// screen position in pixels (xy), view depth (z, negative in front), pixels per metre of trail width at that depth (w):
+// like the mod, the width grows with the distance (max(0.6, d / 1.6)), so the trail looks the same near and far
 vec4 vrcProject(vec3 world) {
     vec4 view = gbufferModelView * vec4(world - cameraPosition, 1.0);
     vec4 clip = gbufferProjection * view;
     vec2 px = (clip.xy / clip.w * 0.5 + 0.5) * vec2(viewWidth, viewHeight);
-    return vec4(px, view.z, gbufferProjection[1][1] * 0.5 * viewHeight / max(-view.z, 0.01));
+    float d = max(length(view.xyz), 0.01);
+    return vec4(px, view.z, gbufferProjection[1][1] * 0.5 * viewHeight / max(-view.z, 0.01) * max(0.6, d / 1.6));
 }
 
 vec3 vrcColor(int i) { return vrcTexel(i).rgb; }
-
-// soft band: 0 outside, 1 in the core
-vec4 vrcShade(float d, float fade, vec3 glow, vec3 mid, vec3 core) {
-    float glowA = (1.0 - smoothstep(0.0, 1.0, d)) * 0.35;
-    float midA = (1.0 - smoothstep(0.45, 0.65, d)) * 0.45;
-    float coreA = 1.0 - smoothstep(0.22, 0.32, d);
-    vec3 c = mix(mix(glow, mid, midA / max(glowA + midA, 1e-4)), core, coreA);
-    float a = clamp(max(max(glowA, midA), coreA * 0.95), 0.0, 1.0) * (0.15 + 0.85 * fade);
-    return vec4(c, a);
-}
 
 vec3 vrcTint(float l, vec3 glow, vec3 mid, vec3 core) {
     vec3 dark = glow * 0.35;
@@ -77,8 +70,10 @@ vec3 vrCursor(vec3 color) {
     vec2 frag = gl_FragCoord.xy;
 
     // ---- trail: distance of this pixel to the band through the points (screen space)
+    // exactly the look of the mod's gizmo trail: three flat bands (glow 100 % width 22 %, middle 62 % width 35 %,
+    // core 30 % width 95 % opacity), thinner and fainter towards the old end, and a head of two discs
     if ((head.r & 1) != 0 && n >= 1) {
-        vec4 best = vec4(0.0);
+        float bestD = 9.0, bestF = 0.0;
         vec4 prev = vec4(0.0);
         float prevFade = 0.0;
         for (int i = 0; i < VRC_MAX; i++) {
@@ -93,20 +88,19 @@ vec3 vrCursor(vec3 color) {
                 float f = mix(prevFade, fade, t);
                 float halfPx = widthM * mix(prev.w, cur.w, t) * (0.25 + 0.75 * f);
                 float d = length(frag - (prev.xy + s * t)) / max(halfPx, 0.75);
-                if (d < 1.0) { vec4 sh = vrcShade(d, f, glow, mid, core); if (sh.a > best.a) best = sh; }
+                if (d < bestD) { bestD = d; bestF = f; }
             }
             prev = cur; prevFade = fade;
         }
-        // round head at the newest point
+        float k = 0.15 + 0.85 * bestF;
+        if (bestD < 1.0)  color = mix(color, glow, min(1.0, 0.22 * opacity * k));
+        if (bestD < 0.62) color = mix(color, mid, min(1.0, 0.35 * opacity * k));
+        if (bestD < 0.3)  color = mix(color, core, min(1.0, 0.95 * opacity * k));
         if (headSize > 0.01 && prev.z < -0.05) {
             float d = length(frag - prev.xy) / max(widthM * prev.w * headSize, 0.75);
-            if (d < 1.0) {
-                float coreA = 1.0 - smoothstep(0.45, 0.55, d);
-                vec4 sh = vec4(mix(mid, core, coreA), max(0.4 * (1.0 - d), coreA * 0.95));
-                if (sh.a > best.a) best = sh;
-            }
+            if (d < 1.0) color = mix(color, mid, 0.4 * opacity);
+            if (d < 0.5) color = mix(color, core, 0.95 * opacity);
         }
-        color = mix(color, best.rgb, best.a * opacity);
     }
 
     // ---- arrow: near the edge of the view, pointing to the cursor when it is outside
@@ -120,13 +114,18 @@ vec3 vrCursor(vec3 color) {
             vec2 dir = normalize(to.xy);                         // towards the cursor in the view plane (y = head up)
             float vert = abs(dir.y), hor = sqrt(max(0.0, 1.0 - vert * vert));
             float off = 1.0 / sqrt(pow(hor / sideR, 2.0) + pow(vert / upR, 2.0));
+            // a flat picture in space, 1.2 m away, facing the eye, like in the mod: cut the view ray of this pixel with it
             vec3 c = vec3(dir * sin(off), -cos(off)) * 1.2;
-            vec4 clip = gbufferProjection * vec4(c, 1.0);
-            vec2 center = (clip.xy / clip.w * 0.5 + 0.5) * vec2(viewWidth, viewHeight);
-            float halfPx = arrowHalf / 1.2 * gbufferProjection[1][1] * 0.5 * viewHeight;
-            vec2 up = normalize(vec2(dir.x * gbufferProjection[0][0] * viewWidth, dir.y * gbufferProjection[1][1] * viewHeight));
-            vec2 right = vec2(up.y, -up.x);
-            vec2 local = vec2(dot(frag - center, right), dot(frag - center, up)) / halfPx;   // -1..1
+            vec3 nrm = normalize(c);
+            vec3 up3 = vec3(dir, 0.0);
+            up3 = normalize(up3 - nrm * dot(up3, nrm));
+            vec3 right3 = cross(up3, -nrm);
+            vec2 ndc = frag / vec2(viewWidth, viewHeight) * 2.0 - 1.0;
+            vec4 rv = gbufferProjectionInverse * vec4(ndc, 1.0, 1.0);
+            vec3 ray = normalize(rv.xyz / rv.w);
+            float hitT = dot(c, nrm) / max(dot(ray, nrm), 1e-4);
+            vec3 hit = ray * hitT - c;
+            vec2 local = vec2(dot(hit, right3), dot(hit, up3)) / arrowHalf;     // -1..1
             if (abs(local.x) < 1.0 && abs(local.y) < 1.0) {
                 ivec2 size = textureSize(vrArrowTex, 0);
                 ivec2 tc = ivec2(clamp((local.x * 0.5 + 0.5) * float(size.x), 0.0, float(size.x - 1)),
