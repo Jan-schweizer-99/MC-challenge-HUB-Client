@@ -11,7 +11,8 @@ FIRST INSTALL  (MC-challenge-HUB-Client.zip)
 5. Multiplayer -> add the server address you got from the server owner.
 
 UPDATE THE SHADER
-In game: Esc -> Shader -> Update shader (from version 1.0.9 on). By hand:
+In game: Esc -> Shader -> Update shader (from version 1.0.9 on). From version 1.0.11 on
+the menu updates too without restarting Minecraft. By hand:
 (ScopeCrystal-Shader.zip)
 1. Close Minecraft and extract the whole ZIP.
 2. Double-click update-shader.cmd.
