@@ -1,3 +1,58 @@
+diff --git a/DrvOpenXR/DrvOpenXR.cpp b/DrvOpenXR/DrvOpenXR.cpp
+index 8e3bd9c..5b103eb 100644
+--- a/DrvOpenXR/DrvOpenXR.cpp
++++ b/DrvOpenXR/DrvOpenXR.cpp
+@@ -22,6 +22,7 @@
+ 
+ static XrBackend* currentBackend;
+ static bool initialised = false;
++static bool noHmd = false; // MC-challenge-HUB patch: last init failed because no headset is there
+ 
+ #ifdef _WIN32
+ std::string GetExeName()
+@@ -77,6 +78,20 @@ static XrBool32 XRAPI_CALL debugCallback(
+ }
+ #endif
+ 
++// MC-challenge-HUB patch: like CreateSystemID, but returns the result instead of aborting
++static XrResult TryCreateSystemID()
++{
++	XrSystemGetInfo systemInfo{};
++	systemInfo.type = XR_TYPE_SYSTEM_GET_INFO;
++	systemInfo.formFactor = XR_FORM_FACTOR_HEAD_MOUNTED_DISPLAY;
++	return xrGetSystem(xr_instance, &systemInfo, &xr_system);
++}
++
++bool DrvOpenXR::LastInitNoHmd()
++{
++	return noHmd;
++}
++
+ static void CreateSystemID()
+ {
+ 	// Create a system - this is when we choose what form factor we want, in this case an HMD
+@@ -279,7 +294,20 @@ IBackend* DrvOpenXR::CreateOpenXRBackend(const char* startupInfo)
+ 	// Load the function pointers for the extension functions
+ 	xr_ext = new XrExt(apiFlags, extensions);
+ 
+-	CreateSystemID();
++	// MC-challenge-HUB patch: without a headset (Quest not connected) the runtime answers
++	// XR_ERROR_FORM_FACTOR_UNAVAILABLE. Aborting here kills the whole game; SteamVR instead reports
++	// VRInitError_Init_HmdNotFound and the game goes on without VR. Do the same: clean up and fail the init.
++	noHmd = false;
++	if (XrResult res = TryCreateSystemID(); XR_FAILED(res)) {
++		OOVR_LOGF("No headset available (XrResult %d), VR init fails without aborting", res);
++		noHmd = true;
++		delete xr_ext;
++		xr_ext = nullptr;
++		xrDestroyInstance(xr_instance);
++		xr_instance = XR_NULL_HANDLE;
++		initialised = false;
++		return nullptr;
++	}
+ 
+ 	// List off the views and store them locally for easy access
+ 	uint32_t viewCount = 0;
 diff --git a/DrvOpenXR/XrHMD.cpp b/DrvOpenXR/XrHMD.cpp
 index ffeab79..5df3b76 100644
 --- a/DrvOpenXR/XrHMD.cpp
@@ -11,6 +66,40 @@ index ffeab79..5df3b76 100644
  #include "XrHMD.h"
  
  #include "../OpenOVR/Misc/Config.h"
+diff --git a/DrvOpenXR/pub/DrvOpenXR.h b/DrvOpenXR/pub/DrvOpenXR.h
+index 9a346cb..c3af585 100644
+--- a/DrvOpenXR/pub/DrvOpenXR.h
++++ b/DrvOpenXR/pub/DrvOpenXR.h
+@@ -9,4 +9,5 @@
+ namespace DrvOpenXR {
+ IBackend* CreateOpenXRBackend(const char* startupInfo);
+ void GetXRAppName(char (&appName)[128]);
++bool LastInitNoHmd(); // MC-challenge-HUB patch
+ }; // namespace DrvOpenXR
+diff --git a/OCOVR/openvr_api.cpp b/OCOVR/openvr_api.cpp
+index a49444a..0079feb 100644
+--- a/OCOVR/openvr_api.cpp
++++ b/OCOVR/openvr_api.cpp
+@@ -270,11 +270,15 @@ VR_INTERFACE uint32_t VR_CALLTYPE VR_InitInternal2(EVRInitError* peError, EVRApp
+ 
+ 	// TODO seperate this from the rest of dllmain
+ 	IBackend* backend = DrvOpenXR::CreateOpenXRBackend(pStartupInfo);
+-	if (!backend && peError) {
+-		*peError = VRInitError_Init_Internal;
+-	} else {
+-		BackendManager::Create(backend);
++	if (!backend) {
++		// MC-challenge-HUB patch: say "no headset" like SteamVR, and allow a later try (headset plugged in)
++		if (peError)
++			*peError = DrvOpenXR::LastInitNoHmd() ? VRInitError_Init_HmdNotFound : VRInitError_Init_Internal;
++		running = false;
++		running_ovr = false;
++		return 0;
+ 	}
++	BackendManager::Create(backend);
+ 
+ 	return current_init_token;
+ }
 diff --git a/OpenOVR/Reimpl/BaseInput.cpp b/OpenOVR/Reimpl/BaseInput.cpp
 index 1091a21..6ea5101 100644
 --- a/OpenOVR/Reimpl/BaseInput.cpp

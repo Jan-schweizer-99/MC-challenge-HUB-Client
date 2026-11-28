@@ -13,6 +13,9 @@ OpenComposite is free software under the GNU GPL v3 (see `LICENSE.txt`), by ZNix
   - `BaseInput.cpp` `GetActionOrigins`: two-call idiom for `xrEnumerateBoundSourcesForAction`. With Meta Quest Link
     the fixed buffer of 20 was too small, so the game crashed when an action had overlapping bindings (B button,
     radial menu). Null or unreadable paths are skipped instead of aborting.
+  - `DrvOpenXR.cpp`, `openvr_api.cpp`: without a headset (Quest not connected) the runtime answers
+    `XR_ERROR_FORM_FACTOR_UNAVAILABLE`; OpenComposite aborted the whole game there. Now the init fails cleanly with
+    `VRInitError_Init_HmdNotFound`, like SteamVR, and the game starts without VR (a later try works again).
   - `XrHMD.cpp`: missing `<chrono>` and `<thread>` includes for MSVC.
 
 ## Build
@@ -35,4 +38,4 @@ cmake --build build --config Release --target OCOVR
 The result `build/bin/Release/vrclient_x64.dll` is `openvr_api.dll` here.
 
 SHA-512 of the shipped DLL:
-`a92a378b45a1839ce42b093e3b8c9dd8b708e04a5f904651badc70b91ffbfbd6f5d5f532c275051f2d6817c1ab1f7a8dbed748c022b70854a57e070fc0f90993`
+`192dbdb8c0be9bbaa71e25d22538c35709c4ab1b57c93047b170c18b89be43fd905e73b8f6b046720de834714d75ccb06f666fa6298cd03740fdfc416b46ec8d`
